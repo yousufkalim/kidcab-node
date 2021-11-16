@@ -1,4 +1,4 @@
-# Node-JS Boilerplate
+# Kidscab
 
 Installation steps to run server locally
 
