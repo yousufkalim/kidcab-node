@@ -1,5 +1,5 @@
 /**
- * Passenger schema
+ * Companies schema
  * @author Usman Haider
  */
 const { Schema, model } = require("mongoose");
