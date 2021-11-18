@@ -21,13 +21,7 @@ const {
  */
 
 // Create - quote Signup
-router.post(
-  "/",
-  upload.single("image"),
-  validateQuote,
-  isValidated,
-  quotes.create
-);
+router.post("/", validateQuote, isValidated, quotes.create);
 
 // Read
 router.get("/", quotes.getAll); // Get all quotes at once

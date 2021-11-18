@@ -21,13 +21,7 @@ const {
  */
 
 // Create - Invoice Signup
-router.post(
-  "/",
-  upload.single("image"),
-  validateInvoice,
-  isValidated,
-  invoices.create
-);
+router.post("/", validateInvoice, isValidated, invoices.create);
 
 // Read
 router.get("/", invoices.getAll); // Get all invoices at once

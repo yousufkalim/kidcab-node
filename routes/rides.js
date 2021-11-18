@@ -21,13 +21,7 @@ const {
  */
 
 // Create - rides Signup
-router.post(
-  "/",
-  upload.single("image"),
-  validateRides,
-  isValidated,
-  rides.create
-);
+router.post("/", validateRides, isValidated, rides.create);
 
 // Read
 router.get("/", rides.getAll); // Get all rides at once

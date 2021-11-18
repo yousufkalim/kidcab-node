@@ -21,7 +21,13 @@ const {
  */
 
 // Create
-router.post("/", validateCompanies, isValidated, companies.create);
+router.post(
+  "/",
+  upload.single("image"),
+  validateCompanies,
+  isValidated,
+  companies.create
+);
 
 // Read
 router.get("/", companies.getAll); // Get all companies at once
