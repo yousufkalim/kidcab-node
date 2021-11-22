@@ -21,13 +21,7 @@ const {
  */
 
 // Create
-router.post(
-  "/",
-  upload.single("image"),
-  validateVehicle,
-  isValidated,
-  vehicles.create
-);
+router.post("/", validateVehicle, isValidated, vehicles.create);
 
 // Read
 router.get("/", vehicles.getAll); // Get all vehicles at once

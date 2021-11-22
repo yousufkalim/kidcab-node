@@ -1,5 +1,5 @@
 {
-  "name": "Kidscab",
+  "name": "Kidcab",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/falconitconsultant/Kidscab-Node.git"
   },
-  "author": "Yousuf Kalim",
+  "author": "Yousuf Kalim & Usman Haider",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/falconitconsultant/Kidscab-Node/issues"
