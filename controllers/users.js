@@ -1,6 +1,6 @@
 /**
  * User CRUD controllers
- * @author Yousuf Kalim
+ * @author Usman Haider
  */
 const Users = require("../models/Users");
 const bcrypt = require("bcryptjs");
@@ -32,7 +32,7 @@ exports.create = async (req, res) => {
 
     // Getting url of the image
     if (req.file) {
-      req.body.photo = req.file.path; // Creating a new property called photo in body object
+      req.body.profile_pic = req.file.path; // Creating a new property called photo in body object
     }
 
     // Creating User
