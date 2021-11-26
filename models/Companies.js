@@ -33,7 +33,7 @@ const companySchema = new Schema(
     city_of_rcs: {
       type: String,
     },
-    manager_id: {
+    manager: {
       type: Schema.Types.ObjectId,
       ref: "drivers",
     },

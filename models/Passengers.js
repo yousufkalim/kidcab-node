@@ -32,7 +32,7 @@ const passengerSchema = new Schema(
     phone_number: {
       type: String,
     },
-    client_id: {
+    client: {
       type: Schema.Types.ObjectId,
       ref: "clients",
       required: true,

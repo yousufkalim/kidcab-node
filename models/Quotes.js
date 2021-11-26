@@ -20,7 +20,7 @@ const quoteSchema = new Schema(
       required: true,
     },
     total_price: {
-      type: String,
+      type: Number,
       required: true,
     },
     vat: {
@@ -60,7 +60,7 @@ const quoteSchema = new Schema(
         required: true,
       },
     ],
-    client_id: {
+    client: {
       type: Schema.Types.ObjectId,
       ref: "clients",
       required: true,

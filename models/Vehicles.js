@@ -40,7 +40,7 @@ const vehicleSchema = new Schema(
       required: true,
     },
 
-    driver_id: {
+    driver: {
       type: Schema.Types.ObjectId,
       ref: "drivers",
       required: true,
