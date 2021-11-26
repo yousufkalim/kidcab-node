@@ -9,7 +9,7 @@ const {
   validateInvoice,
   validateInvoiceUpdate,
   isValidated,
-} = require("../middleware/validators");
+} = require("../middleware/validators/invoices");
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -21,14 +21,14 @@ const {
  */
 
 // Create - Invoice Signup
-router.post("/", validateInvoice, isValidated, invoices.create);
+router.post("/", invoices.create);
 
 // Read
 router.get("/", invoices.getAll); // Get all invoices at once
 router.get("/:invoiceId", invoices.getById); // Get one invoice by it's id
 
 // Update
-router.put("/:invoiceId", validateInvoiceUpdate, isValidated, invoices.update); // Update a specific invoice by it's id
+router.put("/:invoiceId", invoices.update); // Update a specific invoice by it's id
 
 // Delete
 router.delete("/:invoiceId", invoices.delete); // delete a specific invoice by it's id

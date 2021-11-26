@@ -9,7 +9,7 @@ const {
   validateDriver,
   validateDriverUpdate,
   isValidated,
-} = require("../middleware/validators");
+} = require("../middleware/validators/drivers");
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -21,20 +21,14 @@ const {
  */
 
 // Create
-router.post(
-  "/",
-  upload.single("image"),
-  validateDriver,
-  isValidated,
-  drivers.create
-);
+router.post("/", upload.single("image"), drivers.create);
 
 // Read
 router.get("/", drivers.getAll); // Get all drivers at once
 router.get("/:driverId", drivers.getById); // Get one driver by it's id
 
 // Update
-router.put("/:driverId", validateDriverUpdate, isValidated, drivers.update); // Update a specific driver by it's id
+router.put("/:driverId", drivers.update); // Update a specific driver by it's id
 
 // Delete
 router.delete("/:driverId", drivers.delete); // delete a specific driver by it's id

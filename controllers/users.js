@@ -2,10 +2,9 @@
  * User CRUD controllers
  * @author Usman Haider
  */
-const Users = require("../models/Users");
 const bcrypt = require("bcryptjs");
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
-
+const Users = require("../models/Users");
 /**
  * Create User - Signup
  * @param {object} req
