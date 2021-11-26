@@ -5,7 +5,7 @@
 const Admin = require("../models/Admins");
 const bcrypt = require("bcryptjs");
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
-
+const { generateAuthToken } = require("../middleware/auth");
 /**
  * Create Admin - Signup
  * @param {object} req
@@ -13,21 +13,13 @@ const bcryptSalt = process.env.BCRYPT_SALT || 10;
  */
 exports.create = async (req, res) => {
   try {
-    let { email, password, confirmPassword } = req.body; // Getting required fields from body
-    const existingAdmin = await Amin.findOne({ email }); // Finding already existing admin
+    let { email, password, first_name, last_name } = req.body; // Getting required fields from body
+    const existingAdmin = await Admin.findOne({ email }); // Finding already existing admin
 
-    // Extra Validations
     if (existingAdmin) {
-      // If we found existing admin in db
       return res
         .status(409)
         .json({ success: false, message: "Admin already exists." });
-    } else if (password !== confirmPassword) {
-      // Passwords not same
-      return res.status(400).json({
-        success: false,
-        message: "Password and Confirm Password are not same.",
-      });
     }
 
     // Getting url of the image
@@ -37,12 +29,77 @@ exports.create = async (req, res) => {
 
     // Creating Admin
     password = bcrypt.hashSync(password, parseInt(bcryptSalt)); // Hashing the password with salt 8
-    const admin = await Admin.create(req.body); // Adding admin in db
+    const admin = await Admin.create({
+      name: {
+        first_name,
+        last_name,
+      },
+      password,
+      profile_pic: req.body.profile_pic,
+      email,
+    }); // Adding admin in db
     await admin.save();
     // Done
     res.json({ success: true, admin }); //Success
   } catch (err) {
-    // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get Login admins
+ * @param {object} req
+ * @param {object} res
+ */
+
+exports.login = async (req, res) => {
+  try {
+    const admin = await Admin.findOne({ email: req.body.email });
+    if (!admin) return res.status(404).send("Email or Password is incorrect");
+    console.log(admin.password);
+    const validPassword = bcrypt.compareSync(req.body.password, admin.password);
+    if (!validPassword)
+      return res.status(401).send("Email or Password is incorrect");
+    const token = await generateAuthToken(admin);
+    res.json({ success: true, admin, token }); // Success
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get Logout admins
+ * @param {object} req
+ * @param {object} res
+ */
+
+exports.logout = async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+    await req.user.save();
+    res.send("Logout successfully");
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get Logout All admins
+ * @param {object} req
+ * @param {object} res
+ */
+
+exports.logoutAll = async (req, res) => {
+  try {
+    req.admin.tokens = [];
+    await req.admin.save();
+    res.send("Logout All admins successfully");
+  } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
@@ -55,10 +112,9 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const admins = await Admin.find(); // Finding all the admins from db
-    res.json({ success: true, admins }); // Success
+    const admins = await Admin.find();
+    res.json({ success: true, admins });
   } catch (err) {
-    // Error handling
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
