@@ -7,7 +7,6 @@ const quotes = require("../controllers/quotes");
 const { upload } = require("../middleware/multer");
 const {
   validateQuote,
-  validateQuoteUpdate,
   isValidated,
 } = require("../middleware/validators/quotes");
 
@@ -21,7 +20,7 @@ const {
  */
 
 // Create - quote Signup
-router.post("/", quotes.create);
+router.post("/", validateQuote, isValidated, quotes.create);
 
 // Read
 router.get("/", quotes.getAll); // Get all quotes at once

@@ -7,7 +7,6 @@ const passengers = require("../controllers/passengers");
 const { upload } = require("../middleware/multer");
 const {
   validatePassenger,
-  validatePassengerUpdate,
   isValidated,
 } = require("../middleware/validators/passengers");
 
@@ -24,7 +23,8 @@ const {
 router.post(
   "/",
   upload.single("image"),
-
+  validatePassenger,
+  isValidated,
   passengers.create
 );
 
