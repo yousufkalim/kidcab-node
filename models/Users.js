@@ -2,10 +2,10 @@
  * Client schema
  * @author Usman Haider
  */
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 
 // Schema
-const clientSchema = new mongoose.Schema(
+const clientSchema = new Schema(
   {
     name: {
       first_name: { type: String, required: true },
@@ -29,6 +29,7 @@ const clientSchema = new mongoose.Schema(
     passengers: [
       {
         type: Schema.Types.ObjectId,
+        ref: "passengers",
       },
     ],
     bank_info: {
@@ -45,7 +46,7 @@ const clientSchema = new mongoose.Schema(
         type: String,
       },
       iban: {
-        type: string,
+        type: String,
       },
     },
     cnic: {
@@ -79,4 +80,4 @@ const clientSchema = new mongoose.Schema(
 );
 
 // Model
-module.exports = mongoose.model("clients", clientSchema);
+module.exports = model("users", clientSchema);

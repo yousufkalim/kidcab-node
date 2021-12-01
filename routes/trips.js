@@ -9,7 +9,7 @@ const {
   validateTrip,
   validateTripUpdate,
   isValidated,
-} = require("../middleware/validators");
+} = require("../middleware/validators/trips");
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -21,14 +21,14 @@ const {
  */
 
 // Create
-router.post("/", validateTrip, isValidated, trips.create);
+router.post("/", trips.create);
 
 // Read
 router.get("/", trips.getAll); // Get all trips at once
 router.get("/:tripId", trips.getById); // Get one trip by it's id
 
 // Update
-router.put("/:tripId", validateTripUpdate, isValidated, trips.update); // Update a specific trip by it's id
+router.put("/:tripId", trips.update); // Update a specific trip by it's id
 
 // Delete
 router.delete("/:tripId", trips.delete); // delete a specific trip by it's id

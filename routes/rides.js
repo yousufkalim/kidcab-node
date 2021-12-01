@@ -9,7 +9,7 @@ const {
   validateRides,
   validateRidesUpdate,
   isValidated,
-} = require("../middleware/validators");
+} = require("../middleware/validators/rides");
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -21,14 +21,14 @@ const {
  */
 
 // Create - rides Signup
-router.post("/", validateRides, isValidated, rides.create);
+router.post("/", rides.create);
 
 // Read
 router.get("/", rides.getAll); // Get all rides at once
 router.get("/:rideId", rides.getById); // Get one ride by it's id
 
 // Update
-router.put("/:rideId", validateRidesUpdate, isValidated, rides.update); // Update a specific ride by it's id
+router.put("/:rideId", rides.update); // Update a specific ride by it's id
 
 // Delete
 router.delete("/:rideId", rides.delete); // delete a specific ride by it's id

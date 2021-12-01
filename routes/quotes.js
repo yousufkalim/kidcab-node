@@ -9,7 +9,7 @@ const {
   validateQuote,
   validateQuoteUpdate,
   isValidated,
-} = require("../middleware/validators");
+} = require("../middleware/validators/quotes");
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -21,14 +21,14 @@ const {
  */
 
 // Create - quote Signup
-router.post("/", validateQuote, isValidated, quotes.create);
+router.post("/", quotes.create);
 
 // Read
 router.get("/", quotes.getAll); // Get all quotes at once
 router.get("/:quoteId", quotes.getById); // Get one quote by it's id
 
 // Update
-router.put("/:quoteId", validateQuoteUpdate, isValidated, quotes.update); // Update a specific quote by it's id
+router.put("/:quoteId", quotes.update); // Update a specific quote by it's id
 
 // Delete
 router.delete("/:quoteId", quotes.delete); // delete a specific quote by it's id

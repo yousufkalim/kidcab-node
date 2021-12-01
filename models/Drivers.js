@@ -36,7 +36,7 @@ const driverSchema = new Schema(
     },
     company_id: {
       type: Schema.Types.ObjectId,
-      ref: companies,
+      ref: "companies",
     },
     vehicles: [
       {
@@ -102,7 +102,7 @@ const driverSchema = new Schema(
         type: String,
       },
       iban: {
-        type: string,
+        type: String,
       },
     },
     earnings: {

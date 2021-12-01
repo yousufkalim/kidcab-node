@@ -25,11 +25,27 @@ const adminSchema = new mongoose.Schema(
       type: String,
       minlength: 8,
     },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
+
+adminSchema.methods.toJSON = function () {
+  const admin = this;
+  const adminObject = admin.toObject();
+  delete adminObject.password;
+  delete adminObject.tokens;
+  return adminObject;
+};
 
 // Model
 module.exports = mongoose.model("admins", adminSchema);

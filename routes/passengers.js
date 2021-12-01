@@ -9,7 +9,7 @@ const {
   validatePassenger,
   validatePassengerUpdate,
   isValidated,
-} = require("../middleware/validators");
+} = require("../middleware/validators/passengers");
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -24,8 +24,7 @@ const {
 router.post(
   "/",
   upload.single("image"),
-  validatePassenger,
-  isValidated,
+
   passengers.create
 );
 
@@ -34,12 +33,7 @@ router.get("/", passengers.getAll); // Get all passengers at once
 router.get("/:passengerId", passengers.getById); // Get one Passenger by it's id
 
 // Update
-router.put(
-  "/:passengerId",
-  validatePassengerUpdate,
-  isValidated,
-  passengers.update
-); // Update a specific passenger by it's id
+router.put("/:passengerId", passengers.update); // Update a specific passenger by it's id
 
 // Delete
 router.delete("/:passengerId", passengers.delete); // delete a specific passenger by it's id

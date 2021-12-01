@@ -9,7 +9,7 @@ const {
   validateVehicle,
   validateVehicleUpdate,
   isValidated,
-} = require("../middleware/validators");
+} = require("../middleware/validators/vehicles");
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -21,20 +21,14 @@ const {
  */
 
 // Create
-router.post(
-  "/",
-  upload.single("image"),
-  validateVehicle,
-  isValidated,
-  vehicles.create
-);
+router.post("/", vehicles.create);
 
 // Read
 router.get("/", vehicles.getAll); // Get all vehicles at once
 router.get("/:vehicleId", vehicles.getById); // Get one vehicle by it's id
 
 // Update
-router.put("/:vehicleId", validateVehicleUpdate, isValidated, vehicles.update); // Update a specific vehicle by it's id
+router.put("/:vehicleId", vehicles.update); // Update a specific vehicle by it's id
 
 // Delete
 router.delete("/:vehicleId", vehicles.delete); // delete a specific vehicle by it's id

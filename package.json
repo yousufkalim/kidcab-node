@@ -1,16 +1,18 @@
 {
-  "name": "Kidscab",
+  "name": "Kidcab",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/falconitconsultant/Kidscab-Node.git"
   },
-  "author": "Yousuf Kalim",
+  "author": "Yousuf Kalim & Usman Haider",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/falconitconsultant/Kidscab-Node/issues"
@@ -22,6 +24,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.12.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.4",
     "morgan": "^1.10.0",
     "multer": "^1.4.3"
