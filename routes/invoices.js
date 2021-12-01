@@ -7,7 +7,6 @@ const invoices = require("../controllers/invoices");
 const { upload } = require("../middleware/multer");
 const {
   validateInvoice,
-  validateInvoiceUpdate,
   isValidated,
 } = require("../middleware/validators/invoices");
 
@@ -21,7 +20,7 @@ const {
  */
 
 // Create - Invoice Signup
-router.post("/", invoices.create);
+router.post("/", validateInvoice, isValidated, invoices.create);
 
 // Read
 router.get("/", invoices.getAll); // Get all invoices at once

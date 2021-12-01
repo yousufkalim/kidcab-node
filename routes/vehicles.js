@@ -4,10 +4,8 @@
  */
 const router = require("express").Router();
 const vehicles = require("../controllers/vehicles");
-const { upload } = require("../middleware/multer");
 const {
   validateVehicle,
-  validateVehicleUpdate,
   isValidated,
 } = require("../middleware/validators/vehicles");
 
@@ -21,7 +19,7 @@ const {
  */
 
 // Create
-router.post("/", vehicles.create);
+router.post("/", validateVehicle, isValidated, vehicles.create);
 
 // Read
 router.get("/", vehicles.getAll); // Get all vehicles at once

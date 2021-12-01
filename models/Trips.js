@@ -68,7 +68,7 @@ const tripSchema = new Schema(
     assigned_drivers: [{ type: Schema.Types.ObjectId, ref: "drivers" }],
     invited_drivers: [
       {
-        id: { type: Schema.Types.ObjectId, ref: "drivers" },
+        driver: { type: Schema.Types.ObjectId, ref: "drivers" },
         price: { type: Number },
         status: {
           type: String,
@@ -77,19 +77,19 @@ const tripSchema = new Schema(
         },
       },
     ],
-    rides_id: [
+    rides: [
       {
         type: Schema.Types.ObjectId,
         ref: "rides",
         required: true,
       },
     ],
-    client_id: {
+    client: {
       type: Schema.Types.ObjectId,
       ref: "clients",
       required: true,
     },
-    quote_id: {
+    quote: {
       type: Schema.Types.ObjectId,
       ref: "quotes",
       required: true,

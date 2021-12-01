@@ -33,8 +33,9 @@ const driverSchema = new Schema(
     role: {
       type: String,
       enum: ["individual", "fleet_manager"],
+      required: true,
     },
-    company_id: {
+    company: {
       type: Schema.Types.ObjectId,
       ref: "companies",
     },
@@ -107,7 +108,6 @@ const driverSchema = new Schema(
     },
     earnings: {
       type: Number,
-      required: true,
     },
   },
   {

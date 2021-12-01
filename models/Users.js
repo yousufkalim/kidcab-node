@@ -7,10 +7,9 @@ const { Schema, model } = require("mongoose");
 // Schema
 const clientSchema = new Schema(
   {
-    name: {
-      first_name: { type: String, required: true },
-      last_name: { type: String, required: true },
-    },
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+
     profile_pic: {
       type: String,
     },

@@ -7,7 +7,6 @@ const rides = require("../controllers/rides");
 const { upload } = require("../middleware/multer");
 const {
   validateRides,
-  validateRidesUpdate,
   isValidated,
 } = require("../middleware/validators/rides");
 
@@ -21,7 +20,7 @@ const {
  */
 
 // Create - rides Signup
-router.post("/", rides.create);
+router.post("/", validateRides, isValidated, rides.create);
 
 // Read
 router.get("/", rides.getAll); // Get all rides at once

@@ -1,29 +1,10 @@
 /**
- * All the validation
+ * Admin the validation
  * @author Usman Haider
  */
 const { check, validationResult } = require("express-validator");
 
-/*
- ====================
- Validations
- ====================
- */
-
-// You can create multiple validations strategies (Read express-validator documentation for more details)
-// User Signup Validation
 exports.validateAdmin = [
-  check("first_name", "Name is required.").notEmpty().trim(),
-  check("last_name", "Name is required.").notEmpty().trim(),
-  check("email", "Email is required.").notEmpty().isEmail().trim(),
-  check("password", "Password is required.")
-    .notEmpty()
-    .trim()
-    .isLength({ min: 8 }),
-];
-
-// User Signup Validation
-exports.validateAdminUpdate = [
   check("first_name", "Name is required.").notEmpty().trim(),
   check("last_name", "Name is required.").notEmpty().trim(),
   check("email", "Email is required.").notEmpty().isEmail().trim(),

@@ -19,22 +19,22 @@ const rideSchema = new Schema(
     price: {
       type: Number,
     },
-    client_id: {
+    client: {
       type: Schema.Types.ObjectId,
       ref: "clients",
       required: true,
     },
-    driver_id: {
+    driver: {
       type: Schema.Types.ObjectId,
       ref: "drivers",
       required: true,
     },
-    vehicle_id: {
+    vehicle: {
       type: Schema.Types.ObjectId,
       ref: "vehicles",
       required: true,
     },
-    trip_id: {
+    trip: {
       type: Schema.Types.ObjectId,
       ref: "trips",
       required: true,

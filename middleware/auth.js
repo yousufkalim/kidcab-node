@@ -3,15 +3,14 @@ const Admin = require("../models/Admins");
 
 exports.auth = async (req, res, next) => {
   try {
+    console.log("Auth Body", req.header("Authorization"));
     const token = await req.header("Authorization").replace("Bearer ", "");
-    console.log(token);
     const decoded = await jwt.verify(token, process.env.TOKEN_SECRET);
     console.log("decoded user", decoded);
     const user = await Admin.findOne({
       _id: decoded._id,
       "tokens.token": token,
     });
-    console.log("auth user", user);
     if (!user) {
       throw new Error();
     }

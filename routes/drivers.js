@@ -7,7 +7,6 @@ const drivers = require("../controllers/drivers");
 const { upload } = require("../middleware/multer");
 const {
   validateDriver,
-  validateDriverUpdate,
   isValidated,
 } = require("../middleware/validators/drivers");
 
@@ -21,7 +20,13 @@ const {
  */
 
 // Create
-router.post("/", upload.single("image"), drivers.create);
+router.post(
+  "/",
+  upload.single("image"),
+  validateDriver,
+  isValidated,
+  drivers.create
+);
 
 // Read
 router.get("/", drivers.getAll); // Get all drivers at once

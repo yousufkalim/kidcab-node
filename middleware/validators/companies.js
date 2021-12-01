@@ -12,22 +12,12 @@ const { check, validationResult } = require("express-validator");
 
 // You can create multiple validations strategies (Read express-validator documentation for more details)
 // User Signup Validation
-exports.validateUser = [
+exports.validateCompany = [
   check("company_name", "Company Name is required.").notEmpty().trim(),
   check("logo", "Logo is required.").notEmpty().trim(),
   check("siret_number", "SIRET Number is required.").notEmpty().trim(),
   check("legal_info", "Legal Info is required.").notEmpty().trim(),
   check("social_capital", "Social Capital is required.").notEmpty().trim(),
-];
-
-// User Signup Validation
-exports.validateUserUpdate = [
-  check("company_name", "Company Name is required.").notEmpty().trim(),
-  check("logo", "Logo is required.").notEmpty().trim(),
-  check("siret_number", "SIRET Number is required.").notEmpty().trim(),
-  check("legal_info", "Legal Info is required.").notEmpty().trim(),
-  check("social_capital", "Social Capital is required.").notEmpty().trim(),
-  ,
 ];
 
 /*
