@@ -5,10 +5,13 @@
 const router = require("express").Router();
 const users = require("../controllers/users");
 const { upload } = require("../middleware/multer");
-const { validateUser, isValidated } = require("../middleware/validators/users");
+const {
+  validateUsers,
+  isValidated,
+} = require("../middleware/validators/users");
 
 /**
- * ////////////////////////// Routes /////////////////////////
+
  * @method post user signup
  * @method get get all users
  * @method get get user by id
@@ -20,7 +23,7 @@ const { validateUser, isValidated } = require("../middleware/validators/users");
 router.post(
   "/",
   upload.single("image"),
-  validateUser,
+  validateUsers,
   isValidated,
   users.create
 );

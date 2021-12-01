@@ -5,7 +5,10 @@
 const router = require("express").Router();
 const trips = require("../controllers/trips");
 const { upload } = require("../middleware/multer");
-const { validateTrip, isValidated } = require("../middleware/validators/trips");
+const {
+  validateTrips,
+  isValidated,
+} = require("../middleware/validators/trips");
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -17,7 +20,7 @@ const { validateTrip, isValidated } = require("../middleware/validators/trips");
  */
 
 // Create
-router.post("/", validateTrip, isValidated, trips.create);
+router.post("/", validateTrips, isValidated, trips.create);
 
 // Read
 router.get("/", trips.getAll); // Get all trips at once

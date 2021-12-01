@@ -96,8 +96,8 @@ exports.logout = async (req, res) => {
 
 exports.logoutAll = async (req, res) => {
   try {
-    req.admin.tokens = [];
-    await req.admin.save();
+    req.user.tokens = [];
+    await req.user.save();
     res.send("Logout All admins successfully");
   } catch (err) {
     console.log("Error ----> ", err);

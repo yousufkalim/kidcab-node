@@ -9,41 +9,45 @@ exports.validateDriver = [
   check("last_name", "Last Name is required.").notEmpty().trim(),
   check("email", "Email is required.").notEmpty().isEmail().trim(),
   check("phone", "Phone is required.").notEmpty().trim(),
-  check("address", "Address is required").notEmpty.trim(),
-  check("role", "Role is required").notEmpty.trim(),
-  check("criminal_record", "Criminal Record is required").notEmpty.trim(),
-  check(
-    "identity_card.front_side_image",
-    "Front Side of ID Card is required"
-  ).notEmpty.trim(),
-  check(
-    "identity_card.back_side_image",
-    "Back Side of ID Card is required"
-  ).notEmpty.trim(),
-  check(
-    "vtc_card.front_side_image",
-    "Front Side of VTC Card is required"
-  ).notEmpty.trim(),
-  check(
-    "vtc_card.back_side_image",
-    "Back Side of VTC Card is required"
-  ).notEmpty.trim(),
+  check("address", "Address is required").notEmpty().trim(),
+  check("role", "Role is required").notEmpty().trim(),
+  check("criminal_record", "Criminal Record is required").notEmpty().trim(),
+  check("identity_card.front_side_image", "Front Side of ID Card is required")
+    .notEmpty()
+    .trim(),
+  check("identity_card.back_side_image", "Back Side of ID Card is required")
+    .notEmpty()
+    .trim(),
+  check("vtc_card.front_side_image", "Front Side of VTC Card is required")
+    .notEmpty()
+    .trim(),
+  check("vtc_card.back_side_image", "Back Side of VTC Card is required")
+    .notEmpty()
+    .trim(),
   check(
     "green_vtc_card.front_side_image",
     "Front Side of Green VTC Card is required"
-  ).notEmpty.trim(),
+  )
+    .notEmpty()
+    .trim(),
   check(
     "green_vtc_card.back_side_image",
     "Back Side of Green VTC Card is required"
-  ).notEmpty.trim(),
+  )
+    .notEmpty()
+    .trim(),
   check(
     "driver_license_card.front_side_image",
     "Front Side of Driver License Card is required"
-  ).notEmpty.trim(),
+  )
+    .notEmpty()
+    .trim(),
   check(
     "driver_license_card.back_side_image",
     "Back Side of Driver License Card is required"
-  ).notEmpty.trim(),
+  )
+    .notEmpty()
+    .trim(),
 
   check("password", "Password is required.")
     .notEmpty()

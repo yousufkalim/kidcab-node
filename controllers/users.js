@@ -12,34 +12,25 @@ const Users = require("../models/Users");
  */
 exports.create = async (req, res) => {
   try {
-    let { email, password, confirmPassword } = req.body; // Getting required fields from body
-    const existingUser = await Users.findOne({ email }); // Finding already existing user
+    let { email, password, bank_info } = req.body;
+    const existingUser = await Users.findOne({ email });
 
-    // Extra Validations
     if (existingUser) {
-      // If we found existing user in db
       return res
         .status(409)
         .json({ success: false, message: "User already exists." });
-    } else if (password !== confirmPassword) {
-      // Passwords not same
-      return res.status(400).json({
-        success: false,
-        message: "Password and Confirm Password are not same.",
-      });
     }
 
-    // Getting url of the image
     if (req.file) {
-      req.body.profile_pic = req.file.path; // Creating a new property called photo in body object
+      req.body.profile_pic = req.file.path;
     }
+    req.body.bank_info = JSON.parse(bank_info);
 
-    // Creating User
-    password = bcrypt.hashSync(password, parseInt(bcryptSalt)); // Hashing the password with salt 8
-    const user = await Users.create(req.body); // Adding user in db
+    password = bcrypt.hashSync(password, parseInt(bcryptSalt));
+    const NewUser = await Users.create(req.body);
 
     // Done
-    res.json({ success: true, user }); //Success
+    res.json({ success: true, NewUser });
   } catch (err) {
     // Error handling
     console.log("Error ----> ", err);
@@ -54,8 +45,8 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const users = await Users.find(); // Finding all the users from db
-    res.json({ success: true, users }); // Success
+    const users = await Users.find();
+    res.json({ success: true, users });
   } catch (err) {
     // Error handling
     console.log("Error ----> ", err);
