@@ -10,7 +10,12 @@ const Passengers = require("../models/Passengers");
  * @param {object} res
  */
 exports.create = async (req, res) => {
+  console.log("passenger Create Controller");
   try {
+    if (req.file) {
+      req.body.profile_pic = req.file.path;
+    }
+    console.log(req.body);
     const passenger = await Passengers.create(req.body);
     await passenger.save();
     res.json({ success: true, passenger });
@@ -27,9 +32,9 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const passengers = await Passengers.find();
+    const passengers = await Passengers.find().populate("client");
     if (!passengers) return res.status(404).send("No Passengers Found");
-    res.json({ success: true, users });
+    res.json({ success: true, passengers });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -44,7 +49,7 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const passengerId = req.params.passengerId;
-    const passenger = await Passengers.findById(passengerId);
+    const passenger = await Passengers.findById(passengerId).populate("client");
     if (!passenger) return res.status(404).send("No Passenger Found");
     res.json({ success: true, passenger });
   } catch (err) {
@@ -61,6 +66,9 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const passengerId = req.params.passengerId;
+    if (req.file) {
+      req.body.profile_pic = req.file.path;
+    }
     const updatedPassenger = await Passengers.findByIdAndUpdate(
       passengerId,
       req.body,
