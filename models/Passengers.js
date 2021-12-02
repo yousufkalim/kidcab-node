@@ -9,17 +9,14 @@ const passengerSchema = new Schema(
   {
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
-
-    type: {
-      type: String,
-      required: true,
-    },
     relationship: {
       type: String,
       required: true,
       enum: [
         "self",
         "son",
+        "brother",
+        "sister",
         "daughter",
         "mother",
         "father",
@@ -28,15 +25,12 @@ const passengerSchema = new Schema(
         "other",
       ],
     },
-    phone_number: {
-      type: String,
-    },
     client: {
       type: Schema.Types.ObjectId,
-      ref: "clients",
+      ref: "users",
       required: true,
     },
-    photo: String,
+    profile_pic: String,
   },
   {
     timestamps: true,

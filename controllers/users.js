@@ -12,6 +12,7 @@ const Users = require("../models/Users");
  */
 exports.create = async (req, res) => {
   try {
+    console.log("user created");
     let { email, password, bank_info } = req.body;
     const existingUser = await Users.findOne({ email });
 
@@ -45,7 +46,7 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const users = await Users.find();
+    const users = await Users.find().populate("passengers");
     res.json({ success: true, users });
   } catch (err) {
     // Error handling
@@ -78,8 +79,23 @@ exports.getById = async (req, res) => {
  */
 exports.update = async (req, res) => {
   try {
-    const userId = req.params.userId; // Getting user id from URL parameter
+    const userId = req.params.userId;
+    let { password, bank_info } = req.body;
+    console.log("user update body", req.body);
+
+    if (req.file) {
+      req.body.profile_pic = req.file.path;
+    }
+
+    req.body.bank_info = JSON.parse(bank_info);
+
+    password = bcrypt.hashSync(password, parseInt(bcryptSalt));
     const user = await Users.findByIdAndUpdate(userId, req.body, { new: true }); // Updating the user
+    if (!user)
+      res.status(404).send({
+        success: false,
+        message: "User does not Found, could not update",
+      });
     res.json({ success: true, user }); // Success
   } catch (err) {
     // Error handling
@@ -97,6 +113,11 @@ exports.delete = async (req, res) => {
   try {
     const userId = req.params.userId; // Getting user id from URL parameter
     const user = await Users.findByIdAndDelete(userId); // Deleting the user
+    if (!user)
+      res.status(404).send({
+        success: false,
+        message: "User does not Found, could not delete",
+      });
     res.json({ success: true, user }); // Success
   } catch (err) {
     // Error handling

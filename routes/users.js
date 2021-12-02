@@ -33,7 +33,7 @@ router.get("/", users.getAll); // Get all users at once
 router.get("/:userId", users.getById); // Get one user by it's id
 
 // Update
-router.put("/:userId", users.update); // Update a specific user by it's id
+router.put("/:userId", upload.single("image"), users.update); // Update a specific user by it's id
 
 // Delete
 router.delete("/:userId", users.delete); // delete a specific user by it's id
