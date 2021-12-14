@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "deploy": "sudo chmod 644 .git/index && git pull origin main && npm install && sudo pm2 restart 14 && sudo pm2 logs 14"
   },
   "repository": {
     "type": "git",
