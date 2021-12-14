@@ -21,7 +21,7 @@ const {
  */
 
 // Create
-router.post("/", upload.single("image"), companies.create);
+router.post("/", upload.single("logo"), companies.create);
 
 // Read
 router.get("/", companies.getAll); // Get all companies at once

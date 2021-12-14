@@ -3,7 +3,7 @@
  * @author Usman Haider
  */
 const Vehicles = require("../models/Vehicles");
-
+const Drivers = require("../models/Drivers");
 /**
  * Create Vehicle
  * @param {object} req
@@ -12,8 +12,13 @@ const Vehicles = require("../models/Vehicles");
 exports.create = async (req, res) => {
   try {
     const vehicle = await Vehicles.create(req.body);
+    const { driver } = req.body;
     if (!vehicle) res.status(501).send("No vehicle is created");
-
+    if (vehicle) {
+      const updateDriver = Drivers.findByIdAndUpdate(driver, {
+        $push: { vehicles: vehicle._id },
+      });
+    }
     res.json({ success: true, vehicle });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -28,7 +33,7 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const vehicles = await Vehicles.find();
+    const vehicles = await Vehicles.find().populate("driver");
     if (!vehicles) res.status(404).send("No Vehicle Founds");
     res.json({ success: true, vehicles });
   } catch (err) {
@@ -45,7 +50,7 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const vehicleId = req.params.vehicleId;
-    const vehicle = await Trips.findById(vehicleId);
+    const vehicle = await Vehicles.findById(vehicleId);
     if (!vehicle) res.status(501).send("No Vehicle Founds");
     res.json({ success: true, vehicle });
   } catch (err) {
@@ -62,9 +67,13 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const vehicleId = req.params.vehicleId;
-    const updatedVehicle = await Trips.findByIdAndUpdate(vehicleId, req.body, {
-      new: true,
-    });
+    const updatedVehicle = await Vehicles.findByIdAndUpdate(
+      vehicleId,
+      req.body,
+      {
+        new: true,
+      }
+    );
     if (!updatedVehicle) res.status(501).send("No Vehicle is Updated");
     res.json({ success: true, updatedVehicle });
   } catch (err) {
@@ -81,7 +90,7 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const vehicleId = req.params.vehicleId;
-    const deletedVehicle = await Trips.findByIdAndDelete(vehicleId);
+    const deletedVehicle = await Vehicles.findByIdAndDelete(vehicleId);
     if (!deletedVehicle) res.status(501).send("No Vehicle is deleted");
     res.json({ success: true, deletedVehicle });
   } catch (err) {

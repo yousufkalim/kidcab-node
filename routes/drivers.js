@@ -19,21 +19,27 @@ const {
  * @method delete delete Driver
  */
 
+const uploadImages = upload.fields([
+  { name: "profile_pic" },
+  { name: "id_card_front" },
+  { name: "id_card_back" },
+  { name: "vtc_card_front" },
+  { name: "vtc_card_back" },
+  { name: "green_card_front" },
+  { name: "green_card_back" },
+  { name: "license_card_front" },
+  { name: "license_card_back" },
+]);
+
 // Create
-router.post(
-  "/",
-  upload.single("image"),
-  validateDriver,
-  isValidated,
-  drivers.create
-);
+router.post("/", uploadImages, drivers.create);
 
 // Read
 router.get("/", drivers.getAll); // Get all drivers at once
 router.get("/:driverId", drivers.getById); // Get one driver by it's id
 
 // Update
-router.put("/:driverId", drivers.update); // Update a specific driver by it's id
+router.put("/:driverId", uploadImages, drivers.update); // Update a specific driver by it's id
 
 // Delete
 router.delete("/:driverId", drivers.delete); // delete a specific driver by it's id

@@ -11,12 +11,19 @@ const Drivers = require("../models/Drivers");
  */
 exports.create = async (req, res) => {
   try {
-    const driver = await Drivers.create(req.body);
-    await driver.save();
-    // Done
-    res.json({ success: true, driver });
+    const { bank_info } = req.body;
+    req.body.bank_info = JSON.parse(bank_info);
+    const imageKeys = Object.keys(req.files);
+
+    const data = Object.assign(
+      {},
+      req.body,
+      ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
+    );
+
+    const driver = await Drivers.create(data);
+    if (driver) res.json({ success: true, files: driver });
   } catch (err) {
-    // Error handling
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
@@ -61,7 +68,17 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const driverId = req.params.driverId;
-    const updatedDriver = await Users.findByIdAndUpdate(driverId, req.body, {
+    const { bank_info } = req.body;
+    req.body.bank_info = JSON.parse(bank_info);
+    const imageKeys = Object.keys(req.files);
+
+    const data = Object.assign(
+      {},
+      req.body,
+      ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
+    );
+
+    const updatedDriver = await Drivers.findByIdAndUpdate(driverId, data, {
       new: true,
     });
     if (!updatedDriver) return res.status(404).send("Rating can't update");
@@ -80,7 +97,7 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const companyId = req.params.companyId;
-    const company = await Users.findByIdAndDelete(companyId);
+    const company = await Drivers.findByIdAndDelete(companyId);
     res.json({ success: true, company });
   } catch (err) {
     console.log("Error ----> ", err);

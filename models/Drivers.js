@@ -7,21 +7,11 @@ const { Schema, model } = require("mongoose");
 // Schema
 const driverSchema = new Schema(
   {
-    name: {
-      first_name: { type: String, required: true },
-      last_name: {
-        type: String,
-        required: true,
-      },
-    },
-    phone: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-    },
+    profile_pic: { type: String },
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    phone_number: { type: String, required: true },
+    email: { type: String, required: true },
     password: {
       type: String,
       required: true,
@@ -45,49 +35,17 @@ const driverSchema = new Schema(
         ref: "vehicles",
       },
     ],
-    identity_card: {
-      front_side_image: {
-        type: String,
-        required: true,
-      },
-      back_side_image: {
-        type: String,
-        required: true,
-      },
-    },
-    vtc_card: {
-      front_side_image: {
-        type: String,
-        required: true,
-      },
-      back_side_image: {
-        type: String,
-        required: true,
-      },
-    },
-    green_vtc_card: {
-      front_side_image: {
-        type: String,
-        required: true,
-      },
-      back_side_image: {
-        type: String,
-        required: true,
-      },
-    },
-    driver_license_card: {
-      front_side_image: {
-        type: String,
-        required: true,
-      },
-      back_side_image: {
-        type: String,
-        required: true,
-      },
-    },
+    id_card_front: String,
+    id_card_back: String,
+    vtc_card_front: String,
+    vtc_card_back: String,
+    green_card_front: String,
+    green_card_back: String,
+    license_card_front: String,
+    license_card_back: String,
+
     criminal_record: {
       type: String,
-      required: true,
     },
     bank_info: {
       account_number: {

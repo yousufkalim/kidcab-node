@@ -17,7 +17,6 @@ exports.create = async (req, res) => {
     }
     console.log(req.body);
     const passenger = await Passengers.create(req.body);
-    await passenger.save();
     res.json({ success: true, passenger });
   } catch (err) {
     console.log("Error ----> ", err);
