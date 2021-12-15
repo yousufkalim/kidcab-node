@@ -11,18 +11,8 @@ exports.validateTrips = [
     .notEmpty()
     .trim()
     .isNumeric(),
-  check("client", "At least one Client ID is required")
-    .notEmpty()
-    .trim()
-    .isMongoId(),
-  check("rides", "At least one Quote ID is required")
-    .notEmpty()
-    .trim()
-    .isMongoId(),
-  check("quote", "At least one Quote ID is required")
-    .notEmpty()
-    .trim()
-    .isMongoId(),
+  check("client", "At least one Client ID is required").notEmpty().trim(),
+  check("quote", "At least one Quote ID is required").notEmpty().trim(),
 ];
 
 /**

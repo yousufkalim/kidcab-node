@@ -72,7 +72,6 @@ const tripSchema = new Schema(
         price: { type: Number },
         status: {
           type: String,
-          required: true,
           enum: ["accepted", "rejected", "pending", "assigned"],
         },
       },
@@ -81,17 +80,16 @@ const tripSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: "rides",
-        required: true,
       },
     ],
     client: {
       type: Schema.Types.ObjectId,
-      ref: "clients",
+      ref: "users",
       required: true,
     },
     quote: {
       type: Schema.Types.ObjectId,
-      ref: "quotes",
+      ref: "Quotes",
       required: true,
     },
   },

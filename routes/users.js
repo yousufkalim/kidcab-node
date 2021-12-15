@@ -20,13 +20,7 @@ const {
  */
 
 // Create - User Signup
-router.post(
-  "/",
-  upload.single("image"),
-  validateUsers,
-  isValidated,
-  users.create
-);
+router.post("/", upload.single("image"), users.create);
 
 // Read
 router.get("/", users.getAll); // Get all users at once

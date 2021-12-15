@@ -9,7 +9,6 @@ exports.auth = async (req, res, next) => {
     console.log(decoded);
     const user = await Admin.findOne({
       _id: decoded._id,
-      "tokens.token": token,
     });
     if (!user) {
       throw new Error();
@@ -31,9 +30,9 @@ exports.generateAuthToken = async (user) => {
       expiresIn: "24h", // expires in 24h
     }
   );
-  user.tokens = user.tokens.concat({
-    token,
-  });
+  // user.tokens = user.tokens.concat({
+  //   token,
+  // });
   await user.save();
   return token;
 };

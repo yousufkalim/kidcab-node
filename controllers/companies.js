@@ -30,7 +30,6 @@ exports.create = async (req, res) => {
 exports.getAll = async (req, res) => {
   try {
     const companies = await Companies.find().populate("manager");
-    console.log(companies);
     res.json({ success: true, companies });
   } catch (err) {
     console.log("Error ----> ", err);
