@@ -11,6 +11,8 @@ const Companies = require("../models/Companies");
  */
 exports.create = async (req, res) => {
   try {
+    if (req.file) req.body.logo = req.file.path;
+
     const company = await Companies.create(req.body);
 
     res.json({ success: true, company });
@@ -27,7 +29,7 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const companies = await Companies.find();
+    const companies = await Companies.find().populate("manager");
     res.json({ success: true, companies });
   } catch (err) {
     console.log("Error ----> ", err);

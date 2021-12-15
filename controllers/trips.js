@@ -11,9 +11,25 @@ const Trips = require("../models/Trips");
  */
 exports.create = async (req, res) => {
   try {
-    const trip = await Trips.create(req.body);
-    if (!trip) res.status(501).send("No trip is created");
+    const { start_address, end_address, invited_drivers, assigned_drivers } =
+      req.body;
+    req.body.invited_drivers = invited_drivers?.map((driver) => ({
+      driver: driver,
+    }));
 
+    const trip = await Trips.create({
+      ...req.body,
+      start_address: {
+        street_address: start_address,
+      },
+      end_address: {
+        street_address: end_address,
+      },
+      assigned_drivers: assigned_drivers.length === 0 ? null : assigned_drivers,
+    });
+
+    if (!trip) res.status(501).send("No trip is created");
+    console.log(trip);
     res.json({ success: true, trip });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -28,7 +44,22 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const trips = await Trips.find();
+    const trips = await Trips.find()
+      .populate("client")
+      .populate({
+        path: "quote",
+        populate: {
+          path: "passengers",
+        },
+      })
+      .populate("rides")
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers");
     if (!trips) res.status(501).send("No Trip Founds");
     res.json({ success: true, trips });
   } catch (err) {
@@ -62,8 +93,21 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const tripId = req.params.tripId;
-    const updatedTrip = await Trips.findByIdAndUpdate(tripId, req.body, {
-      new: true,
+    const { start_address, end_address, invited_drivers, assigned_drivers } =
+      req.body;
+    req.body.invited_drivers = invited_drivers?.map((driver) => ({
+      driver: driver,
+    }));
+
+    const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
+      ...req.body,
+      start_address: {
+        street_address: start_address,
+      },
+      end_address: {
+        street_address: end_address,
+      },
+      assigned_drivers: assigned_drivers ? assigned_drivers : null,
     });
     if (!updatedTrip) res.status(501).send("No Trip is Updated");
     res.json({ success: true, updatedTrip });

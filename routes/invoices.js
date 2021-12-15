@@ -20,7 +20,7 @@ const {
  */
 
 // Create - Invoice Signup
-router.post("/", validateInvoice, isValidated, invoices.create);
+router.post("/", invoices.create);
 
 // Read
 router.get("/", invoices.getAll); // Get all invoices at once

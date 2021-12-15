@@ -17,7 +17,6 @@ const invoiceSchema = new Schema(
     },
     type: {
       type: String,
-      required: true,
     },
     total_price: {
       type: Number,

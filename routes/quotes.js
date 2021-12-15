@@ -20,7 +20,7 @@ const {
  */
 
 // Create - quote Signup
-router.post("/", validateQuote, isValidated, quotes.create);
+router.post("/", quotes.create);
 
 // Read
 router.get("/", quotes.getAll); // Get all quotes at once

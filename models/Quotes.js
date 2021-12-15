@@ -58,11 +58,12 @@ const quoteSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         required: true,
+        ref: "passengers",
       },
     ],
     client: {
       type: Schema.Types.ObjectId,
-      ref: "clients",
+      ref: "users",
       required: true,
     },
   },

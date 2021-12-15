@@ -6,10 +6,9 @@ exports.auth = async (req, res, next) => {
     console.log("Auth Body", req.header("Authorization"));
     const token = await req.header("Authorization").replace("Bearer ", "");
     const decoded = await jwt.verify(token, process.env.TOKEN_SECRET);
-    console.log("decoded user", decoded);
+    console.log(decoded);
     const user = await Admin.findOne({
       _id: decoded._id,
-      "tokens.token": token,
     });
     if (!user) {
       throw new Error();
@@ -26,11 +25,14 @@ exports.auth = async (req, res, next) => {
 exports.generateAuthToken = async (user) => {
   const token = jwt.sign(
     { _id: user._id.toString() },
-    process.env.TOKEN_SECRET
+    process.env.TOKEN_SECRET,
+    {
+      expiresIn: "24h", // expires in 24h
+    }
   );
-  user.tokens = user.tokens.concat({
-    token,
-  });
+  // user.tokens = user.tokens.concat({
+  //   token,
+  // });
   await user.save();
   return token;
 };
