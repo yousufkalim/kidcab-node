@@ -27,7 +27,10 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const invoices = await Invoices.find();
+    const invoices = await Invoices.find().populate({
+      path: "trip",
+      populate: { path: "client" },
+    });
     if (!invoices) res.status(404).send("Invoices does not found");
     res.json({ success: true, invoices });
   } catch (err) {
@@ -85,7 +88,7 @@ exports.delete = async (req, res) => {
   try {
     const invoiceId = req.params.invoiceId;
     const deletedInvoice = await Invoices.findByIdAndDelete(invoiceId);
-    if (!invoice) return res.status(404).send("Can't delete invoice");
+    if (!deletedInvoice) return res.status(404).send("Can't delete invoice");
     res.json({ success: true, deletedInvoice });
   } catch (err) {
     console.log("Error ----> ", err);
