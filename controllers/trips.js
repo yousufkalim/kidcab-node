@@ -13,7 +13,7 @@ exports.create = async (req, res) => {
   try {
     const { start_address, end_address, invited_drivers, assigned_drivers } =
       req.body;
-    req.body.invited_drivers = invited_drivers?.map((driver) => ({
+    req.body.invited_drivers = invited_drivers.map((driver) => ({
       driver: driver,
     }));
 
@@ -95,7 +95,7 @@ exports.update = async (req, res) => {
     const tripId = req.params.tripId;
     const { start_address, end_address, invited_drivers, assigned_drivers } =
       req.body;
-    req.body.invited_drivers = invited_drivers?.map((driver) => ({
+    req.body.invited_drivers = invited_drivers.map((driver) => ({
       driver: driver,
     }));
 
