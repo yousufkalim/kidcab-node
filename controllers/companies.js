@@ -70,7 +70,7 @@ exports.update = async (req, res) => {
     );
     if (!updatedCompany) return res.status(404).send("Rating can't update");
 
-    res.json({ success: true, company });
+    res.json({ success: true, updatedCompany });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
