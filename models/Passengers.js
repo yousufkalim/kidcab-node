@@ -30,7 +30,6 @@ const passengerSchema = new Schema(
       ref: "users",
       required: true,
     },
-    profile_pic: String,
   },
   {
     timestamps: true,
