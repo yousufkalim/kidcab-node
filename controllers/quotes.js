@@ -1,6 +1,6 @@
 /**
  * Quotes CRUD controllers
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const Quotes = require("../models/Quotes");
 

@@ -1,6 +1,6 @@
 /**
  * Admin schema
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const mongoose = require("mongoose");
 

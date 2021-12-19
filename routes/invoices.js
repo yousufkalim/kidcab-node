@@ -1,6 +1,6 @@
 /**
  * Invoice CRUD routes
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const router = require("express").Router();
 const invoices = require("../controllers/invoices");

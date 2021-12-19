@@ -1,6 +1,6 @@
 /**
  * All api routes handles here
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const router = require("express").Router();
 

@@ -1,6 +1,6 @@
 /**
  * Driver validation
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const { check, validationResult } = require("express-validator");
 

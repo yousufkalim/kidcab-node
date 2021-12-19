@@ -1,6 +1,6 @@
 /**
  * User CRUD controllers
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const Invoices = require("../models/Invoices");
 

@@ -1,6 +1,6 @@
 /**
  * Passenger CRUD controllers
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const Passengers = require("../models/Passengers");
 const Users = require("../models/Users");

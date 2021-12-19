@@ -1,6 +1,6 @@
 /**
  * Driver CRUD controllers
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const Drivers = require("../models/Drivers");
 

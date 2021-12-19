@@ -1,6 +1,6 @@
 /**
  * trips CRUD controllers
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const Vehicles = require("../models/Vehicles");
 const Drivers = require("../models/Drivers");

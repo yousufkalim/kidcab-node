@@ -1,6 +1,6 @@
 /**
  * Vehicle CRUD routes
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const router = require("express").Router();
 const vehicles = require("../controllers/vehicles");

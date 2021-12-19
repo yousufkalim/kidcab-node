@@ -1,6 +1,6 @@
 /**
  * Admin CRUD routes
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const router = require("express").Router();
 const admins = require("../controllers/admins");

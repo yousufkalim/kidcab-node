@@ -1,6 +1,6 @@
 /**
  * Rides CRUD controllers
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const Rides = require("../models/Rides");
 

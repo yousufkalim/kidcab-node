@@ -1,6 +1,6 @@
 /**
  * trips CRUD controllers
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const Trips = require("../models/Trips");
 

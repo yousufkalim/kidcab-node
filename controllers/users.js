@@ -1,6 +1,6 @@
 /**
  * User CRUD controllers
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const bcrypt = require("bcryptjs");
 const bcryptSalt = process.env.BCRYPT_SALT || 10;

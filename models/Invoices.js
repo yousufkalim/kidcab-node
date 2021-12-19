@@ -1,6 +1,6 @@
 /**
  * Invoice schema
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const { Schema, model } = require("mongoose");
 

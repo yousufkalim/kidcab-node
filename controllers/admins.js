@@ -1,6 +1,6 @@
 /**
  * Admin CRUD controllers
- * @author Usman Haider
+ * @author Arooj Ishfaq
  */
 const Admin = require("../models/Admins");
 const bcrypt = require("bcryptjs");
