@@ -11,8 +11,9 @@ const Drivers = require("../models/Drivers");
  */
 exports.create = async (req, res) => {
   try {
-    const { bank_info } = req.body;
+    const { bank_info, address } = req.body;
     req.body.bank_info = JSON.parse(bank_info);
+    req.body.address = JSON.parse(address);
     const imageKeys = Object.keys(req.files);
 
     const data = Object.assign(
@@ -68,8 +69,9 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const driverId = req.params.driverId;
-    const { bank_info } = req.body;
+    const { bank_info, address } = req.body;
     req.body.bank_info = JSON.parse(bank_info);
+    req.body.address = JSON.parse(address);
     const imageKeys = Object.keys(req.files);
 
     const data = Object.assign(
