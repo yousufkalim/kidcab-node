@@ -30,8 +30,12 @@ const driverSchema = new Schema(
       required: true,
     },
     company: {
-      type: Schema.Types.ObjectId,
-      ref: "companies",
+      company_name: String,
+      siret_number: String,
+      legal_info: String,
+      social_capital: String,
+      vat_number: String,
+      city_of_rcs: String,
     },
     vehicles: [
       {
