@@ -14,7 +14,30 @@ const clientSchema = new Schema(
       type: String,
     },
     address: {
-      type: String,
+      lat: {
+        type: String,
+        required: true,
+      },
+      lng: {
+        type: String,
+        required: true,
+      },
+      label: {
+        type: String,
+        required: true,
+      },
+      label2: {
+        type: String,
+        required: true,
+      },
+      city: {
+        type: String,
+        required: true,
+      },
+      postal_code: {
+        type: String,
+        required: true,
+      },
     },
     siret_number: {
       type: String,

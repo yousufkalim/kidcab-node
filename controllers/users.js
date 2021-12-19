@@ -13,7 +13,7 @@ const Users = require("../models/Users");
 exports.create = async (req, res) => {
   try {
     console.log("user created");
-    let { email, password, bank_info } = req.body;
+    let { email, password, bank_info, address } = req.body;
     const existingUser = await Users.findOne({ email });
 
     if (existingUser) {
@@ -26,6 +26,7 @@ exports.create = async (req, res) => {
       req.body.profile_pic = req.file.path;
     }
     req.body.bank_info = JSON.parse(bank_info);
+    req.body.address = JSON.parse(address);
 
     password = bcrypt.hashSync(password, parseInt(bcryptSalt));
     const NewUser = await Users.create(req.body);
