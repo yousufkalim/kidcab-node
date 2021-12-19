@@ -34,17 +34,12 @@ const tripSchema = new Schema(
     },
     addresses: [
       {
-        Location_info: {
-          latitude: {
-            type: String,
-          },
-          longitude: {
-            type: String,
-          },
-          street_address: {
-            type: String,
-          },
-        },
+        lat: String,
+        lng: String,
+        label: String,
+        label2: String,
+        city: String,
+        postal_code: String,
       },
     ],
     client_price: {
