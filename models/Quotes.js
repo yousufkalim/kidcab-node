@@ -48,10 +48,20 @@ const quoteSchema = new Schema(
         type: Date,
       },
       start_address: {
-        type: String,
+        lat: String,
+        lng: String,
+        label: String,
+        label2: String,
+        city: String,
+        postal_code: String,
       },
       end_address: {
-        type: String,
+        lat: String,
+        lng: String,
+        label: String,
+        label2: String,
+        city: String,
+        postal_code: String,
       },
     },
     passengers: [
