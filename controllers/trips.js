@@ -19,12 +19,6 @@ exports.create = async (req, res) => {
 
     const trip = await Trips.create({
       ...req.body,
-      start_address: {
-        street_address: start_address,
-      },
-      end_address: {
-        street_address: end_address,
-      },
       assigned_drivers: assigned_drivers.length === 0 ? null : assigned_drivers,
     });
 
@@ -101,12 +95,6 @@ exports.update = async (req, res) => {
 
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
-      start_address: {
-        street_address: start_address,
-      },
-      end_address: {
-        street_address: end_address,
-      },
       assigned_drivers: assigned_drivers ? assigned_drivers : null,
     });
     if (!updatedTrip) res.status(501).send("No Trip is Updated");

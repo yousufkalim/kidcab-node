@@ -17,26 +17,20 @@ const tripSchema = new Schema(
       enum: ["pending", "confirmed", "cancelled", "completed"],
     },
     start_address: {
-      latitude: {
-        type: String,
-      },
-      longitude: {
-        type: String,
-      },
-      street_address: {
-        type: String,
-      },
+      lat: String,
+      lng: String,
+      label: String,
+      label2: String,
+      city: String,
+      postal_code: String,
     },
     end_address: {
-      latitude: {
-        type: String,
-      },
-      longitude: {
-        type: String,
-      },
-      street_address: {
-        type: String,
-      },
+      lat: String,
+      lng: String,
+      label: String,
+      label2: String,
+      city: String,
+      postal_code: String,
     },
     addresses: [
       {
