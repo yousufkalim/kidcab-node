@@ -27,10 +27,15 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const invoices = await Invoices.find().populate({
-      path: "trip",
-      populate: { path: "client" },
-    });
+    const invoices = await Invoices.find()
+      .populate({
+        path: "trip",
+        populate: { path: "client" },
+      })
+      .populate({
+        path: "trip",
+        populate: { path: "quote" },
+      });
     if (!invoices) res.status(404).send("Invoices does not found");
     res.json({ success: true, invoices });
   } catch (err) {
@@ -72,7 +77,7 @@ exports.update = async (req, res) => {
       }
     );
     if (!updatedInvoice) return res.status(404).send("Rating can't update");
-    res.json({ success: true, user });
+    res.json({ success: true, updatedInvoice });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
