@@ -14,30 +14,12 @@ const clientSchema = new Schema(
       type: String,
     },
     address: {
-      lat: {
-        type: String,
-        required: true,
-      },
-      lng: {
-        type: String,
-        required: true,
-      },
-      label: {
-        type: String,
-        required: true,
-      },
-      label2: {
-        type: String,
-        required: true,
-      },
-      city: {
-        type: String,
-        required: true,
-      },
-      postal_code: {
-        type: String,
-        required: true,
-      },
+      lat: String,
+      lng: String,
+      label: String,
+      label2: String,
+      city: String,
+      postal_code: String,
     },
     siret_number: {
       type: String,
