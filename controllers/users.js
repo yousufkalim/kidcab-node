@@ -81,7 +81,7 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const userId = req.params.userId;
-    let { password, bank_info } = req.body;
+    let { password, bank_info, address } = req.body;
     console.log("user update body", req.body);
 
     if (req.file) {
@@ -89,6 +89,7 @@ exports.update = async (req, res) => {
     }
 
     req.body.bank_info = JSON.parse(bank_info);
+    req.body.address = JSON.parse(address);
 
     password = bcrypt.hashSync(password, parseInt(bcryptSalt));
     const user = await Users.findByIdAndUpdate(userId, req.body, { new: true }); // Updating the user
