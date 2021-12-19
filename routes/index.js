@@ -13,7 +13,6 @@ router.use("/trips", require("./trips")); // All the trips routes
 router.use("/rides", require("./rides")); // All the rides routes
 router.use("/invoices", require("./invoices")); // All the invoices routes
 router.use("/drivers", require("./drivers")); // All the drivers routes
-router.use("/companies", require("./companies")); // All the companies routes
 router.use("/vehicles", require("./vehicles")); // All the vehicles routes
 
 // Export
