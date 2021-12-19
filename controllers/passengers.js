@@ -3,6 +3,7 @@
  * @author Usman Haider
  */
 const Passengers = require("../models/Passengers");
+const Users = require("../models/Users");
 
 /**
  * Create Passenger - Signup
@@ -17,6 +18,12 @@ exports.create = async (req, res) => {
     }
     console.log(req.body);
     const passenger = await Passengers.create(req.body);
+    await Users.findByIdAndUpdate(req.body.client, {
+      $push: {
+        passengers: passenger._id,
+      },
+    });
+
     res.json({ success: true, passenger });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -92,6 +99,12 @@ exports.delete = async (req, res) => {
   try {
     const passengerId = req.params.passengerId;
     const deletedPassenger = await Passengers.findByIdAndDelete(passengerId);
+    await Users.findByIdAndUpdate(deletedPassenger.client, {
+      $pull: {
+        passengers: deletedPassenger._id,
+      },
+    });
+
     if (!deletedPassenger) return res.status(404).send("No Passenger Deleted");
     res.json({ success: true, deletedPassenger });
   } catch (err) {
