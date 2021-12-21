@@ -38,9 +38,6 @@ const quoteSchema = new Schema(
       total_trips: {
         type: String,
       },
-      total_passengers: {
-        type: String,
-      },
       start_date: {
         type: Date,
       },
