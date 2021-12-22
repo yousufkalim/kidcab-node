@@ -21,6 +21,9 @@ const adminSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    phone_number: {
+      type: Number,
+    },
     password: {
       type: String,
       minlength: 8,
@@ -41,7 +44,7 @@ const adminSchema = new mongoose.Schema(
 
 adminSchema.methods.toJSON = function () {
   const admin = this;
-  const adminObject = admin.toObject();
+  const adminObject = admin.tosObject();
   delete adminObject.password;
   delete adminObject.tokens;
   return adminObject;

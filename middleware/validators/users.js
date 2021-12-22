@@ -5,6 +5,10 @@ exports.validateUsers = [
   check("last_name", "Last Name is required").notEmpty().trim(),
   check("cnic", "CNIC Number is required").notEmpty().trim().isNumeric(),
   check("email", "Email is Required").notEmpty().trim().isEmail(),
+  check("phone_number", "phone_number is required.")
+    .notEmpty()
+    .trim()
+    .isLength({ min: 11 }),
 ];
 
 /**
