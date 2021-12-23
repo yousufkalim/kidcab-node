@@ -44,7 +44,7 @@ const adminSchema = new mongoose.Schema(
 
 adminSchema.methods.toJSON = function () {
   const admin = this;
-  const adminObject = admin.tosObject();
+  const adminObject = admin.toObject();
   delete adminObject.password;
   delete adminObject.tokens;
   return adminObject;
