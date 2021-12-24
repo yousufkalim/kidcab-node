@@ -24,7 +24,11 @@ exports.validateUser = [
     .notEmpty()
     .trim()
     .isLength({ min: 8 }),
-  check("gender", "Gender is required.").notEmpty(),
+  check("phone_number", "phone_number is required.")
+    .notEmpty()
+    .trim()
+    .isLength({ min: 11 }),
+  // check("gender", "Gender is required.").notEmpty(),
   check("role", "Role is required.").notEmpty(),
   check("number", "Number is required.").notEmpty().isNumeric().trim(),
 ];
@@ -34,7 +38,7 @@ exports.validateUserUpdate = [
   check("name", "Name is required.").notEmpty().trim(),
   check("cnic", "CNIC is required.").notEmpty().isNumeric().trim(),
   check("email", "Email is required.").notEmpty().isEmail().trim(),
-  check("gender", "Gender is required.").notEmpty(),
+  // check("gender", "Gender is required.").notEmpty(),
   check("role", "Role is required.").notEmpty(),
   check("number", "Number is required.").notEmpty().isNumeric().trim(),
 ];

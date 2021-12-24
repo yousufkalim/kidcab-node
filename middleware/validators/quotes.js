@@ -15,6 +15,14 @@ exports.validateQuote = [
     .notEmpty()
     .trim()
     .isMongoId(),
+  check("trip_info.start_address", "start date is required")
+    .notEmpty()
+    .isDate()
+    .trim(),
+  check("trip_info.end_address", "end date is required")
+    .notEmpty()
+    .isDate()
+    .trim(),
 ];
 
 /**

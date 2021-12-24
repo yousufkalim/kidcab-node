@@ -12,6 +12,7 @@ const clientSchema = new Schema(
 
     phone_number: {
       type: String,
+      required: true,
     },
     address: {
       lat: String,
@@ -50,10 +51,10 @@ const clientSchema = new Schema(
         type: String,
       },
     },
-    cnic: {
-      type: Number,
-      required: true,
-    },
+    // cnic: {
+    //   type: Number,
+    //   required: true,
+    // },
     email: {
       type: String,
       required: true,
@@ -66,7 +67,7 @@ const clientSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ["male", "female", "other"],
+      enum: ["male", "female", "other", ""],
     },
     role: {
       type: String,

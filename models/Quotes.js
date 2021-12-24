@@ -30,6 +30,7 @@ const quoteSchema = new Schema(
     status: {
       type: String,
       enum: ["pending", "accepted", "rejected"],
+      required: true,
     },
     docu_sign_link: {
       type: String,
@@ -53,7 +54,7 @@ const quoteSchema = new Schema(
         postal_code: String,
       },
       end_address: {
-        lat: String,
+        lat: { String },
         lng: String,
         label: String,
         label2: String,
@@ -64,8 +65,8 @@ const quoteSchema = new Schema(
     passengers: [
       {
         type: Schema.Types.ObjectId,
-        required: true,
         ref: "passengers",
+        required: true,
       },
     ],
     client: {
