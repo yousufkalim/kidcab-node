@@ -9,7 +9,6 @@ exports.validateVehicle = [
   check("engine_type", "Engine Type is required").notEmpty().trim(),
   check("gray_card", "Gray Card is required").notEmpty().trim(),
   check("inspection_info", "Inspection Info is required").notEmpty().trim(),
-  check("driver", "Driver ID is required").notEmpty().trim().isMongoId(),
 ];
 
 /**
