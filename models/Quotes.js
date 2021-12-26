@@ -54,7 +54,7 @@ const quoteSchema = new Schema(
         postal_code: String,
       },
       end_address: {
-        lat: { String },
+        lat: String,
         lng: String,
         label: String,
         label2: String,
