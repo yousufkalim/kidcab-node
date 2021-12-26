@@ -40,7 +40,7 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const drivers = await Drivers.find();
+    const drivers = await Drivers.find().populate("vehicles");
     res.json({ success: true, drivers });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -56,7 +56,7 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const driverId = req.params.driverId;
-    const driver = await Drivers.findById(driverId);
+    const driver = await Drivers.findById(driverId).populate("vehicles");
     res.json({ success: true, driver });
   } catch (err) {
     console.log("Error ----> ", err);

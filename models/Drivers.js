@@ -40,7 +40,7 @@ const driverSchema = new Schema(
     vehicles: [
       {
         type: Schema.Types.ObjectId,
-        ref: "vehicles",
+        ref: "Vehicles",
       },
     ],
     id_card_front: String,

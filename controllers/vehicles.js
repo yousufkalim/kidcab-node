@@ -15,7 +15,7 @@ exports.create = async (req, res) => {
     const { driver } = req.body;
     if (!vehicle) res.status(501).send("No vehicle is created");
     if (vehicle) {
-      const updateDriver = Drivers.findByIdAndUpdate(driver, {
+      await Drivers.findByIdAndUpdate(driver, {
         $push: { vehicles: vehicle._id },
       });
     }
