@@ -14,7 +14,9 @@ exports.create = async (req, res) => {
     const { bank_info, address, company, vehicles } = req.body;
     req.body.bank_info = JSON.parse(bank_info);
     req.body.address = JSON.parse(address);
-    req.body.company = JSON.parse(company);
+    if (company) {
+      req.body.company = JSON.parse(company);
+    }
     req.body.vehicles = JSON.parse(vehicles);
 
     const imageKeys = Object.keys(req.files);
@@ -75,7 +77,9 @@ exports.update = async (req, res) => {
     const { bank_info, address, company, vehicles } = req.body;
     req.body.bank_info = JSON.parse(bank_info);
     req.body.address = JSON.parse(address);
-    req.body.company = JSON.parse(company);
+    if (company) {
+      req.body.company = JSON.parse(company);
+    }
     req.body.vehicles = JSON.parse(vehicles);
     const imageKeys = Object.keys(req.files);
 
