@@ -13,6 +13,9 @@ exports.validateTrips = [
     .isNumeric(),
   check("client", "At least one Client ID is required").notEmpty().trim(),
   check("quote", "At least one Quote ID is required").notEmpty().trim(),
+  //check("addresses", "Address is Required").notEmpty().trim(),
+  check("start_address.lat", "Starting Address is Required").notEmpty().trim(),
+  check("end_address.lat", "Ending Address is Required").notEmpty().trim(),
 ];
 
 /**

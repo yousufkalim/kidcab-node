@@ -32,7 +32,7 @@ const uploadImages = upload.fields([
 ]);
 
 // Create
-router.post("/", uploadImages, drivers.create);
+router.post("/", uploadImages, validateDriver, isValidated, drivers.create);
 
 // Read
 router.get("/", drivers.getAll); // Get all drivers at once
