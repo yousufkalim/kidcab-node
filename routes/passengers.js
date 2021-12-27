@@ -23,7 +23,8 @@ const {
 router.post(
   "/",
   upload.single("image"),
-
+  validatePassenger,
+  isValidated,
   passengers.create
 );
 
