@@ -62,9 +62,9 @@ const driverSchema = new Schema(
       bank_name: {
         type: String,
       },
-      bank_address: {
-        type: String,
-      },
+      // bank_address: {
+      //   type: String,
+      // },
       balance: {
         type: String,
       },

@@ -87,10 +87,12 @@ exports.update = async (req, res) => {
     if (req.file) {
       req.body.profile_pic = req.file.path;
     }
-
-    req.body.bank_info = JSON.parse(bank_info);
-    req.body.address = JSON.parse(address);
-
+    if (req.body.bank_info) {
+      req.body.bank_info = JSON.parse(bank_info);
+    }
+    if (req.body.address) {
+      req.body.address = JSON.parse(address);
+    }
     password = bcrypt.hashSync(password, parseInt(bcryptSalt));
     const user = await Users.findByIdAndUpdate(userId, req.body, { new: true }); // Updating the user
     if (!user)

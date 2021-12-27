@@ -42,7 +42,6 @@ const vehicleSchema = new Schema(
 
     driver: {
       type: Schema.Types.ObjectId,
-      required: true,
       ref: "drivers",
     },
   },
