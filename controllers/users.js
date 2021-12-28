@@ -152,70 +152,47 @@ exports.delete = async (req, res) => {
   }
 };
 
-//user forget password
-// exports.forgetPassword = async (req, res) => {
-//   try {
-//     const userId = req.params.userId;
-//     req.body.password = bcrypt.hashSync(password, parseInt(bcryptSalt));
-//     console.log("user update body", req.body.password);
-//     const user = await Users.findByIdAndUpdate(userId, req.body.password, {
-//       new: true,
-//     });
-//     // Updating the user password
-//     // if (!user) ;
-//     // res.status(404).send({
-//     //   success: false,
-//     //   message: "User does not Found, could not update",
-//     // });
-//     res.json({ success: true, user }); // Success
-//   } catch (err) {
-//     //error handling
-//     console.log("Error ----> ", err);
-//     res.status(500).json({ success: false, message: "Internal server error" });
-//   }
-// };
+//update
+exports.changePassword = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { oldPassword, newPassword, confirmPassword } = req.body;
 
-// //update
-// exports.changePassword = async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-//     const { oldPassword, newPassword, confirmPassword } = req.body;
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password and confirm password are not same",
+      });
+    }
 
-//     if (newPassword !== confirmPassword) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "New password and confirm password are not same",
-//       });
-//     }
+    let user = await Users.findById(userId);
 
-//     let user = await Users.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
 
-//     if (!user) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "User not found" });
-//     }
+    const isMatched = bcrypt.compareSync(oldPassword, user.password);
 
-//     const isMatched = bcrypt.compareSync(oldPassword, user.password);
+    if (!isMatched) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid old Password" });
+    }
 
-//     if (!isMatched) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "Invalid old Password" });
-//     }
+    // Generate token
+    user.password = bcrypt.hashSync(newPassword, parseInt(bcryptSalt));
 
-//     // Generate token
-//     user.password = bcrypt.hashSync(newPassword, parseInt(bcryptSalt));
+    await user.save();
 
-//     await user.save();
-
-//     res.json({ success: true, user });
-//   } catch (err) {
-//     // Error handling
-//     console.log("Error ----> ", err);
-//     res.status(500).json({ success: false, message: "Internal server error" });
-//   }
-// };
+    res.json({ success: true, user });
+  } catch (err) {
+    // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 
 //forget
 exports.forgot = async (req, res) => {
