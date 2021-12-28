@@ -2,6 +2,7 @@
  * User CRUD controllers
  * @author Arooj Ishfaq
  */
+const { sendEmail } = require("../utils/sendEmail");
 const bcrypt = require("bcryptjs");
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
 const Users = require("../models/Users");
@@ -116,11 +117,11 @@ exports.update = async (req, res) => {
     }
 
     const user = await Users.findByIdAndUpdate(userId, req.body, { new: true }); // Updating the user
-    if (!user)
-      res.status(404).send({
-        success: false,
-        message: "User does not Found, could not update",
-      });
+    if (!user) s;
+    res.status(404).send({
+      success: false,
+      message: "User does not Found, could not update",
+    });
     res.json({ success: true, user }); // Success
   } catch (err) {
     // Error handling
@@ -144,6 +145,111 @@ exports.delete = async (req, res) => {
         message: "User does not Found, could not delete",
       });
     res.json({ success: true, user }); // Success
+  } catch (err) {
+    // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+//user forget password
+// exports.forgetPassword = async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+//     req.body.password = bcrypt.hashSync(password, parseInt(bcryptSalt));
+//     console.log("user update body", req.body.password);
+//     const user = await Users.findByIdAndUpdate(userId, req.body.password, {
+//       new: true,
+//     });
+//     // Updating the user password
+//     // if (!user) ;
+//     // res.status(404).send({
+//     //   success: false,
+//     //   message: "User does not Found, could not update",
+//     // });
+//     res.json({ success: true, user }); // Success
+//   } catch (err) {
+//     //error handling
+//     console.log("Error ----> ", err);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
+
+// //update
+// exports.changePassword = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+//     const { oldPassword, newPassword, confirmPassword } = req.body;
+
+//     if (newPassword !== confirmPassword) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "New password and confirm password are not same",
+//       });
+//     }
+
+//     let user = await Users.findById(userId);
+
+//     if (!user) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "User not found" });
+//     }
+
+//     const isMatched = bcrypt.compareSync(oldPassword, user.password);
+
+//     if (!isMatched) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Invalid old Password" });
+//     }
+
+//     // Generate token
+//     user.password = bcrypt.hashSync(newPassword, parseInt(bcryptSalt));
+
+//     await user.save();
+
+//     res.json({ success: true, user });
+//   } catch (err) {
+//     // Error handling
+//     console.log("Error ----> ", err);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
+
+//forget
+exports.forgot = async (req, res) => {
+  try {
+    let { email } = req.params;
+    let user = await Users.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Generating random password
+    let randomPassword = Math.random().toString(36).slice(-8);
+    //let newPassword = req.body.password;
+
+    // Sending email to user
+    sendEmail(email, randomPassword)
+      .then(async () => {
+        // If email is sent then we have to update the password in db
+        user.password = await bcrypt.hash(randomPassword, parseInt(bcryptSalt));
+        await user.save();
+
+        // Done
+        res.json({ success: true, message: "Email sent successfully" });
+      })
+      .catch((err) => {
+        // Error handling
+        console.log("Error ----> ", err);
+        res
+          .status(500)
+          .json({ success: false, message: "Internal server error" });
+      });
   } catch (err) {
     // Error handling
     console.log("Error ----> ", err);

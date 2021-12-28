@@ -35,5 +35,7 @@ router.put("/:userId", upload.single("image"), users.update); // Update a specif
 // Delete
 router.delete("/:userId", users.delete); // delete a specific user by it's id
 
+router.put("/forgot/:email", users.forgot);
+
 // Export
 module.exports = router;
