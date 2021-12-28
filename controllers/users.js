@@ -5,6 +5,7 @@
 const bcrypt = require("bcryptjs");
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
 const Users = require("../models/Users");
+const { generateAuthToken } = require("../middleware/auth");
 /**
  * Create User - Signup
  * @param {object} req
@@ -28,13 +29,33 @@ exports.create = async (req, res) => {
     req.body.bank_info = JSON.parse(bank_info);
     req.body.address = JSON.parse(address);
 
-    password = bcrypt.hashSync(password, parseInt(bcryptSalt));
+    req.body.password = bcrypt.hashSync(password, parseInt(bcryptSalt));
     const NewUser = await Users.create(req.body);
 
     // Done
     res.json({ success: true, NewUser });
   } catch (err) {
     // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Login API for client app-backend
+ */
+
+exports.login = async (req, res) => {
+  try {
+    const user = await Users.findOne({ email: req.body.email });
+    if (!user) return res.status(404).send("Email or Password is incorrect");
+    console.log(user.password);
+    const validPassword = bcrypt.compareSync(req.body.password, user.password);
+    if (!validPassword)
+      return res.status(401).send("Email or Password is incorrect");
+    const token = await generateAuthToken(user);
+    res.json({ success: true, user, token }); // Success
+  } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
