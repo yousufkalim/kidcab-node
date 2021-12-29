@@ -3,6 +3,7 @@
  * @author Arooj Ishfaq
  */
 const Trips = require("../models/Trips");
+const moment = require("moment");
 
 /**
  * Create Trip
@@ -56,6 +57,43 @@ exports.getAll = async (req, res) => {
       .populate("assigned_drivers");
     if (!trips) res.status(501).send("No Trip Founds");
     res.json({ success: true, trips });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get upcoming trips/rides
+ * @param {object} req
+ * @param {object} res
+ */
+
+exports.getUpcomingTrips = async (req, res) => {
+  try {
+    const trips = await Trips.find({ client: req.params.clientId });
+    var current = moment();
+    let upcomingTrips = trips.filter((a) => moment(current).isBefore(a.date));
+    if (!trips) res.status(501).send("No Trip Founds");
+    res.json({ success: true, upcomingTrips });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get past trips/rides
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getPastTrips = async (req, res) => {
+  try {
+    const trips = await Trips.find({ client: req.params.clientId });
+    var current = moment();
+    let pastTrips = trips.filter((a) => moment(current).isAfter(a.date));
+    if (!trips) res.status(501).send("No Trip Founds");
+    res.json({ success: true, pastTrips });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });

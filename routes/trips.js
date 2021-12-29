@@ -32,5 +32,10 @@ router.put("/:tripId", trips.update); // Update a specific trip by it's id
 // Delete
 router.delete("/:tripId", trips.delete); // delete a specific trip by it's id
 
+//Upcoming
+router.get("/upcoming/:clientId", trips.getUpcomingTrips); // Get all upcoming trips
+
+//Past
+router.get("/past/:clientId", trips.getPastTrips); // Get all past trips
 // Export
 module.exports = router;
