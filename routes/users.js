@@ -23,7 +23,7 @@ const {
 router.post("/", upload.single("image"), users.create);
 
 //login-client App
-router.get("/login", users.login);
+router.post("/login", users.login);
 
 // Read
 router.get("/", users.getAll); // Get all users at once
@@ -35,7 +35,11 @@ router.put("/:userId", upload.single("image"), users.update); // Update a specif
 // Delete
 router.delete("/:userId", users.delete); // delete a specific user by it's id
 
+//forget password
 router.put("/forgot/:email", users.forgot);
+
+//change password
+router.put("/password/:userId", users.changePassword);
 
 // Export
 module.exports = router;
