@@ -116,12 +116,17 @@ exports.update = async (req, res) => {
       req.body.address = JSON.parse(address);
     }
 
-    const user = await Users.findByIdAndUpdate(userId, req.body, { new: true }); // Updating the user
-    if (!user) s;
-    res.status(404).send({
-      success: false,
-      message: "User does not Found, could not update",
-    });
+    const user = await Users.findOneAndUpdate({ _id: userId }, req.body, {
+      new: true,
+    }); // Updating the user
+
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User does not Found, could not update",
+      });
+    }
+
     res.json({ success: true, user }); // Success
   } catch (err) {
     // Error handling
@@ -152,7 +157,7 @@ exports.delete = async (req, res) => {
   }
 };
 
-//update
+//update password
 exports.changePassword = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -194,7 +199,7 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-//forget
+//forget password recovery
 exports.forgot = async (req, res) => {
   try {
     let { email } = req.params;
