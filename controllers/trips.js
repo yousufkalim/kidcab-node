@@ -3,7 +3,10 @@
  * @author Arooj Ishfaq
  */
 const Trips = require("../models/Trips");
-
+const Drivers = require("../models/Drivers");
+const moment = require("moment");
+const { sendEmail } = require("../utils/sendInvite");
+const { BASE_URL } = process.env;
 /**
  * Create Trip
  * @param {object} req
@@ -11,20 +14,67 @@ const Trips = require("../models/Trips");
  */
 exports.create = async (req, res) => {
   try {
-    const { start_address, end_address, invited_drivers, assigned_drivers } =
-      req.body;
+    const { invited_drivers } = req.body;
+    const drivers = await Drivers.find({ _id: { $in: invited_drivers } });
+
     req.body.invited_drivers = invited_drivers.map((driver) => ({
       driver: driver,
     }));
 
-    const trip = await Trips.create({
-      ...req.body,
-      assigned_drivers: assigned_drivers.length === 0 ? null : assigned_drivers,
+    const trip = await Trips.create(req.body);
+
+    const sendEmails = drivers.map((driver) => {
+      return sendEmail(
+        driver.email,
+        `${BASE_URL}/api/trips/${trip._id}/${driver._id}`
+      );
     });
 
-    if (!trip) res.status(501).send("No trip is created");
-    console.log(trip);
-    res.json({ success: true, trip });
+    Promise.all(sendEmails)
+      .then((response) => {
+        res.json({ success: true, response });
+      })
+      .catch((err) => {
+        console.log("Email Error ----> ", err);
+        res
+          .status(500)
+          .json({ success: false, message: "Internal server error" });
+      });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Accept trip
+ * @param {object} req
+ * @param {object} res
+ */
+exports.accept = async (req, res) => {
+  const { tripId, driverId } = req.params;
+
+  try {
+    let trip = await Trips.findById(tripId);
+    let driver = await Drivers.findById(driverId);
+
+    if (!trip || !driver) {
+      res
+        .status(404)
+        .json({ success: false, message: "Trip/Driver not found" });
+    } else if (trip.required_drivers <= trip.assigned_drivers.length) {
+      res.status(400).json({ success: false, message: "Trip already booked" });
+    }
+
+    const updatedTrip = await Trips.findByIdAndUpdate(
+      trip._id,
+      {
+        $push: { assigned_drivers: driverId },
+      },
+      { new: true }
+    );
+
+    res.json({ success: true, trip: updatedTrip });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -63,6 +113,43 @@ exports.getAll = async (req, res) => {
 };
 
 /**
+ * Get upcoming trips/rides
+ * @param {object} req
+ * @param {object} res
+ */
+
+exports.getUpcomingTrips = async (req, res) => {
+  try {
+    const trips = await Trips.find({ client: req.params.clientId });
+    var current = moment();
+    let upcomingTrips = trips.filter((a) => moment(current).isBefore(a.date));
+    if (!trips) res.status(501).send("No Trip Founds");
+    res.json({ success: true, upcomingTrips });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get past trips/rides
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getPastTrips = async (req, res) => {
+  try {
+    const trips = await Trips.find({ client: req.params.clientId });
+    var current = moment();
+    let pastTrips = trips.filter((a) => moment(current).isAfter(a.date));
+    if (!trips) res.status(501).send("No Trip Founds");
+    res.json({ success: true, pastTrips });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
  * Get trip by id
  * @param {object} req
  * @param {object} res
@@ -89,10 +176,12 @@ exports.update = async (req, res) => {
     const tripId = req.params.tripId;
     const { start_address, end_address, invited_drivers, assigned_drivers } =
       req.body;
-    req.body.invited_drivers = invited_drivers.map((driver) => ({
-      driver: driver,
-    }));
-
+    if (invited_drivers) {
+      req.body.invited_drivers = invited_drivers.map((driver) => ({
+        driver: driver,
+      }));
+    }
+    console.log("DRIVERS INVITED :)--------", req.body.invited_drivers);
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
       assigned_drivers: assigned_drivers ? assigned_drivers : null,
