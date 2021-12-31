@@ -7,6 +7,8 @@ const { Schema, model } = require("mongoose");
 // Schema
 const quoteSchema = new Schema(
   {
+    _id: String,
+
     quote_number: {
       type: String,
       required: true,

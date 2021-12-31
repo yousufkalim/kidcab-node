@@ -7,6 +7,7 @@ const { Schema, model } = require("mongoose");
 // Schema
 const tripSchema = new Schema(
   {
+    _id: String,
     date: {
       type: Date,
       required: true,

@@ -7,6 +7,7 @@ const { Schema, model } = require("mongoose");
 // Schema
 const passengerSchema = new Schema(
   {
+    _id: String,
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
     relationship: {

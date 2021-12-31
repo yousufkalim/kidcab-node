@@ -59,11 +59,13 @@ exports.accept = async (req, res) => {
     let driver = await Drivers.findById(driverId);
 
     if (!trip || !driver) {
-      res
+      return res
         .status(404)
         .json({ success: false, message: "Trip/Driver not found" });
     } else if (trip.required_drivers <= trip.assigned_drivers.length) {
-      res.status(400).json({ success: false, message: "Trip already booked" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Trip already booked" });
     }
 
     const updatedTrip = await Trips.findByIdAndUpdate(
@@ -122,8 +124,10 @@ exports.getUpcomingTrips = async (req, res) => {
   try {
     const trips = await Trips.find({ client: req.params.clientId });
     var current = moment();
+
     let upcomingTrips = trips.filter((a) => moment(current).isBefore(a.date));
-    if (!trips) res.status(501).send("No Trip Founds");
+    if (!trips) return res.status(501).send("No Trip Founds");
+
     res.json({ success: true, upcomingTrips });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -140,8 +144,13 @@ exports.getPastTrips = async (req, res) => {
   try {
     const trips = await Trips.find({ client: req.params.clientId });
     var current = moment();
+
     let pastTrips = trips.filter((a) => moment(current).isAfter(a.date));
-    if (!trips) res.status(501).send("No Trip Founds");
+
+    if (!trips) {
+      return res.status(501).send("No Trip Founds");
+    }
+
     res.json({ success: true, pastTrips });
   } catch (err) {
     console.log("Error ----> ", err);

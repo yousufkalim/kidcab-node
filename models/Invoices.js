@@ -7,6 +7,7 @@ const { Schema, model } = require("mongoose");
 // Schema
 const invoiceSchema = new Schema(
   {
+    _id: String,
     invoice_title: {
       type: String,
       required: true,
