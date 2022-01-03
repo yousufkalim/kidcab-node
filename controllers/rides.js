@@ -116,6 +116,29 @@ exports.getPastRides = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+/**
+ * Get ongoing rides by clientid
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getOngoingRides = async (req, res) => {
+  try {
+    const rides = await Rides.find({
+      client: req.params.clientId,
+      status: "ongoing",
+    })
+      .populate("client")
+      .populate("driver")
+      .populate("vehicles")
+      .populate("trip");
+    if (!ride) res.status(501).send("No Rides Found");
+    res.json({ success: true, rides });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 /**
  * Update ride
  * @param {object} req

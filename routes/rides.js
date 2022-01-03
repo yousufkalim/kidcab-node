@@ -37,6 +37,9 @@ router.get("/upcoming/:clientId", rides.getUpcomingRides);
 
 // get past rides
 router.get("/past/:clientId", rides.getPastRides);
+
+// get Ongoing rides
+router.get("/Ongoing/:clientId", rides.getOngoingRides);
 // Delete
 router.delete("/:rideId", rides.delete); // delete a specific ride by it's id
 
