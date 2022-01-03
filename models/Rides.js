@@ -8,13 +8,13 @@ const { Schema, model } = require("mongoose");
 const rideSchema = new Schema(
   {
     route_info: {
-      latitude: { type: String, required: true },
-      longitude: { type: String, required: true },
+      latitude: String,
+      longitude: String,
     },
     status: {
       type: String,
-      required: true,
       enum: ["pending", "ongoing", "cancelled", "completed"],
+      default: "pending",
     },
     price: {
       type: Number,
