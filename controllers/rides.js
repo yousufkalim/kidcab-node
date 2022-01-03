@@ -132,7 +132,7 @@ exports.getOngoingRides = async (req, res) => {
       .populate("driver")
       .populate("vehicles")
       .populate("trip");
-    if (!ride) res.status(501).send("No Rides Found");
+    if (!rides) res.status(501).send("No Rides Found");
     res.json({ success: true, rides });
   } catch (err) {
     console.log("Error ----> ", err);
