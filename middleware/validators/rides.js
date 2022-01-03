@@ -1,9 +1,9 @@
 const { check, validationResult } = require("express-validator");
 
 exports.validateRides = [
-  check("latitude", "latitude is Required").notEmpty().trim(),
-  check("longitude", "longitude is required").notEmpty().trim(),
-  check("status", "Status is required").notEmpty().trim(),
+  // check("latitude", "latitude is Required").notEmpty().trim(),
+  // check("longitude", "longitude is required").notEmpty().trim(),
+  // check("status", "Status is required").notEmpty().trim(),
   check("client", "At least one Client ID is required").notEmpty().trim(),
   check("driver", "At least one Driver ID is required").notEmpty().trim(),
   check("vehicle", "At least one Vehicle ID is required").notEmpty().trim(),

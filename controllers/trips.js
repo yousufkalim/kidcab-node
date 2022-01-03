@@ -4,6 +4,7 @@
  */
 const Trips = require("../models/Trips");
 const Drivers = require("../models/Drivers");
+const Rides = require("../models/Rides");
 const moment = require("moment");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
@@ -21,8 +22,9 @@ exports.create = async (req, res) => {
       driver: driver,
     }));
 
-    const trip = await Trips.create(req.body);
+    const trip = await Trips.create({ ...req.body, rides: [] }); //creating trip
 
+    //sending invites to driver
     const sendEmails = drivers.map((driver) => {
       return sendEmail(
         driver.email,
@@ -30,6 +32,7 @@ exports.create = async (req, res) => {
       );
     });
 
+    //resolving all promises
     Promise.all(sendEmails)
       .then((response) => {
         res.json({ success: true, response });
@@ -53,10 +56,20 @@ exports.create = async (req, res) => {
  */
 exports.accept = async (req, res) => {
   const { tripId, driverId } = req.params;
-
   try {
     let trip = await Trips.findById(tripId);
     let driver = await Drivers.findById(driverId);
+    const driver_id = driver._id;
+    const price = trip.driver_price / trip.required_drivers;
+
+    //creating ride when driver accepts invitation
+    const ride = await Rides.create({
+      price: price,
+      client: trip.client,
+      driver: driver_id,
+      vehicle: driver.vehicles[0],
+      trip: trip._id,
+    });
 
     if (!trip || !driver) {
       return res
@@ -68,10 +81,11 @@ exports.accept = async (req, res) => {
         .json({ success: false, message: "Trip already booked" });
     }
 
+    //updating trip after creating ride
     const updatedTrip = await Trips.findByIdAndUpdate(
       trip._id,
       {
-        $push: { assigned_drivers: driverId },
+        $push: { assigned_drivers: driverId, rides: ride._id },
       },
       { new: true }
     );
