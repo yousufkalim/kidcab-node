@@ -7,7 +7,6 @@ const { Schema, model } = require("mongoose");
 // Schema
 const driverSchema = new Schema(
   {
-    _id: String,
     profile_pic: { type: String },
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },

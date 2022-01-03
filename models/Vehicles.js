@@ -7,7 +7,6 @@ const { Schema, model } = require("mongoose");
 // Schema
 const vehicleSchema = new Schema(
   {
-    _id: String,
     vehicle_name: {
       type: String,
       required: true,
