@@ -3,7 +3,7 @@
  * @author Arooj Ishfaq
  */
 const Rides = require("../models/Rides");
-
+const moment = require("moment");
 /**
  * Create Ride
  * @param {object} req
@@ -54,7 +54,7 @@ exports.getById = async (req, res) => {
   }
 };
 /**
- * Get ride by clientid
+ * Get rides by clientid
  * @param {object} req
  * @param {object} res
  */
@@ -69,6 +69,41 @@ exports.getByClientId = async (req, res) => {
   }
 };
 
+/**
+ * Get upcomingrides by clientid
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getUpcomingRides = async (req, res) => {
+  try {
+    const rides = await Rides.find({ client: req.params.clientId });
+    var current = moment();
+    let upcomingRides = rides.filter((a) => moment(current).isBefore(a.date));
+    if (!rides) res.status(501).send("No rides Founds");
+    res.json({ success: true, upcomingRides });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get past rides
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getPastRides = async (req, res) => {
+  try {
+    const rides = await Rides.find({ client: req.params.clientId });
+    var current = moment();
+    let pastRides = rides.filter((a) => moment(current).isAfter(a.date));
+    if (!rides) res.status(501).send("No rides Founds");
+    res.json({ success: true, pastRides });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 /**
  * Update ride
  * @param {object} req
