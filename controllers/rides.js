@@ -63,7 +63,7 @@ exports.getByClientId = async (req, res) => {
     const ride = await Rides.find({ client: req.params.clientId })
       .populate("client")
       .populate("driver")
-      .populate("Vehicles")
+      .populate("vehicle")
       .populate("trip");
     if (!ride) res.status(501).send("No Rides Found");
     res.json({ success: true, ride });
@@ -83,7 +83,7 @@ exports.getUpcomingRides = async (req, res) => {
     const rides = await Rides.find({ client: req.params.clientId })
       .populate("client")
       .populate("driver")
-      .populate("vehicles")
+      .populate("vehicle")
       .populate("trip");
     var current = moment();
     let upcomingRides = rides.filter((a) => moment(current).isBefore(a.date));
@@ -105,7 +105,7 @@ exports.getPastRides = async (req, res) => {
     const rides = await Rides.find({ client: req.params.clientId })
       .populate("client")
       .populate("driver")
-      .populate("vehicles")
+      .populate("vehicle")
       .populate("trip");
     var current = moment();
     let pastRides = rides.filter((a) => moment(current).isAfter(a.date));
@@ -130,7 +130,7 @@ exports.getOngoingRides = async (req, res) => {
     })
       .populate("client")
       .populate("driver")
-      .populate("vehicles")
+      .populate("vehicle")
       .populate("trip");
     if (!rides) res.status(501).send("No Rides Found");
     res.json({ success: true, rides });
