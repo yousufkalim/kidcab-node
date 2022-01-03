@@ -53,6 +53,21 @@ exports.getById = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+/**
+ * Get ride by clientid
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getByClientId = async (req, res) => {
+  try {
+    const ride = await Rides.find({ client: req.params.clientId });
+    if (!ride) res.status(501).send("No Rides Found");
+    res.json({ success: true, ride });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 
 /**
  * Update ride

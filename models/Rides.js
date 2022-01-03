@@ -7,6 +7,7 @@ const { Schema, model } = require("mongoose");
 // Schema
 const rideSchema = new Schema(
   {
+    _id: String,
     route_info: {
       latitude: String,
       longitude: String,
@@ -21,7 +22,7 @@ const rideSchema = new Schema(
     },
     client: {
       type: Schema.Types.ObjectId,
-      ref: "clients",
+      ref: "users",
       required: true,
     },
     driver: {
