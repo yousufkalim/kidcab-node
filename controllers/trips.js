@@ -69,15 +69,16 @@ exports.accept = async (req, res) => {
       driver: driver_id,
       vehicle: driver.vehicles[0],
       trip: trip._id,
+      date: trip.date,
     });
 
-    // if (!trip || !driver) {
-    //   res
-    //     .status(404)
-    //     .json({ success: false, message: "Trip/Driver not found" });
-    // } else if (trip.required_drivers <= trip.assigned_drivers.length) {
-    //   res.status(400).json({ success: false, message: "Trip already booked" });
-    // }
+    if (!trip || !driver) {
+      res
+        .status(404)
+        .json({ success: false, message: "Trip/Driver not found" });
+    } else if (trip.required_drivers <= trip.assigned_drivers.length) {
+      res.status(400).json({ success: false, message: "Trip already booked" });
+    }
 
     //updating trip after creating ride
     const updatedTrip = await Trips.findByIdAndUpdate(

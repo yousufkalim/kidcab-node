@@ -40,6 +40,10 @@ const rideSchema = new Schema(
       ref: "trips",
       required: true,
     },
+    date: {
+      type: Date,
+      required: true,
+    },
   },
   {
     timestamps: true,

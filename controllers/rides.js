@@ -46,7 +46,7 @@ exports.getById = async (req, res) => {
   try {
     const rideId = req.params.rideId;
     const ride = await Rides.findById(rideId);
-    if (!ride) res.status(501).send("No Ride Founds");
+    if (!ride) res.status(501).send("No Ride Found");
     res.json({ success: true, ride });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -60,7 +60,11 @@ exports.getById = async (req, res) => {
  */
 exports.getByClientId = async (req, res) => {
   try {
-    const ride = await Rides.find({ client: req.params.clientId });
+    const ride = await Rides.find({ client: req.params.clientId })
+      .populate("client")
+      .populate("driver")
+      .populate("Vehicles")
+      .populate("trip");
     if (!ride) res.status(501).send("No Rides Found");
     res.json({ success: true, ride });
   } catch (err) {
@@ -76,10 +80,14 @@ exports.getByClientId = async (req, res) => {
  */
 exports.getUpcomingRides = async (req, res) => {
   try {
-    const rides = await Rides.find({ client: req.params.clientId });
+    const rides = await Rides.find({ client: req.params.clientId })
+      .populate("client")
+      .populate("driver")
+      .populate("vehicles")
+      .populate("trip");
     var current = moment();
     let upcomingRides = rides.filter((a) => moment(current).isBefore(a.date));
-    if (!rides) res.status(501).send("No rides Founds");
+    if (!rides) res.status(501).send("No rides Found");
     res.json({ success: true, upcomingRides });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -94,10 +102,14 @@ exports.getUpcomingRides = async (req, res) => {
  */
 exports.getPastRides = async (req, res) => {
   try {
-    const rides = await Rides.find({ client: req.params.clientId });
+    const rides = await Rides.find({ client: req.params.clientId })
+      .populate("client")
+      .populate("driver")
+      .populate("vehicles")
+      .populate("trip");
     var current = moment();
     let pastRides = rides.filter((a) => moment(current).isAfter(a.date));
-    if (!rides) res.status(501).send("No rides Founds");
+    if (!rides) res.status(501).send("No rides Found");
     res.json({ success: true, pastRides });
   } catch (err) {
     console.log("Error ----> ", err);
