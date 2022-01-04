@@ -7,7 +7,7 @@ const { Schema, model } = require("mongoose");
 // Schema
 const rideSchema = new Schema(
   {
-    _id: String,
+    //_id: String,
     route_info: {
       latitude: String,
       longitude: String,

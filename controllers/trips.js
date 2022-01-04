@@ -113,7 +113,7 @@ exports.getAll = async (req, res) => {
           path: "passengers",
         },
       })
-      .populate("rides")
+
       .populate({
         path: "invited_drivers",
         populate: {

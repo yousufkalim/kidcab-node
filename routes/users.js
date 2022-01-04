@@ -23,7 +23,7 @@ const {
 router.post("/", upload.single("image"), users.create);
 
 //login-client App
-router.post("/login", users.login);
+router.get("/login", users.login);
 
 // Read
 router.get("/", users.getAll); // Get all users at once

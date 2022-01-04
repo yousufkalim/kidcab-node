@@ -46,7 +46,7 @@ exports.getById = async (req, res) => {
   try {
     const rideId = req.params.rideId;
     const ride = await Rides.findById(rideId);
-    if (!ride) res.status(404).send("No Rides Found");
+    if (!ride) return res.status(404).send("No Rides Found");
     res.json({ success: true, ride });
   } catch (err) {
     console.log("Error ----> ", err);
