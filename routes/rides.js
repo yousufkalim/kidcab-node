@@ -16,6 +16,10 @@ const {
  * @method get get all rides
  * @method get get rides by id
  * @method put update rides
+ * @method get get rides by clientId
+ * @method get get upcoming rides
+ * @method get get past rides
+ * @method get get ongoing rides
  * @method delete delete rides
  */
 

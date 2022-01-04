@@ -17,6 +17,8 @@ const {
  * @method get get trip by id
  * @method put update trip
  * @method delete delete trip
+ * @method get get upcoming trips
+ * @method get get past trips
  */
 
 // Create

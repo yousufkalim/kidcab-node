@@ -17,6 +17,8 @@ const {
  * @method get get user by id
  * @method put update user
  * @method delete delete user
+ * @method put forget password
+ * @method put change password
  */
 
 // Create - User Signup
