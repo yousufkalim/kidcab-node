@@ -12,7 +12,7 @@ const moment = require("moment");
 exports.create = async (req, res) => {
   try {
     const ride = await Rides.create(req.body);
-    if (!ride) res.status(501).send("No Ride is created");
+    if (!ride) res.status(404).send("No Ride is created");
 
     res.json({ success: true, ride });
   } catch (err) {
@@ -29,7 +29,7 @@ exports.create = async (req, res) => {
 exports.getAll = async (req, res) => {
   try {
     const rides = await Rides.find();
-    if (!rides) res.status(501).send("No Ride Founds");
+    if (!rides) res.status(404).send("No Rides Found");
     res.json({ success: true, rides });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -46,7 +46,7 @@ exports.getById = async (req, res) => {
   try {
     const rideId = req.params.rideId;
     const ride = await Rides.findById(rideId);
-    if (!ride) res.status(501).send("No Ride Found");
+    if (!ride) res.status(404).send("No Rides Found");
     res.json({ success: true, ride });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -65,7 +65,7 @@ exports.getByClientId = async (req, res) => {
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
-    if (!ride) res.status(501).send("No Rides Found");
+    if (!ride) res.status(404).send("No Rides Found");
     res.json({ success: true, ride });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -87,7 +87,7 @@ exports.getUpcomingRides = async (req, res) => {
       .populate("trip");
     var current = moment();
     let upcomingRides = rides.filter((a) => moment(current).isBefore(a.date));
-    if (!rides) res.status(501).send("No rides Found");
+    if (!rides) res.status(404).send("No rides Found");
     res.json({ success: true, upcomingRides });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -109,7 +109,7 @@ exports.getPastRides = async (req, res) => {
       .populate("trip");
     var current = moment();
     let pastRides = rides.filter((a) => moment(current).isAfter(a.date));
-    if (!rides) res.status(501).send("No rides Found");
+    if (!rides) res.status(404).send("No rides Found");
     res.json({ success: true, pastRides });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -132,7 +132,7 @@ exports.getOngoingRides = async (req, res) => {
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
-    if (!rides) res.status(501).send("No Rides Found");
+    if (!rides) res.status(404).send("No Rides Found");
     res.json({ success: true, rides });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -150,7 +150,7 @@ exports.update = async (req, res) => {
     const updatedRide = await Rides.findByIdAndUpdate(rideId, req.body, {
       new: true,
     });
-    if (!updatedRide) res.status(501).send("No Ride is Updated");
+    if (!updatedRide) res.status(404).send("No Ride is Updated");
     res.json({ success: true, updatedRide });
   } catch (err) {
     console.log("Error ----> ", err);
