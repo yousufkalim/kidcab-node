@@ -3,7 +3,9 @@
  * @author Arooj Ishfaq
  */
 const Drivers = require("../models/Drivers");
-
+const bcrypt = require("bcryptjs");
+const bcryptSalt = process.env.BCRYPT_SALT || 10;
+const { generateAuthToken } = require("../middleware/auth");
 /**
  * Create Driver
  * @param {object} req
@@ -11,7 +13,7 @@ const Drivers = require("../models/Drivers");
  */
 exports.create = async (req, res) => {
   try {
-    const { bank_info, address, company, vehicles } = req.body;
+    const { email, password, bank_info, address, company, vehicles } = req.body;
     //console.log(address);
     req.body.bank_info = JSON.parse(bank_info);
     req.body.address = JSON.parse(address);
@@ -20,6 +22,7 @@ exports.create = async (req, res) => {
     }
     req.body.vehicles = JSON.parse(vehicles);
 
+    req.body.password = bcrypt.hashSync(password, parseInt(bcryptSalt));
     const imageKeys = Object.keys(req.files);
 
     const data = Object.assign(
@@ -29,6 +32,7 @@ exports.create = async (req, res) => {
     );
 
     const driver = await Drivers.create(data);
+
     if (driver) res.json({ success: true, files: driver });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -51,6 +55,28 @@ exports.getAll = async (req, res) => {
   }
 };
 
+/**
+ * Login API for driver
+ */
+
+exports.login = async (req, res) => {
+  try {
+    const driver = await Drivers.findOne({ email: req.body.email });
+    if (!driver) return res.status(404).send("Email or Password is incorrect");
+    console.log(driver.password);
+    const validPassword = bcrypt.compareSync(
+      req.body.password,
+      driver.password
+    );
+    if (!validPassword)
+      return res.status(401).send("Email or Password is incorrect");
+    const token = await generateAuthToken(driver);
+    res.json({ success: true, driver, token }); // Success
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 /**
  * Get driver by id
  * @param {object} req

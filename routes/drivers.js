@@ -34,6 +34,9 @@ const uploadImages = upload.fields([
 // Create
 router.post("/", uploadImages, validateDriver, isValidated, drivers.create);
 
+//login
+router.post("/login", drivers.login);
+
 // Read
 router.get("/", drivers.getAll); // Get all drivers at once
 router.get("/:driverId", drivers.getById); // Get one driver by it's id
