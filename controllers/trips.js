@@ -69,6 +69,7 @@ exports.accept = async (req, res) => {
       driver: driver_id,
       vehicle: driver.vehicles[0],
       trip: trip._id,
+      date: trip.date,
     });
 
     if (!trip || !driver) {
@@ -112,7 +113,7 @@ exports.getAll = async (req, res) => {
           path: "passengers",
         },
       })
-      .populate("rides")
+
       .populate({
         path: "invited_drivers",
         populate: {
@@ -120,7 +121,7 @@ exports.getAll = async (req, res) => {
         },
       })
       .populate("assigned_drivers");
-    if (!trips) res.status(501).send("No Trip Founds");
+    if (!trips) res.status(404).send("No Trips Found");
     res.json({ success: true, trips });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -140,8 +141,7 @@ exports.getUpcomingTrips = async (req, res) => {
     var current = moment();
 
     let upcomingTrips = trips.filter((a) => moment(current).isBefore(a.date));
-    if (!trips) return res.status(501).send("No Trip Founds");
-
+    if (!trips) res.status(404).send("No Trips Found");
     res.json({ success: true, upcomingTrips });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -160,11 +160,7 @@ exports.getPastTrips = async (req, res) => {
     var current = moment();
 
     let pastTrips = trips.filter((a) => moment(current).isAfter(a.date));
-
-    if (!trips) {
-      return res.status(501).send("No Trip Founds");
-    }
-
+    if (!trips) return res.status(404).send("No Trips Found");
     res.json({ success: true, pastTrips });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -181,7 +177,7 @@ exports.getById = async (req, res) => {
   try {
     const tripId = req.params.tripId;
     const trip = await Trips.findById(tripId);
-    if (!trip) res.status(501).send("No Trip Founds");
+    if (!trip) res.status(404).send("No Trips Found");
     res.json({ success: true, trip });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -209,7 +205,7 @@ exports.update = async (req, res) => {
       ...req.body,
       assigned_drivers: assigned_drivers ? assigned_drivers : null,
     });
-    if (!updatedTrip) res.status(501).send("No Trip is Updated");
+    if (!updatedTrip) res.status(404).send("No Trip is Updated");
     res.json({ success: true, updatedTrip });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -226,7 +222,7 @@ exports.delete = async (req, res) => {
   try {
     const tripId = req.params.tripId;
     const deletedTrip = await Trips.findByIdAndDelete(tripId);
-    if (!deletedTrip) res.status(501).send("No Trip is deleted");
+    if (!deletedTrip) res.status(404).send("No Trip is deleted");
     res.json({ success: true, deletedTrip });
   } catch (err) {
     console.log("Error ----> ", err);
