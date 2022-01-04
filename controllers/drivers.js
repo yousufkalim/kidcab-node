@@ -6,6 +6,7 @@ const Drivers = require("../models/Drivers");
 const bcrypt = require("bcryptjs");
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
 const { generateAuthToken } = require("../middleware/auth");
+const { sendEmail } = require("../utils/sendEmail");
 /**
  * Create Driver
  * @param {object} req
@@ -101,13 +102,14 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const driverId = req.params.driverId;
-    const { bank_info, address, company, vehicles } = req.body;
+    const { email, bank_info, address, company, vehicles } = req.body;
     req.body.bank_info = JSON.parse(bank_info);
     req.body.address = JSON.parse(address);
     if (company) {
       req.body.company = JSON.parse(company);
     }
     req.body.vehicles = JSON.parse(vehicles);
+
     const imageKeys = Object.keys(req.files);
 
     const data = Object.assign(
@@ -138,6 +140,91 @@ exports.delete = async (req, res) => {
     const company = await Drivers.findByIdAndDelete(companyId);
     res.json({ success: true, company });
   } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+//update password
+exports.changePassword = async (req, res) => {
+  try {
+    const { driverId } = req.params;
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password and confirm password are not same",
+      });
+    }
+
+    let driver = await Drivers.findById(driverId);
+
+    if (!driver) {
+      return res
+        .status(404)
+        .json({ success: false, message: "driver not found" });
+    }
+
+    const isMatched = bcrypt.compareSync(oldPassword, driver.password);
+
+    if (!isMatched) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid old Password" });
+    }
+
+    // Generate token
+    driver.password = bcrypt.hashSync(newPassword, parseInt(bcryptSalt));
+
+    await driver.save();
+
+    res.json({ success: true, driver });
+  } catch (err) {
+    // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+//forget password recovery
+exports.forgot = async (req, res) => {
+  try {
+    let { email } = req.params;
+    let driver = await Drivers.findOne({ email });
+
+    if (!driver) {
+      return res
+        .status(404)
+        .json({ success: false, message: "driver not found" });
+    }
+
+    // Generating random password
+    let randomPassword = Math.random().toString(36).slice(-8);
+    //let newPassword = req.body.password;
+
+    // Sending email to driver
+    sendEmail(email, randomPassword)
+      .then(async () => {
+        // If email is sent then we have to update the password in db
+        driver.password = await bcrypt.hash(
+          randomPassword,
+          parseInt(bcryptSalt)
+        );
+        await driver.save();
+
+        // Done
+        res.json({ success: true, message: "Email sent successfully" });
+      })
+      .catch((err) => {
+        // Error handling
+        console.log("Error ----> ", err);
+        res
+          .status(500)
+          .json({ success: false, message: "Internal server error" });
+      });
+  } catch (err) {
+    // Error handling
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
   }

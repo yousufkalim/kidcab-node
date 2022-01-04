@@ -47,5 +47,11 @@ router.put("/:driverId", uploadImages, drivers.update); // Update a specific dri
 // Delete
 router.delete("/:driverId", drivers.delete); // delete a specific driver by it's id
 
+//forget password
+router.put("/forgot/:email", drivers.forgot);
+
+//change password
+router.put("/password/:driverId", drivers.changePassword);
+
 // Export
 module.exports = router;
