@@ -78,7 +78,7 @@ exports.getByClientId = async (req, res) => {
  * @param {object} req
  * @param {object} res
  */
-exports.getUpcomingRides = async (req, res) => {
+exports.getClientUpcomingRides = async (req, res) => {
   try {
     const rides = await Rides.find({ client: req.params.clientId })
       .populate("client")
@@ -100,7 +100,7 @@ exports.getUpcomingRides = async (req, res) => {
  * @param {object} req
  * @param {object} res
  */
-exports.getPastRides = async (req, res) => {
+exports.getClientPastRides = async (req, res) => {
   try {
     const rides = await Rides.find({ client: req.params.clientId })
       .populate("client")
@@ -122,7 +122,7 @@ exports.getPastRides = async (req, res) => {
  * @param {object} req
  * @param {object} res
  */
-exports.getOngoingRides = async (req, res) => {
+exports.getClientOngoingRides = async (req, res) => {
   try {
     const rides = await Rides.find({
       client: req.params.clientId,
@@ -169,6 +169,93 @@ exports.delete = async (req, res) => {
     const ride = await Users.findByIdAndDelete(rideId);
     if (!ride) return res.status(404).send("No Ride deleted");
     res.json({ success: true, ride });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get rides by driverid
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getByDriverId = async (req, res) => {
+  try {
+    const ride = await Rides.find({ driver: req.params.driverId })
+      .populate("client")
+      .populate("driver")
+      .populate("vehicle")
+      .populate("trip");
+    if (!ride) res.status(404).send("No Rides Found");
+    res.json({ success: true, ride });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get upcomingrides by driverid
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getDriverUpcomingRides = async (req, res) => {
+  try {
+    const rides = await Rides.find({ driver: req.params.driverId })
+      .populate("client")
+      .populate("driver")
+      .populate("vehicle")
+      .populate("trip");
+    var current = moment();
+    let upcomingRides = rides.filter((a) => moment(current).isBefore(a.date));
+    if (!rides) res.status(404).send("No rides Found");
+    res.json({ success: true, upcomingRides });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get past rides
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getDriverPastRides = async (req, res) => {
+  try {
+    const rides = await Rides.find({ driver: req.params.driverId })
+      .populate("client")
+      .populate("driver")
+      .populate("vehicle")
+      .populate("trip");
+    var current = moment();
+    let pastRides = rides.filter((a) => moment(current).isAfter(a.date));
+    if (!rides) res.status(404).send("No rides Found");
+    res.json({ success: true, pastRides });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get ongoing rides by driverid
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getDriverOngoingRides = async (req, res) => {
+  try {
+    const rides = await Rides.find({
+      driver: req.params.driverId,
+      status: "ongoing",
+    })
+      .populate("client")
+      .populate("driver")
+      .populate("vehicle")
+      .populate("trip");
+    if (!rides) res.status(404).send("No Rides Found");
+    res.json({ success: true, rides });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
