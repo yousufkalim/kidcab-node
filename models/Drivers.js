@@ -87,10 +87,6 @@ const driverSchema = new Schema(
     earnings: {
       type: Number,
     },
-    services: {
-      type: String,
-      enum: ["monthly", "per_ride"],
-    },
   },
   {
     timestamps: true,
