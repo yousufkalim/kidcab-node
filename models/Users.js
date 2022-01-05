@@ -12,7 +12,6 @@ const clientSchema = new Schema(
 
     phone_number: {
       type: String,
-      required: true,
     },
     address: {
       lat: String,

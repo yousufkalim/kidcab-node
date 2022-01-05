@@ -48,8 +48,8 @@ const driverSchema = new Schema(
     id_card_back: String,
     vtc_card_front: String,
     vtc_card_back: String,
-    green_card_front: String,
-    green_card_back: String,
+    // green_card_front: String,
+    // green_card_back: String,
     license_card_front: String,
     license_card_back: String,
 
