@@ -2,13 +2,11 @@ const { check, validationResult } = require("express-validator");
 
 exports.validateVehicle = [
   check("vehicle_name", "Vehicle Name is Required").notEmpty().trim(),
-  check("number_plate", "Number Plate is required").notEmpty().trim(),
   check("brand", "Brand is required").notEmpty().trim(),
   check("model", "Model is required").notEmpty().trim(),
   check("color", "Color is required").notEmpty().trim(),
   check("engine_type", "Engine Type is required").notEmpty().trim(),
   check("gray_card", "Gray Card is required").notEmpty().trim(),
-  check("inspection_info", "Inspection Info is required").notEmpty().trim(),
 ];
 
 /**

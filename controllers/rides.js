@@ -45,7 +45,11 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const rideId = req.params.rideId;
-    const ride = await Rides.findById(rideId);
+    const ride = await Rides.findById(rideId)
+      .populate("client")
+      .populate("driver")
+      .populate("vehicle")
+      .populate("trip");
     if (!ride) return res.status(404).send("No Rides Found");
     res.json({ success: true, ride });
   } catch (err) {

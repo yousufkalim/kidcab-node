@@ -8,6 +8,12 @@ const {
   validateVehicle,
   isValidated,
 } = require("../middleware/validators/vehicles");
+const { upload } = require("../middleware/multer");
+const uploadImages = upload.fields([
+  { name: "number_plate" },
+  { name: "insurance_certificate" },
+  { name: "inspection_info" },
+]);
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -19,7 +25,7 @@ const {
  */
 
 // Create
-router.post("/", validateVehicle, isValidated, vehicles.create);
+router.post("/", uploadImages, validateVehicle, isValidated, vehicles.create);
 
 // Read
 router.get("/", vehicles.getAll); // Get all vehicles at once
