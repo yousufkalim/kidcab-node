@@ -13,7 +13,6 @@ const { check, validationResult } = require("express-validator");
 exports.validatePassenger = [
   check("first_name", "First Name is required.").notEmpty().trim(),
   check("last_name", "Last Name is required.").notEmpty().trim(),
-  check("type", "Type is required.").notEmpty().trim(),
   check("relationship", "Relationship is required.").notEmpty().trim(),
   check("client", "Client ID is required.").notEmpty().trim().isMongoId(),
 ];

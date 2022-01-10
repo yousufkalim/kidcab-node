@@ -42,6 +42,7 @@ const tripSchema = new Schema(
         postal_code: String,
       },
     ],
+    distance: Number,
     client_price: {
       type: Number,
       required: true,

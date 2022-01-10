@@ -35,17 +35,24 @@ router.put("/:rideId", rides.update); // Update a specific ride by it's id
 
 // getridesofclient
 router.get("/client/:clientId", rides.getByClientId); // Get rides of client
+// get client upcoming rides
+router.get("/client/upcoming/:clientId", rides.getClientUpcomingRides);
+// get client past rides
+router.get("/client/past/:clientId", rides.getClientPastRides);
+// Client Ongoing rides
+router.get("/client/ongoing/:clientId", rides.getClientOngoingRides);
 
-// get upcoming rides
-router.get("/upcoming/:clientId", rides.getUpcomingRides);
-
-// get past rides
-router.get("/past/:clientId", rides.getPastRides);
-
-// get Ongoing rides
-router.get("/ongoing/:clientId", rides.getOngoingRides);
 // Delete
 router.delete("/:rideId", rides.delete); // delete a specific ride by it's id
+
+// get rides of Driver
+router.get("/driver/:driverId", rides.getByDriverId); // Get rides of client
+// get driver upcoming rides
+router.get("/driver/upcoming/:driverId", rides.getDriverUpcomingRides);
+// get driver past rides
+router.get("/driver/past/:driverId", rides.getDriverPastRides);
+// get driver Ongoing rides
+router.get("/driver/ongoing/:driverId", rides.getDriverOngoingRides);
 
 // Export
 module.exports = router;

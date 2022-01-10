@@ -36,10 +36,14 @@ const vehicleSchema = new Schema(
       required: true,
     },
     inspection_info: {
-      type: String,
-      required: true,
+      url: { type: String },
+      date: { type: String },
     },
-
+    registration_card: String,
+    insurance_certificate: {
+      url: { type: String },
+      date: { type: String },
+    },
     driver: {
       type: Schema.Types.ObjectId,
       ref: "drivers",

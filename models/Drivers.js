@@ -7,6 +7,7 @@ const { Schema, model } = require("mongoose");
 // Schema
 const driverSchema = new Schema(
   {
+    //_id: String,
     profile_pic: { type: String },
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
@@ -47,14 +48,25 @@ const driverSchema = new Schema(
     id_card_back: String,
     vtc_card_front: String,
     vtc_card_back: String,
-    green_card_front: String,
-    green_card_back: String,
+    criminal_record: {
+      url: { type: String },
+      date: { type: Date },
+    },
+    restricted_information_statement: {
+      url: { type: String },
+      date: { type: Date },
+    },
+    kbis: {
+      url: { type: String },
+      date: { type: Date },
+    },
+    pro_rc_insurance_certificate: {
+      url: { type: String },
+      date: { type: Date },
+    },
     license_card_front: String,
     license_card_back: String,
 
-    criminal_record: {
-      type: String,
-    },
     bank_info: {
       account_number: {
         type: String,
@@ -74,10 +86,6 @@ const driverSchema = new Schema(
     },
     earnings: {
       type: Number,
-    },
-    services: {
-      type: String,
-      enum: ["monthly", "per_ride"],
     },
   },
   {

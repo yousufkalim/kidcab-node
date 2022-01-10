@@ -28,11 +28,17 @@ const uploadImages = upload.fields([
   { name: "green_card_front" },
   { name: "green_card_back" },
   { name: "license_card_front" },
-  { name: "license_card_back" },
+  { name: "criminalRecord_image" },
+  { name: "kbis_image" },
+  { name: "proRC_Certificate_image" },
+  { name: "restrictedInfoStatement_image" },
 ]);
 
 // Create
 router.post("/", uploadImages, validateDriver, isValidated, drivers.create);
+
+//login
+router.post("/login", drivers.login);
 
 // Read
 router.get("/", drivers.getAll); // Get all drivers at once
@@ -43,6 +49,12 @@ router.put("/:driverId", uploadImages, drivers.update); // Update a specific dri
 
 // Delete
 router.delete("/:driverId", drivers.delete); // delete a specific driver by it's id
+
+//forget password
+router.put("/forgot/:email", drivers.forgot);
+
+//change password
+router.put("/password/:driverId", drivers.changePassword);
 
 // Export
 module.exports = router;
