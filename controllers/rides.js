@@ -50,6 +50,7 @@ exports.getById = async (req, res) => {
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
+
     if (!ride) return res.status(404).send("No Rides Found");
     res.json({ success: true, ride });
   } catch (err) {
@@ -69,6 +70,7 @@ exports.getByClientId = async (req, res) => {
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
+
     if (!ride) res.status(404).send("No Rides Found");
     res.json({ success: true, ride });
   } catch (err) {
@@ -89,6 +91,7 @@ exports.getClientUpcomingRides = async (req, res) => {
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
+
     var current = moment();
     let upcomingRides = rides.filter((a) => moment(current).isBefore(a.date));
     if (!rides) res.status(404).send("No rides Found");
@@ -111,6 +114,7 @@ exports.getClientPastRides = async (req, res) => {
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
+
     var current = moment();
     let pastRides = rides.filter((a) => moment(current).isAfter(a.date));
     if (!rides) res.status(404).send("No rides Found");
@@ -126,6 +130,7 @@ exports.getClientPastRides = async (req, res) => {
  * @param {object} req
  * @param {object} res
  */
+
 exports.getClientOngoingRides = async (req, res) => {
   try {
     const rides = await Rides.find({
@@ -143,6 +148,7 @@ exports.getClientOngoingRides = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
 /**
  * Update ride
  * @param {object} req
@@ -211,6 +217,7 @@ exports.getDriverUpcomingRides = async (req, res) => {
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
+
     var current = moment();
     let upcomingRides = rides.filter((a) => moment(current).isBefore(a.date));
     if (!rides) res.status(404).send("No rides Found");
@@ -258,6 +265,7 @@ exports.getDriverOngoingRides = async (req, res) => {
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
+
     if (!rides) res.status(404).send("No Rides Found");
     res.json({ success: true, rides });
   } catch (err) {

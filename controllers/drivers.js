@@ -15,7 +15,15 @@ const { sendEmail } = require("../utils/sendEmail");
 exports.create = async (req, res) => {
   try {
     const { email, password, bank_info, address, company, vehicles } = req.body;
-    //console.log(address);
+
+    const existingDriver = await Drivers.findOne({ email });
+
+    if (existingDriver) {
+      res
+        .status(400)
+        .json({ success: false, message: "Driver already exists" });
+    }
+
     req.body.bank_info = JSON.parse(bank_info);
     req.body.address = JSON.parse(address);
     if (company) {
@@ -63,14 +71,15 @@ exports.getAll = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const driver = await Drivers.findOne({ email: req.body.email });
-    if (!driver) return res.status(404).send("Email or Password is incorrect");
-    console.log(driver.password);
+    if (!driver) return res.status(404).send("Driver not found");
+
     const validPassword = bcrypt.compareSync(
       req.body.password,
       driver.password
     );
-    if (!validPassword)
-      return res.status(401).send("Email or Password is incorrect");
+
+    if (!validPassword) return res.status(401).send("Password is incorrect");
+
     const token = await generateAuthToken(driver);
     res.json({ success: true, driver, token }); // Success
   } catch (err) {
@@ -78,6 +87,7 @@ exports.login = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
 /**
  * Get driver by id
  * @param {object} req
@@ -103,6 +113,7 @@ exports.update = async (req, res) => {
   try {
     const driverId = req.params.driverId;
     const { email, bank_info, address, company, vehicles } = req.body;
+
     req.body.bank_info = JSON.parse(bank_info);
     req.body.address = JSON.parse(address);
     if (company) {
@@ -121,6 +132,7 @@ exports.update = async (req, res) => {
     const updatedDriver = await Drivers.findByIdAndUpdate(driverId, data, {
       new: true,
     });
+
     if (!updatedDriver) return res.status(404).send("Rating can't update");
     res.json({ success: true, updatedDriver });
   } catch (err) {
@@ -174,7 +186,7 @@ exports.changePassword = async (req, res) => {
         .json({ success: false, message: "Invalid old Password" });
     }
 
-    // Generate token
+    // Generate password hash
     driver.password = bcrypt.hashSync(newPassword, parseInt(bcryptSalt));
 
     await driver.save();
