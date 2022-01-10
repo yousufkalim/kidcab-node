@@ -120,6 +120,7 @@ exports.getAll = async (req, res) => {
   try {
     const trips = await Trips.find()
       .populate("client")
+      .populate("rides")
       .populate({
         path: "quote",
         populate: {
@@ -150,7 +151,7 @@ exports.getAll = async (req, res) => {
 
 exports.getUpcomingTrips = async (req, res) => {
   try {
-    const trips = await Trips.find({ client: req.params.clientId });
+    const trips = await Trips.find({ client: req.params.clientId }).populate("rides");
     var current = moment();
 
     let upcomingTrips = trips.filter((a) => moment(current).isBefore(a.date));
@@ -169,7 +170,7 @@ exports.getUpcomingTrips = async (req, res) => {
  */
 exports.getPastTrips = async (req, res) => {
   try {
-    const trips = await Trips.find({ client: req.params.clientId });
+    const trips = await Trips.find({ client: req.params.clientId }).populate("rides");
     var current = moment();
 
     let pastTrips = trips.filter((a) => moment(current).isAfter(a.date));
@@ -189,7 +190,7 @@ exports.getPastTrips = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const tripId = req.params.tripId;
-    const trip = await Trips.findById(tripId);
+    const trip = await Trips.findById(tripId).populate("rides");
     if (!trip) res.status(404).send("No Trips Found");
     res.json({ success: true, trip });
   } catch (err) {
