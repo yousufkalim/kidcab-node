@@ -11,8 +11,9 @@ const Drivers = require("../models/Drivers");
  */
 exports.create = async (req, res) => {
   try {
+    req.body.driver = JSON.parse(req.body.driver);
+    
     const imageKeys = Object.keys(req.files);
-
     const data = Object.assign(
       {},
       req.body,
