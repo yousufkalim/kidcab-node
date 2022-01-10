@@ -6,6 +6,7 @@ const Trips = require("../models/Trips");
 const Drivers = require("../models/Drivers");
 const Rides = require("../models/Rides");
 const moment = require("moment");
+const geoLib = require("geo-lib");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
 /**
@@ -15,12 +16,24 @@ const { BASE_URL } = process.env;
  */
 exports.create = async (req, res) => {
   try {
-    const { invited_drivers } = req.body;
+    const { invited_drivers, start_address, end_address } = req.body;
     const drivers = await Drivers.find({ _id: { $in: invited_drivers } });
 
     req.body.invited_drivers = invited_drivers.map((driver) => ({
       driver: driver,
     }));
+
+    let result = geoLib.distance({
+      p1: {
+        lat: parseInt(start_address.lat),
+        lon: parseInt(start_address.lng),
+      },
+      p2: {
+        lat: parseInt(end_address.lat),
+        lon: parseInt(end_address.lng),
+      },
+    });
+    req.body.distance = parseFloat(result.distance).toFixed(1);
 
     const trip = await Trips.create({ ...req.body, rides: [] }); //creating trip
 
@@ -200,7 +213,19 @@ exports.update = async (req, res) => {
         driver: driver,
       }));
     }
-    console.log("DRIVERS INVITED :)--------", req.body.invited_drivers);
+
+    let result = geoLib.distance({
+      p1: {
+        lat: parseInt(start_address.lat),
+        lon: parseInt(start_address.lng),
+      },
+      p2: {
+        lat: parseInt(end_address.lat),
+        lon: parseInt(end_address.lng),
+      },
+    });
+    req.body.distance = parseFloat(result.distance).toFixed(1);
+
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
       assigned_drivers: assigned_drivers ? assigned_drivers : null,
