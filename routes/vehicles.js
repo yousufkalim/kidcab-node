@@ -10,9 +10,9 @@ const {
 } = require("../middleware/validators/vehicles");
 const { upload } = require("../middleware/multer");
 const uploadImages = upload.fields([
-  { name: "number_plate" },
-  { name: "insurance_certificate" },
   { name: "inspection_info" },
+  { name: "registration_card" },
+  { name: "insurance_certificate" },
 ]);
 
 /**
@@ -32,7 +32,7 @@ router.get("/", vehicles.getAll); // Get all vehicles at once
 router.get("/:vehicleId", vehicles.getById); // Get one vehicle by it's id
 
 // Update
-router.put("/:vehicleId", vehicles.update); // Update a specific vehicle by it's id
+router.put("/:vehicleId", uploadImages, vehicles.update); // Update a specific vehicle by it's id
 
 // Delete
 router.delete("/:vehicleId", vehicles.delete); // delete a specific vehicle by it's id

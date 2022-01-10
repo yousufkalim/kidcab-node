@@ -11,10 +11,6 @@ const vehicleSchema = new Schema(
       type: String,
       required: true,
     },
-    number_plate: {
-      type: String,
-      required: true,
-    },
     brand: {
       type: String,
       required: true,
@@ -35,15 +31,11 @@ const vehicleSchema = new Schema(
       type: String,
       required: true,
     },
-    inspection_info: {
-      url: { type: String },
-      date: { type: String },
-    },
+    inspection_info: String,
+    inspection_expiry_date: Date,
     registration_card: String,
-    insurance_certificate: {
-      url: { type: String },
-      date: { type: String },
-    },
+    insurance_certificate: String,
+    insurance_expiry_date: Date,
     driver: {
       type: Schema.Types.ObjectId,
       ref: "drivers",

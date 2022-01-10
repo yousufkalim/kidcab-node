@@ -11,7 +11,15 @@ const Drivers = require("../models/Drivers");
  */
 exports.create = async (req, res) => {
   try {
-    const vehicle = await Vehicles.create(req.body);
+    const imageKeys = Object.keys(req.files);
+
+    const data = Object.assign(
+      {},
+      req.body,
+      ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
+    );
+
+    const vehicle = await Vehicles.create(data);
     const { driver } = req.body;
     if (!vehicle) res.status(501).send("No vehicle is created");
     if (vehicle) {
@@ -67,13 +75,20 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const vehicleId = req.params.vehicleId;
-    const updatedVehicle = await Vehicles.findByIdAndUpdate(
-      vehicleId,
+
+    req.body.driver = JSON.parse(req.body.driver);
+
+    const imageKeys = Object.keys(req.files);
+    const data = Object.assign(
+      {},
       req.body,
-      {
-        new: true,
-      }
+      ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
     );
+
+    const updatedVehicle = await Vehicles.findByIdAndUpdate(vehicleId, data, {
+      new: true,
+    });
+
     if (!updatedVehicle) res.status(501).send("No Vehicle is Updated");
     res.json({ success: true, updatedVehicle });
   } catch (err) {
