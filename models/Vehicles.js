@@ -39,7 +39,7 @@ const vehicleSchema = new Schema(
       url: { type: String },
       date: { type: String },
     },
-    registeration_card: String,
+    registration_card: String,
     insurance_certificate: {
       url: { type: String },
       date: { type: String },
