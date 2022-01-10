@@ -28,7 +28,16 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const rides = await Rides.find();
+    const rides = await Rides.find()
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
+      .populate("driver")
+      .populate("vehicle")
+      .populate("trip");
     if (!rides) res.status(404).send("No Rides Found");
     res.json({ success: true, rides });
   } catch (err) {
@@ -46,7 +55,12 @@ exports.getById = async (req, res) => {
   try {
     const rideId = req.params.rideId;
     const ride = await Rides.findById(rideId)
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
@@ -66,7 +80,12 @@ exports.getById = async (req, res) => {
 exports.getByClientId = async (req, res) => {
   try {
     const ride = await Rides.find({ client: req.params.clientId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
@@ -87,7 +106,12 @@ exports.getByClientId = async (req, res) => {
 exports.getClientUpcomingRides = async (req, res) => {
   try {
     const rides = await Rides.find({ client: req.params.clientId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
@@ -110,7 +134,12 @@ exports.getClientUpcomingRides = async (req, res) => {
 exports.getClientPastRides = async (req, res) => {
   try {
     const rides = await Rides.find({ client: req.params.clientId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
@@ -137,10 +166,16 @@ exports.getClientOngoingRides = async (req, res) => {
       client: req.params.clientId,
       status: "ongoing",
     })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
+
     if (!rides) res.status(404).send("No Rides Found");
     res.json({ success: true, rides });
   } catch (err) {
@@ -193,10 +228,16 @@ exports.delete = async (req, res) => {
 exports.getByDriverId = async (req, res) => {
   try {
     const ride = await Rides.find({ driver: req.params.driverId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
+
     if (!ride) res.status(404).send("No Rides Found");
     res.json({ success: true, ride });
   } catch (err) {
@@ -213,7 +254,12 @@ exports.getByDriverId = async (req, res) => {
 exports.getDriverUpcomingRides = async (req, res) => {
   try {
     const rides = await Rides.find({ driver: req.params.driverId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
@@ -236,10 +282,16 @@ exports.getDriverUpcomingRides = async (req, res) => {
 exports.getDriverPastRides = async (req, res) => {
   try {
     const rides = await Rides.find({ driver: req.params.driverId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
+
     var current = moment();
     let pastRides = rides.filter((a) => moment(current).isAfter(a.date));
     if (!rides) res.status(404).send("No rides Found");
@@ -261,7 +313,12 @@ exports.getDriverOngoingRides = async (req, res) => {
       driver: req.params.driverId,
       status: "ongoing",
     })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate("trip");
