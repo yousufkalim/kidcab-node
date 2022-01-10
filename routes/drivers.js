@@ -25,13 +25,12 @@ const uploadImages = upload.fields([
   { name: "id_card_back" },
   { name: "vtc_card_front" },
   { name: "vtc_card_back" },
-  { name: "green_card_front" },
-  { name: "green_card_back" },
   { name: "license_card_front" },
-  { name: "criminalRecord_image" },
+  { name: "license_card_back" },
+  { name: "criminal_record_image" },
   { name: "kbis_image" },
-  { name: "proRC_Certificate_image" },
-  { name: "restrictedInfoStatement_image" },
+  { name: "proRc_image" },
+  { name: "ris_image" },
 ]);
 
 // Create

@@ -48,22 +48,14 @@ const driverSchema = new Schema(
     id_card_back: String,
     vtc_card_front: String,
     vtc_card_back: String,
-    criminal_record: {
-      url: { type: String },
-      date: { type: Date },
-    },
-    restricted_information_statement: {
-      url: { type: String },
-      date: { type: Date },
-    },
-    kbis: {
-      url: { type: String },
-      date: { type: Date },
-    },
-    pro_rc_insurance_certificate: {
-      url: { type: String },
-      date: { type: Date },
-    },
+    criminal_record_image: String,
+    criminal_record_date: Date,
+    ris_image: String,
+    ris_date: Date,
+    kbis_image: String,
+    kbis_date: Date,
+    proRc_image: String,
+    proRc_date: Date,
     license_card_front: String,
     license_card_back: String,
 
