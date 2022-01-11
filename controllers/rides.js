@@ -29,7 +29,12 @@ exports.create = async (req, res) => {
 exports.getAll = async (req, res) => {
   try {
     const rides = await Rides.find()
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate({
@@ -58,7 +63,12 @@ exports.getById = async (req, res) => {
   try {
     const rideId = req.params.rideId;
     const ride = await Rides.findById(rideId)
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate({
@@ -86,7 +96,12 @@ exports.getById = async (req, res) => {
 exports.getByClientId = async (req, res) => {
   try {
     const ride = await Rides.find({ client: req.params.clientId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate({
@@ -115,7 +130,12 @@ exports.getByClientId = async (req, res) => {
 exports.getClientUpcomingRides = async (req, res) => {
   try {
     const rides = await Rides.find({ client: req.params.clientId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate({
@@ -146,7 +166,12 @@ exports.getClientUpcomingRides = async (req, res) => {
 exports.getClientPastRides = async (req, res) => {
   try {
     const rides = await Rides.find({ client: req.params.clientId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate({
@@ -181,7 +206,12 @@ exports.getClientOngoingRides = async (req, res) => {
       client: req.params.clientId,
       status: "ongoing",
     })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate({
@@ -246,7 +276,12 @@ exports.delete = async (req, res) => {
 exports.getByDriverId = async (req, res) => {
   try {
     const ride = await Rides.find({ driver: req.params.driverId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate({
@@ -275,7 +310,12 @@ exports.getByDriverId = async (req, res) => {
 exports.getDriverUpcomingRides = async (req, res) => {
   try {
     const rides = await Rides.find({ driver: req.params.driverId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate({
@@ -306,7 +346,12 @@ exports.getDriverUpcomingRides = async (req, res) => {
 exports.getDriverPastRides = async (req, res) => {
   try {
     const rides = await Rides.find({ driver: req.params.driverId })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate({
@@ -340,7 +385,12 @@ exports.getDriverOngoingRides = async (req, res) => {
       driver: req.params.driverId,
       status: "ongoing",
     })
-      .populate("client")
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("driver")
       .populate("vehicle")
       .populate({
