@@ -70,7 +70,7 @@ exports.getAll = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const driver = await Drivers.findOne({ email: req.body.email });
+    const driver = await Drivers.findOne({ email: req.body.email }).populate("vehicles");
     if (!driver) return res.status(404).send("Driver not found");
 
     const validPassword = bcrypt.compareSync(
@@ -131,7 +131,7 @@ exports.update = async (req, res) => {
 
     const updatedDriver = await Drivers.findByIdAndUpdate(driverId, data, {
       new: true,
-    });
+    }).populate("vehicles")
 
     if (!updatedDriver) return res.status(404).send("Rating can't update");
     res.json({ success: true, updatedDriver });
