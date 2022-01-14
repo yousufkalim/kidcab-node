@@ -112,6 +112,38 @@ exports.accept = async (req, res) => {
 };
 
 /**
+ * Decline trip by driver
+ * @param {object} req
+ * @param {object} res
+ */
+exports.declineByDriver = async (req, res) => {
+  try {
+    let { tripId, driverId } = req.params;
+
+    let declinedTrip = await Trips.findByIdAndUpdate(
+      tripId,
+      {
+        $pull: {
+          invited_drivers: { driver: driverId },
+        },
+      },
+      { new: true }
+    );
+
+    if (!declinedTrip) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Trip already declined" });
+    }
+
+    res.json({ success: true, declinedTrip });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
  * Get all trips
  * @param {object} req
  * @param {object} res
@@ -144,6 +176,44 @@ exports.getAll = async (req, res) => {
 };
 
 /**
+ * Get pending trips by driver id
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getPendingByDriver = async (req, res) => {
+  try {
+    let { driverId } = req.params;
+
+    const trips = await Trips.find({
+      "invited_drivers.driver": driverId,
+      status: "pending",
+    })
+      .populate("client")
+      .populate("rides")
+      .populate({
+        path: "quote",
+        populate: {
+          path: "passengers",
+        },
+      })
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers");
+
+    if (!trips) res.status(404).send("No Trips Found");
+
+    res.json({ success: true, trips });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
  * Get upcoming trips/rides
  * @param {object} req
  * @param {object} res
@@ -151,7 +221,9 @@ exports.getAll = async (req, res) => {
 
 exports.getUpcomingTrips = async (req, res) => {
   try {
-    const trips = await Trips.find({ client: req.params.clientId }).populate("rides");
+    const trips = await Trips.find({ client: req.params.clientId }).populate(
+      "rides"
+    );
     var current = moment();
 
     let upcomingTrips = trips.filter((a) => moment(current).isBefore(a.date));
@@ -170,7 +242,9 @@ exports.getUpcomingTrips = async (req, res) => {
  */
 exports.getPastTrips = async (req, res) => {
   try {
-    const trips = await Trips.find({ client: req.params.clientId }).populate("rides");
+    const trips = await Trips.find({ client: req.params.clientId }).populate(
+      "rides"
+    );
     var current = moment();
 
     let pastTrips = trips.filter((a) => moment(current).isAfter(a.date));

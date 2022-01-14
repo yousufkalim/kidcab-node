@@ -26,6 +26,7 @@ router.post("/", validateTrips, isValidated, trips.create);
 
 // Read
 router.get("/", trips.getAll); // Get all trips at once
+router.get("/getPendingByDriver/:driverId", trips.getPendingByDriver); // Get all trips at once
 router.get("/:tripId", trips.getById); // Get one trip by it's id
 
 // Update ride
@@ -41,6 +42,7 @@ router.get("/upcoming/:clientId", trips.getUpcomingTrips); // Get all upcoming t
 router.get("/past/:clientId", trips.getPastTrips); // Get all past trips
 
 router.get("/:tripId/:driverId", trips.accept);
+router.get("/declineByDriver/:tripId/:driverId", trips.declineByDriver);
 
 // Export
 module.exports = router;
