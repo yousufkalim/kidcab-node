@@ -100,6 +100,7 @@ exports.accept = async (req, res) => {
       trip._id,
       {
         $push: { assigned_drivers: driverId, rides: ride._id },
+        $pull: { invited_drivers: driverId },
       },
       { new: true }
     );
