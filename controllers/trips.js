@@ -5,8 +5,7 @@
 const Trips = require("../models/Trips");
 const Drivers = require("../models/Drivers");
 const Rides = require("../models/Rides");
-const moment = require("moment");
-const { io } = require("../index");
+const moment = require("moment");;
 const { findDistance } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
@@ -23,16 +22,6 @@ exports.create = async (req, res) => {
     req.body.invited_drivers = invited_drivers.map((driver) => ({
       driver: driver,
     }));
-    drivers.map(async (driver) => {
-      io.on("connection", (socket) => {
-        console.log("Connected to sockets", socket.id);
-        socket.emit(`receive_rideRequest${driver.id}`, {
-          message: "You have New Ride ",
-        });
-      });
-      console.log("Notification Passed For", driver.id);
-    });
-
     const result = await findDistance(start_address, end_address);
     req.body.distance = parseFloat(result).toFixed(1);
     console.log("Calculate Distance", req.body.distance);

@@ -12,7 +12,7 @@ const notificationSchema = new Schema(
     user: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Users",
+        ref: "users",
       },
     ],
     expiry_date: Date,
@@ -23,4 +23,4 @@ const notificationSchema = new Schema(
 );
 
 // Model
-module.exports = model("users", clientSchema);
+module.exports = model("notifications", notificationSchema);
