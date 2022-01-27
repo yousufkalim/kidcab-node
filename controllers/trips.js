@@ -6,7 +6,8 @@ const Trips = require("../models/Trips");
 const Drivers = require("../models/Drivers");
 const Rides = require("../models/Rides");
 const moment = require("moment");
-const geoLib = require("geo-lib");
+const { io } = require("../index");
+const { findDistance } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
 /**
@@ -18,25 +19,24 @@ exports.create = async (req, res) => {
   try {
     const { invited_drivers, start_address, end_address } = req.body;
     const drivers = await Drivers.find({ _id: { $in: invited_drivers } });
-
+    console.log(drivers);
     req.body.invited_drivers = invited_drivers.map((driver) => ({
       driver: driver,
     }));
-
-    let result = geoLib.distance({
-      p1: {
-        lat: parseInt(start_address.lat),
-        lon: parseInt(start_address.lng),
-      },
-      p2: {
-        lat: parseInt(end_address.lat),
-        lon: parseInt(end_address.lng),
-      },
+    drivers.map(async (driver) => {
+      io.on("connection", (socket) => {
+        console.log("Connected to sockets", socket.id);
+        socket.emit(`receive_rideRequest${driver.id}`, {
+          message: "You have New Ride ",
+        });
+      });
+      console.log("Notification Passed For", driver.id);
     });
-    req.body.distance = parseFloat(result.distance).toFixed(1);
 
+    const result = await findDistance(start_address, end_address);
+    req.body.distance = parseFloat(result).toFixed(1);
+    console.log("Calculate Distance", req.body.distance);
     const trip = await Trips.create({ ...req.body, rides: [] }); //creating trip
-
     //sending invites to driver
     const sendEmails = drivers.map((driver) => {
       return sendEmail(
@@ -44,7 +44,6 @@ exports.create = async (req, res) => {
         `${BASE_URL}/api/trips/${trip._id}/${driver._id}`
       );
     });
-
     //resolving all promises
     Promise.all(sendEmails)
       .then((response) => {
