@@ -32,5 +32,7 @@ router.put("/:invoiceId", invoices.update); // Update a specific invoice by it's
 // Delete
 router.delete("/:invoiceId", invoices.delete); // delete a specific invoice by it's id
 
+//testing status route
+router.get("/status/:status", invoices.getInvoicesByStatus); // Get all trips by status
 // Export
 module.exports = router;
