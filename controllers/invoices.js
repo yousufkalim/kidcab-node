@@ -60,6 +60,32 @@ exports.getById = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+/**
+ * Get trip by status
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getInvoicesByStatus = async (req, res) => {
+  try {
+    // const tripId = req.params.tripId;
+    const invoices = await Invoices.find({
+      status: req.params.status === "all" ? undefined : req.params.status,
+    })
+      .populate({
+        path: "trip",
+        populate: { path: "client" },
+      })
+      .populate({
+        path: "trip",
+        populate: { path: "quote" },
+      });
+    if (!invoices) res.status(404).send("No invoices Found");
+    res.json({ success: true, invoices });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 
 /**
  * Update invoice

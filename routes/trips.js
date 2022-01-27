@@ -32,6 +32,9 @@ router.get("/:tripId", trips.getById); // Get one trip by it's id
 // Update ride
 router.put("/:tripId", trips.update); // Update a specific trip by it's id
 
+//testing status route
+router.get("/status/:status", trips.getTripsByStatus); // Get all trips by status
+
 // Delete
 router.delete("/:tripId", trips.delete); // delete a specific trip by it's id
 

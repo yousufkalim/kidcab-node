@@ -275,6 +275,40 @@ exports.getById = async (req, res) => {
 };
 
 /**
+ * Get trip by status
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getTripsByStatus = async (req, res) => {
+  try {
+    // const tripId = req.params.tripId;
+    const trips = await Trips.find({
+      status: req.params.status === "all" ? undefined : req.params.status,
+    })
+      .populate("client")
+      .populate({
+        path: "quote",
+        populate: {
+          path: "passengers",
+        },
+      })
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers");
+
+    if (!trips) res.status(404).send("No Trips Found");
+    res.json({ success: true, trips });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
  * Update trip
  * @param {object} req
  * @param {object} res
