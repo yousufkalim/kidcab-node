@@ -9,14 +9,7 @@ const { Schema, model } = require("mongoose");
 const notificationSchema = new Schema(
   {
     title: String,
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "users",
-    },
-    driver: {
-      type: Schema.Types.ObjectId,
-      ref: "drivers",
-    },
+    receiver: String,
     expiry_date: Date,
   },
   {
