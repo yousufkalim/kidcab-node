@@ -5,9 +5,12 @@
 const Trips = require("../models/Trips");
 const Drivers = require("../models/Drivers");
 const Rides = require("../models/Rides");
-const moment = require("moment");;
+const Users = require("../models/Users");
+const Notifications = require("../models/notifications");
+const moment = require("moment");
 const { findDistance } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
+const io = require("../index");
 const { BASE_URL } = process.env;
 /**
  * Create Trip
@@ -17,11 +20,30 @@ const { BASE_URL } = process.env;
 exports.create = async (req, res) => {
   try {
     const { invited_drivers, start_address, end_address } = req.body;
+    const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+    const fifteenDays = new Date(daysCount); //Set date after 15days
     const drivers = await Drivers.find({ _id: { $in: invited_drivers } });
     console.log(drivers);
     req.body.invited_drivers = invited_drivers.map((driver) => ({
       driver: driver,
     }));
+    //This map will send notification to all driver then create notification for each driver
+    drivers.map(async (driver) => {
+      io.emit(`receive_rideRequest${driver.id}`, {
+        message: "You have New Ride ",
+      });
+      const notification = await Notifications.create({
+        title: "You got new ride",
+        expiry_date: fifteenDays,
+        driver: driver.id,
+      });
+      const driverNotification = await Drivers.findByIdAndUpdate(driver.id, {
+        $push: {
+          notifications: notification.id,
+        },
+      });
+    });
+    //Function to findDistance
     const result = await findDistance(start_address, end_address);
     req.body.distance = parseFloat(result).toFixed(1);
     console.log("Calculate Distance", req.body.distance);
@@ -62,7 +84,6 @@ exports.accept = async (req, res) => {
     let driver = await Drivers.findById(driverId);
     const driver_id = driver._id;
     const price = trip.driver_price / trip.required_drivers;
-
     //creating ride when driver accepts invitation
     const ride = await Rides.create({
       price: price,

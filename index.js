@@ -47,7 +47,5 @@ io.on("connection", (socket) => {
     console.log(error.message);
   }
 });
-//cron-job that will run after every 10days to delete all expired notifications from DB
 
-cron.schedule('0 5 */10 * *', () => {
-});
+module.exports = io;
