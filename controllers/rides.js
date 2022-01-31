@@ -3,6 +3,7 @@
  * @author Arooj Ishfaq
  */
 const Rides = require("../models/Rides");
+const Notifications = require("../models/Notifications");
 const moment = require("moment");
 /**
  * Create Ride
@@ -224,8 +225,8 @@ exports.getClientOngoingRides = async (req, res) => {
         },
       });
 
-    if (!rides) res.status(404).send("No Rides Found");
-    res.json({ success: true, rides });
+    if (!rides) return res.status(404).send("No Rides Found");
+    return res.status(202).json({ success: true, rides });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -405,6 +406,45 @@ exports.getDriverOngoingRides = async (req, res) => {
 
     if (!rides) res.status(404).send("No Rides Found");
     res.json({ success: true, rides });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+/**
+ * Complete Rides
+ * @param {object} req
+ * @param {object} res
+ */
+exports.completeRide = async (req, res) => {
+  try {
+    const rideId = req.params.rideId;
+    const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+    const fifteenDays = new Date(daysCount); //Set date after 15days
+    const findRide = await Rides.findById(rideId);
+    if (findRide) {
+      io.emit(`feedback${driver.id}`, {
+        message: "Thank You for the ride",
+      });
+      const notification = await Notifications.create({
+        title: "Thank You for the ride",
+        expiry_date: fifteenDays,
+        receiver: driver.id,
+      });
+      const driverNotification = await Drivers.findByIdAndUpdate(driver.id, {
+        $push: {
+          notifications: notification.id,
+        },
+      });
+      findRide.status = "completed";
+      await findRide.save();
+      return res
+        .status(202)
+        .json({ success: true, message: "Ride Updated Successfully" });
+    } else
+      return res
+        .status(404)
+        .json({ success: false, message: "RideId is not valid" });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });

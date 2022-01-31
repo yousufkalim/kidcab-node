@@ -50,10 +50,6 @@ const clientSchema = new Schema(
         type: String,
       },
     },
-    // cnic: {
-    //   type: Number,
-    //   required: true,
-    // },
     email: {
       type: String,
       required: true,
@@ -74,6 +70,12 @@ const clientSchema = new Schema(
       enum: ["admin", "user"],
       default: "user",
     },
+    notifications:[
+      {
+        type: Schema.Types.ObjectId,
+        ref: "notification",
+      },
+    ]
   },
   {
     timestamps: true,

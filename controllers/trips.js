@@ -5,9 +5,12 @@
 const Trips = require("../models/Trips");
 const Drivers = require("../models/Drivers");
 const Rides = require("../models/Rides");
+const Users = require("../models/Users");
+const Notifications = require("../models/Notifications");
 const moment = require("moment");
-const geoLib = require("geo-lib");
+const { findDistance } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
+const io = require("../index");
 const { BASE_URL } = process.env;
 /**
  * Create Trip
@@ -17,26 +20,34 @@ const { BASE_URL } = process.env;
 exports.create = async (req, res) => {
   try {
     const { invited_drivers, start_address, end_address } = req.body;
+    const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+    const fifteenDays = new Date(daysCount); //Set date after 15days
     const drivers = await Drivers.find({ _id: { $in: invited_drivers } });
-
+    console.log(drivers);
     req.body.invited_drivers = invited_drivers.map((driver) => ({
       driver: driver,
     }));
-
-    let result = geoLib.distance({
-      p1: {
-        lat: parseInt(start_address.lat),
-        lon: parseInt(start_address.lng),
-      },
-      p2: {
-        lat: parseInt(end_address.lat),
-        lon: parseInt(end_address.lng),
-      },
+    //This map will send notification to all driver then create notification for each driver
+    drivers.map(async (driver) => {
+      io.emit(`receive_rideRequest${driver.id}`, {
+        message: "You have New Ride ",
+      });
+      const notification = await Notifications.create({
+        title: "You got new ride",
+        expiry_date: fifteenDays,
+        driver: driver.id,
+      });
+      const driverNotification = await Drivers.findByIdAndUpdate(driver.id, {
+        $push: {
+          notifications: notification.id,
+        },
+      });
     });
-    req.body.distance = parseFloat(result.distance).toFixed(1);
-
+    //Function to findDistance
+    const result = await findDistance(start_address, end_address);
+    req.body.distance = parseFloat(result).toFixed(1);
+    console.log("Calculate Distance", req.body.distance);
     const trip = await Trips.create({ ...req.body, rides: [] }); //creating trip
-
     //sending invites to driver
     const sendEmails = drivers.map((driver) => {
       return sendEmail(
@@ -44,7 +55,6 @@ exports.create = async (req, res) => {
         `${BASE_URL}/api/trips/${trip._id}/${driver._id}`
       );
     });
-
     //resolving all promises
     Promise.all(sendEmails)
       .then((response) => {
@@ -74,7 +84,6 @@ exports.accept = async (req, res) => {
     let driver = await Drivers.findById(driverId);
     const driver_id = driver._id;
     const price = trip.driver_price / trip.required_drivers;
-
     //creating ride when driver accepts invitation
     const ride = await Rides.create({
       price: price,
