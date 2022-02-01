@@ -256,7 +256,7 @@ exports.getPastTrips = async (req, res) => {
       "rides"
     );
     var current = moment();
-
+    
     let pastTrips = trips.filter((a) => moment(current).isAfter(a.date));
     if (!trips) return res.status(404).send("No Trips Found");
     res.json({ success: true, pastTrips });
