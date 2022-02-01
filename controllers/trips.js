@@ -29,7 +29,7 @@ exports.create = async (req, res) => {
     }));
     //This map will send notification to all driver then create notification for each driver
     drivers.map(async (driver) => {
-      io.emit(`receive_rideRequest${driver.id}`, {
+      io.broadcast.emit(`receive_rideRequest${driver.id}`, {
         message: "You have New Ride ",
       });
       const notification = await Notifications.create({
@@ -256,7 +256,7 @@ exports.getPastTrips = async (req, res) => {
       "rides"
     );
     var current = moment();
-    
+
     let pastTrips = trips.filter((a) => moment(current).isAfter(a.date));
     if (!trips) return res.status(404).send("No Trips Found");
     res.json({ success: true, pastTrips });
