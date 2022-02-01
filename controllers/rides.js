@@ -4,6 +4,7 @@
  */
 const Rides = require("../models/Rides");
 const Notifications = require("../models/Notifications");
+const io = require("../index");
 const moment = require("moment");
 /**
  * Create Ride
@@ -423,7 +424,7 @@ exports.completeRide = async (req, res) => {
     const fifteenDays = new Date(daysCount); //Set date after 15days
     const findRide = await Rides.findById(rideId);
     if (findRide) {
-      io.emit(`feedback${driver.id}`, {
+      io.broadcast.emit(`feedback${driver.id}`, {
         message: "Thank You for the ride",
       });
       const notification = await Notifications.create({
