@@ -1,7 +1,7 @@
 const { check, validationResult } = require("express-validator");
 
 exports.validateTrips = [
-  check("date", "Date is Required").notEmpty().trim().isDate(),
+  // check("date", "Date is Required").notEmpty().trim().isDate(),
   check("status", "Status is Required").notEmpty().trim(),
   check("client_price", "Client Price is required")
     .notEmpty()

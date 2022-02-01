@@ -16,46 +16,48 @@ const { BASE_URL } = process.env;
  */
 exports.create = async (req, res) => {
   try {
-    const { invited_drivers, start_address, end_address } = req.body;
-    const drivers = await Drivers.find({ _id: { $in: invited_drivers } });
+    const { invited_drivers, start_address, end_address, dates } = req.body;
+    dates.map(async (date) => {
+      const drivers = await Drivers.find({ _id: { $in: invited_drivers } });
 
-    req.body.invited_drivers = invited_drivers.map((driver) => ({
-      driver: driver,
-    }));
+      req.body.invited_drivers = invited_drivers.map((driver) => ({
+        driver: driver,
+      }));
 
-    let result = geoLib.distance({
-      p1: {
-        lat: parseInt(start_address.lat),
-        lon: parseInt(start_address.lng),
-      },
-      p2: {
-        lat: parseInt(end_address.lat),
-        lon: parseInt(end_address.lng),
-      },
-    });
-    req.body.distance = parseFloat(result.distance).toFixed(1);
-
-    const trip = await Trips.create({ ...req.body, rides: [] }); //creating trip
-
-    //sending invites to driver
-    const sendEmails = drivers.map((driver) => {
-      return sendEmail(
-        driver.email,
-        `${BASE_URL}/api/trips/${trip._id}/${driver._id}`
-      );
-    });
-
-    //resolving all promises
-    Promise.all(sendEmails)
-      .then((response) => {
-        res.json({ success: true, response });
-      })
-      .catch((err) => {
-        console.log("Email Error ----> ", err);
-        res
-          .status(500)
-          .json({ success: false, message: "Internal server error" });
+      let result = geoLib.distance({
+        p1: {
+          lat: parseInt(start_address.lat),
+          lon: parseInt(start_address.lng),
+        },
+        p2: {
+          lat: parseInt(end_address.lat),
+          lon: parseInt(end_address.lng),
+        },
       });
+      req.body.distance = parseFloat(result.distance).toFixed(1);
+
+      const trip = await Trips.create({ ...req.body, rides: [], date }); //creating trip
+
+      //sending invites to driver
+      const sendEmails = drivers.map((driver) => {
+        return sendEmail(
+          driver.email,
+          `${BASE_URL}/api/trips/${trip._id}/${driver._id}`
+        );
+      });
+
+      //resolving all promises
+      Promise.all(sendEmails)
+        .then((response) => {
+          res.json({ success: true, response });
+        })
+        .catch((err) => {
+          console.log("Email Error ----> ", err);
+          res
+            .status(500)
+            .json({ success: false, message: "Internal server error" });
+        });
+    });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
