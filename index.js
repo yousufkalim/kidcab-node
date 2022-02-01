@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
       let findRide = await Rides.findById(data.RideId);
       if (findRide) {
         console.log("Inside If");
-        socket.emit(`receive_coordinates${data.RideId}`, {
+        socket.broadcast.emit(`receive_coordinates${data.RideId}`, {
           coordinates: data.coordinates,
         });
         console.log("coordinates", data.coordinates);
