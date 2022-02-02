@@ -16,7 +16,6 @@ exports.create = async (req, res) => {
   try {
     const ride = await Rides.create(req.body);
     if (!ride) res.status(404).send("No Ride is created");
-
     res.json({ success: true, ride });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -450,6 +449,79 @@ exports.completeRide = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "RideId is not valid" });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Start Ride
+ * @param {object} req
+ * @param {object} res
+ */
+exports.startRide = async (req, res) => {
+  try {
+    const rideId = req.params.rideId;
+    const updateRide = await Rides.findByIdAndUpdate(
+      rideId,
+      { status: "start" },
+      { new: true }
+    );
+    if (updateRide) return res.status(202).json({ success: true, updateRide });
+    else
+      return res
+        .status(404)
+        .json({ success: false, message: "Invalid Ride Id" });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+/**
+ * End Ride
+ * @param {object} req
+ * @param {object} res
+ */
+exports.endRide = async (req, res) => {
+  try {
+    const rideId = req.params.rideId;
+    const updateRide = await Rides.findByIdAndUpdate(
+      rideId,
+      { status: "end" },
+      { new: true }
+    );
+    if (updateRide) return res.status(202).json({ success: true, updateRide });
+    else
+      return res
+        .status(404)
+        .json({ success: false, message: "Invalid Ride Id" });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.getLatestRide = async (req, res) => {
+  try {
+    const driverId = req.params.driverId;
+    const time = new Date();
+    time.setHours(time.getHours() + 1);
+    const findRide = await Rides.find({
+      $and: [
+        { driver: driverId },
+        { date: { $gt: new Date() } },
+        { date: { $lt: time } },
+      ],
+    })
+      .sort({ createdAt: 1 })
+      .limit(1);
+    if (findRide.length > 0)
+      return res.status(202).json({ success: true, findRide });
+    else
+      return res
+        .status(202)
+        .json({ success: false, message: "No latest Ride Available" });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });

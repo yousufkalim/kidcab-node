@@ -16,7 +16,7 @@ const rideSchema = new Schema(
     ],
     status: {
       type: String,
-      enum: ["pending", "ongoing", "cancelled", "completed"],
+      enum: ["pending", "start", "end", "ongoing", "cancelled", "completed"],
       default: "pending",
     },
     price: {
