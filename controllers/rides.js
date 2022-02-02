@@ -3,6 +3,7 @@
  * @author Arooj Ishfaq
  */
 const Rides = require("../models/Rides");
+const Users = require("../models/Users");
 const Notifications = require("../models/Notifications");
 const io = require("../index");
 const moment = require("moment");
@@ -425,7 +426,7 @@ exports.completeRide = async (req, res) => {
     const findRide = await Rides.findById(rideId);
     if (findRide) {
       if (io.socket) {
-        io.socket.emit(`feedback${driver.id}`, {
+        io.socket.emit(`feedback${findRide.driver}`, {
           message: "Thank You for the ride",
         });
       }
@@ -433,13 +434,16 @@ exports.completeRide = async (req, res) => {
       const notification = await Notifications.create({
         title: "Thank You for the ride",
         expiry_date: fifteenDays,
-        receiver: driver.id,
+        receiver: findRide.driver,
       });
-      const driverNotification = await Drivers.findByIdAndUpdate(driver.id, {
-        $push: {
-          notifications: notification.id,
-        },
-      });
+      const driverNotification = await Drivers.findByIdAndUpdate(
+        findRide.driver,
+        {
+          $push: {
+            notifications: notification.id,
+          },
+        }
+      );
       findRide.status = "completed";
       await findRide.save();
       return res
@@ -463,13 +467,32 @@ exports.completeRide = async (req, res) => {
 exports.startRide = async (req, res) => {
   try {
     const rideId = req.params.rideId;
+    const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+    const fifteenDays = new Date(daysCount); //Set date after 15days
     const updateRide = await Rides.findByIdAndUpdate(
       rideId,
       { status: "start" },
       { new: true }
     );
-    if (updateRide) return res.status(202).json({ success: true, updateRide });
-    else
+    if (updateRide) {
+      if (io.socket) {
+        io.socket.emit(`start${updateRide.client}`, {
+          message: "Ride has been Started",
+        });
+      }
+
+      const notification = await Notifications.create({
+        title: "Ride has been Started",
+        expiry_date: fifteenDays,
+        receiver: updateRide.client,
+      });
+      await Users.findByIdAndUpdate(updateRide.client, {
+        $push: {
+          notifications: notification.id,
+        },
+      });
+      return res.status(202).json({ success: true, updateRide });
+    } else
       return res
         .status(404)
         .json({ success: false, message: "Invalid Ride Id" });
@@ -486,13 +509,31 @@ exports.startRide = async (req, res) => {
 exports.endRide = async (req, res) => {
   try {
     const rideId = req.params.rideId;
+    const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+    const fifteenDays = new Date(daysCount); //Set date after 15days
     const updateRide = await Rides.findByIdAndUpdate(
       rideId,
       { status: "end" },
       { new: true }
     );
-    if (updateRide) return res.status(202).json({ success: true, updateRide });
-    else
+    if (updateRide) {
+      if (io.socket) {
+        io.socket.emit(`endRide${updateRide.client}`, {
+          message: "Ride has been Ended",
+        });
+      }
+      const notification = await Notifications.create({
+        title: "Ride has been Ended",
+        expiry_date: fifteenDays,
+        receiver: updateRide.client,
+      });
+      await Users.findByIdAndUpdate(updateRide.client, {
+        $push: {
+          notifications: notification.id,
+        },
+      });
+      return res.status(202).json({ success: true, updateRide });
+    } else
       return res
         .status(404)
         .json({ success: false, message: "Invalid Ride Id" });
