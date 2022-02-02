@@ -9,7 +9,6 @@ const tripSchema = new Schema(
   {
     date: {
       type: Date,
-      required: true,
     },
     status: {
       type: String,
