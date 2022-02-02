@@ -20,47 +20,72 @@ const { BASE_URL } = process.env;
 exports.create = async (req, res) => {
   try {
     const { invited_drivers, start_address, end_address, dates } = req.body;
-    dates.map(async (date) => {
-      const drivers = await Drivers.find({ _id: { $in: invited_drivers } });
+    const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+    const fifteenDays = new Date(daysCount); //Set date after 15days
 
-      req.body.invited_drivers = invited_drivers.map((driver) => ({
-        driver: driver,
-      }));
+    const createTrips = () => {
+      return new Promise((resolve, reject) => {
+        dates.map(async (date, index) => {
+          try {
+            const drivers = await Drivers.find({
+              _id: { $in: invited_drivers },
+            });
 
-      let result = geoLib.distance({
-        p1: {
-          lat: parseInt(start_address.lat),
-          lon: parseInt(start_address.lng),
-        },
-        p2: {
-          lat: parseInt(end_address.lat),
-          lon: parseInt(end_address.lng),
-        },
-      });
-      req.body.distance = parseFloat(result.distance).toFixed(1);
+            req.body.invited_drivers = invited_drivers.map((driver) => ({
+              driver: driver,
+            }));
 
-      const trip = await Trips.create({ ...req.body, rides: [], date }); //creating trip
+            //Function to findDistance
+            const result = await findDistance(start_address, end_address);
 
-      //sending invites to driver
-      const sendEmails = drivers.map((driver) => {
-        return sendEmail(
-          driver.email,
-          `${BASE_URL}/api/trips/${trip._id}/${driver._id}`
-        );
-      });
+            req.body.distance = parseFloat(result).toFixed(1);
+            const trip = await Trips.create({ ...req.body, rides: [], date }); //creating trip
 
-      //resolving all promises
-      Promise.all(sendEmails)
-        .then((response) => {
-          res.json({ success: true, response });
-        })
-        .catch((err) => {
-          console.log("Email Error ----> ", err);
-          res
-            .status(500)
-            .json({ success: false, message: "Internal server error" });
+            //This map will send notification to all driver then create notification for each driver
+            drivers.map(async (driver) => {
+              io.broadcast.emit(`receive_rideRequest${driver.id}`, {
+                message: "You have New Ride ",
+              });
+
+              const notification = await Notifications.create({
+                title: "You got new ride",
+                expiry_date: fifteenDays,
+                driver: driver.id,
+              });
+
+              await Drivers.findByIdAndUpdate(driver.id, {
+                $push: {
+                  notifications: notification.id,
+                },
+              });
+
+              await sendEmail(
+                driver.email,
+                `${BASE_URL}/api/trips/${trip._id}/${driver._id}`
+              );
+            });
+
+            let datesLength = dates.length - 1;
+            if (index === datesLength) {
+              resolve(trip);
+            }
+          } catch (err) {
+            reject(err);
+          }
         });
-    });
+      });
+    };
+
+    //resolving all promises
+    createTrips()
+      .then((response) => {
+        res.json({ success: true, response });
+      })
+      .catch((err) => {
+        res
+          .status(500)
+          .json({ success: false, message: "Internal server error" });
+      });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
