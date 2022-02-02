@@ -6,6 +6,7 @@ require("dotenv").config();
 const app = require("express")();
 const server = require("http").createServer(app);
 const Rides = require("./models/Rides");
+const Trips = require("./controllers/trips");
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
@@ -28,11 +29,13 @@ server.listen(port, () => {
 
 io.on("connection", (socket) => {
   try {
+    console.log("Connected");
+    exports.io = io;
+    exports.socket = socket;
     socket.on("send_coordinates", async (data) => {
       console.log(data.RideId, "RideId");
       let findRide = await Rides.findById(data.RideId);
       if (findRide) {
-        console.log("Inside If");
         socket.broadcast.emit(`receive_coordinates${data.RideId}`, {
           coordinates: data.coordinates,
         });
@@ -47,5 +50,3 @@ io.on("connection", (socket) => {
     console.log(error.message);
   }
 });
-
-module.exports = io;
