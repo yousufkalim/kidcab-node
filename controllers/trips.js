@@ -5,9 +5,12 @@
 const Trips = require("../models/Trips");
 const Drivers = require("../models/Drivers");
 const Rides = require("../models/Rides");
+const Users = require("../models/Users");
+const Notifications = require("../models/Notifications");
 const moment = require("moment");
-const geoLib = require("geo-lib");
+const { findDistance } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
+const io = require("../index");
 const { BASE_URL } = process.env;
 /**
  * Create Trip
@@ -76,7 +79,6 @@ exports.accept = async (req, res) => {
     let driver = await Drivers.findById(driverId);
     const driver_id = driver._id;
     const price = trip.driver_price / trip.required_drivers;
-
     //creating ride when driver accepts invitation
     const ride = await Rides.create({
       price: price,

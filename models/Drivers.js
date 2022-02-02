@@ -79,6 +79,12 @@ const driverSchema = new Schema(
     earnings: {
       type: Number,
     },
+    notifications: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "notification",
+      },
+    ],
   },
   {
     timestamps: true,
