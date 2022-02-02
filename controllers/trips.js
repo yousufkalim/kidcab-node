@@ -10,8 +10,8 @@ const Notifications = require("../models/Notifications");
 const moment = require("moment");
 const { findDistance } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
-const io = require("../index");
 const { BASE_URL } = process.env;
+const io = require("../index");
 /**
  * Create Trip
  * @param {object} req
@@ -22,7 +22,6 @@ exports.create = async (req, res) => {
     const { invited_drivers, start_address, end_address, dates } = req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
-
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
@@ -43,10 +42,11 @@ exports.create = async (req, res) => {
 
             //This map will send notification to all driver then create notification for each driver
             drivers.map(async (driver) => {
-              io.broadcast.emit(`receive_rideRequest${driver.id}`, {
-                message: "You have New Ride ",
-              });
-
+              if (io.socket) {
+                io.socket.emit(`receive_rideRequest${driver.id}`, {
+                  message: "You have New Ride ",
+                });
+              }
               const notification = await Notifications.create({
                 title: "You got new ride",
                 expiry_date: fifteenDays,
@@ -87,7 +87,7 @@ exports.create = async (req, res) => {
           .json({ success: false, message: "Internal server error" });
       });
   } catch (err) {
-    console.log("Error ----> ", err);
+    console.log("Error ----> ", err.message);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
