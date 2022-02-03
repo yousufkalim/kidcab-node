@@ -57,7 +57,9 @@ router.get("/driver/ongoing/:driverId", rides.getDriverOngoingRides);
 //start Ride
 router.put("/startRide/:rideId", rides.startRide);
 //End Ride
-router.put("/endRide/:driverId", rides.endRide);
+router.put("/endRide/:rideId", rides.endRide);
+//complete Ride
+router.put("/completeRide/:rideId", rides.completeRide);
 //get upcoming ride
 router.get("/getLatestRide/:driverId", rides.getLatestRide);
 // Export
