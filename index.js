@@ -33,7 +33,6 @@ io.on("connection", (socket) => {
     exports.io = io;
     exports.socket = socket;
     socket.on("send_coordinates", async (data) => {
-      console.log(data.RideId, "RideId");
       let findRide = await Rides.findById(data.RideId);
       if (findRide) {
         socket.broadcast.emit(`receive_coordinates${data.RideId}`, {

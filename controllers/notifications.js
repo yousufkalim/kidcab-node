@@ -73,11 +73,17 @@ exports.deleteAll = async (req, res) => {
   try {
     const userId = req.params.userId;
     const deletedNotification = await Notifications.deleteMany({
-      user: userId,
+      receiver: userId,
     });
-    if (!deletedNotification)
-      return res.status(404).json("Can't delete Notification");
-    else return res.status(202).json({ success: true, deletedNotification });
+    if (deletedNotification.deletedCount == 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Can’t delete Notification" });
+    } else {
+      return res
+        .status(202)
+        .json({ success: true, message: "All Notifications Deleted" });
+    }
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
