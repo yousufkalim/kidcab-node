@@ -18,6 +18,6 @@ router.get("/getAll/:userId", notifications.getAll); // Get all quotes at once
 router.get("/:notificationId", notifications.getById); // Get one quote by it's id
 // Delete
 router.delete("/:notificationId", notifications.delete); // delete a specific quote by it's id
-router.delete("deleteAll/:userId",notifications.deleteAll)
+router.delete("/deleteAll/:userId",notifications.deleteAll)
 // Export
 module.exports = router;
