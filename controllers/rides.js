@@ -312,7 +312,10 @@ exports.getByDriverId = async (req, res) => {
  */
 exports.getDriverUpcomingRides = async (req, res) => {
   try {
-    const rides = await Rides.find({ driver: req.params.driverId })
+    const rides = await Rides.find({
+      driver: req.params.driverId,
+      status: "pending",
+    })
       .populate({
         path: "client",
         populate: {
@@ -331,10 +334,8 @@ exports.getDriverUpcomingRides = async (req, res) => {
         },
       });
 
-    var current = moment();
-    let upcomingRides = rides.filter((a) => moment(current).isBefore(a.date));
     if (!rides) res.status(404).send("No rides Found");
-    res.json({ success: true, upcomingRides });
+    res.json({ success: true, rides });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -348,7 +349,10 @@ exports.getDriverUpcomingRides = async (req, res) => {
  */
 exports.getDriverPastRides = async (req, res) => {
   try {
-    const rides = await Rides.find({ driver: req.params.driverId })
+    const rides = await Rides.find({
+      driver: req.params.driverId,
+      status: "end",
+    })
       .populate({
         path: "client",
         populate: {
@@ -366,11 +370,8 @@ exports.getDriverPastRides = async (req, res) => {
           },
         },
       });
-
-    var current = moment();
-    let pastRides = rides.filter((a) => moment(current).isAfter(a.date));
     if (!rides) res.status(404).send("No rides Found");
-    res.json({ success: true, pastRides });
+    res.json({ success: true, rides });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -386,7 +387,7 @@ exports.getDriverOngoingRides = async (req, res) => {
   try {
     const rides = await Rides.find({
       driver: req.params.driverId,
-      status: "ongoing",
+      status: "start",
     })
       .populate({
         path: "client",
