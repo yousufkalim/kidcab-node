@@ -132,7 +132,10 @@ exports.getByClientId = async (req, res) => {
  */
 exports.getClientUpcomingRides = async (req, res) => {
   try {
-    const rides = await Rides.find({ client: req.params.clientId })
+    const upcomingRides = await Rides.find({
+      client: req.params.clientId,
+      status: "pending",
+    })
       .populate({
         path: "client",
         populate: {
@@ -151,8 +154,6 @@ exports.getClientUpcomingRides = async (req, res) => {
         },
       });
 
-    var current = moment();
-    let upcomingRides = rides.filter((a) => moment(current).isBefore(a.date));
     if (!rides) res.status(404).send("No rides Found");
     res.json({ success: true, upcomingRides });
   } catch (err) {
@@ -168,7 +169,10 @@ exports.getClientUpcomingRides = async (req, res) => {
  */
 exports.getClientPastRides = async (req, res) => {
   try {
-    const rides = await Rides.find({ client: req.params.clientId })
+    const pastRides = await Rides.find({
+      client: req.params.clientId,
+      status: "end",
+    })
       .populate({
         path: "client",
         populate: {
@@ -187,8 +191,6 @@ exports.getClientPastRides = async (req, res) => {
         },
       });
 
-    var current = moment();
-    let pastRides = rides.filter((a) => moment(current).isAfter(a.date));
     if (!rides) res.status(404).send("No rides Found");
     res.json({ success: true, pastRides });
   } catch (err) {
@@ -207,7 +209,7 @@ exports.getClientOngoingRides = async (req, res) => {
   try {
     const rides = await Rides.find({
       client: req.params.clientId,
-      status: "ongoing",
+      status: "start",
     })
       .populate({
         path: "client",
