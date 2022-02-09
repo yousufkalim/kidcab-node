@@ -154,7 +154,7 @@ exports.getClientUpcomingRides = async (req, res) => {
         },
       });
 
-    if (!rides) res.status(404).send("No rides Found");
+    if (!upcomingRides) res.status(404).send("No rides Found");
     res.json({ success: true, upcomingRides });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -191,7 +191,7 @@ exports.getClientPastRides = async (req, res) => {
         },
       });
 
-    if (!rides) res.status(404).send("No rides Found");
+    if (!pastRides) res.status(404).send("No rides Found");
     res.json({ success: true, pastRides });
   } catch (err) {
     console.log("Error ----> ", err);
