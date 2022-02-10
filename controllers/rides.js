@@ -424,18 +424,19 @@ exports.getDriverOngoingRides = async (req, res) => {
 exports.completeRide = async (req, res) => {
   try {
     const rideId = req.params.rideId;
+    const feedback = req.body.feedback;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
     const findRide = await Rides.findById(rideId);
     if (findRide) {
       if (io.socket) {
         io.socket.emit(`feedback${findRide.driver}`, {
-          message: "Thank You for the ride",
+          message: feedback,
         });
       }
 
       const notification = await Notifications.create({
-        title: "Thank You for the ride",
+        title: feedback,
         expiry_date: fifteenDays,
         receiver: findRide.driver,
       });
@@ -481,6 +482,7 @@ exports.startRide = async (req, res) => {
       if (io.socket) {
         io.socket.emit(`start${updateRide.client}`, {
           message: "Ride has been Started",
+          rideData: updateRide,
         });
       }
 
@@ -523,6 +525,7 @@ exports.endRide = async (req, res) => {
       if (io.socket) {
         io.socket.emit(`endRide${updateRide.client}`, {
           message: "Ride has been Ended",
+          rideData: updateRide,
         });
       }
       const notification = await Notifications.create({
