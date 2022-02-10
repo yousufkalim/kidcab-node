@@ -33,7 +33,7 @@ router.get("/:rideId", rides.getById); // Get one ride by it's id
 // Update
 router.put("/:rideId", rides.update); // Update a specific ride by it's id
 //complete Ride
-router.put("completeRide/:rideId", rides.completeRide); //complete ride by it's id
+router.put("/completeRide/:rideId", rides.completeRide); //complete ride by it's id
 // getridesofclient
 router.get("/client/:clientId", rides.getByClientId); // Get rides of client
 // get client upcoming rides
@@ -58,8 +58,6 @@ router.get("/driver/ongoing/:driverId", rides.getDriverOngoingRides);
 router.put("/startRide/:rideId", rides.startRide);
 //End Ride
 router.put("/endRide/:rideId", rides.endRide);
-//complete Ride
-router.put("/completeRide/:rideId", rides.completeRide);
 //get upcoming ride
 router.get("/getLatestRide/:driverId", rides.getLatestRide);
 // Export
