@@ -4,6 +4,7 @@
  */
 const Rides = require("../models/Rides");
 const Users = require("../models/Users");
+const Drivers = require("../models/Drivers");
 const Notifications = require("../models/Notifications");
 const io = require("../index");
 const moment = require("moment");
@@ -171,7 +172,7 @@ exports.getClientPastRides = async (req, res) => {
   try {
     const pastRides = await Rides.find({
       client: req.params.clientId,
-      status: "end",
+      $or: [{ status: "end" }, { status: "completed" }],
     })
       .populate({
         path: "client",
@@ -353,7 +354,7 @@ exports.getDriverPastRides = async (req, res) => {
   try {
     const rides = await Rides.find({
       driver: req.params.driverId,
-      status: "end",
+      $or: [{ status: "end" }, { status: "completed" }],
     })
       .populate({
         path: "client",
@@ -440,14 +441,11 @@ exports.completeRide = async (req, res) => {
         expiry_date: fifteenDays,
         receiver: findRide.driver,
       });
-      const driverNotification = await Drivers.findByIdAndUpdate(
-        findRide.driver,
-        {
-          $push: {
-            notifications: notification.id,
-          },
-        }
-      );
+      await Drivers.findByIdAndUpdate(findRide.driver, {
+        $push: {
+          notifications: notification.id,
+        },
+      });
       findRide.status = "completed";
       await findRide.save();
       return res
