@@ -70,12 +70,12 @@ const clientSchema = new Schema(
       enum: ["admin", "user"],
       default: "user",
     },
-    notifications:[
+    notifications: [
       {
         type: Schema.Types.ObjectId,
         ref: "notification",
       },
-    ]
+    ],
   },
   {
     timestamps: true,

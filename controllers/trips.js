@@ -50,7 +50,7 @@ exports.create = async (req, res) => {
               const notification = await Notifications.create({
                 title: "You got new ride",
                 expiry_date: fifteenDays,
-                driver: driver.id,
+                receiver: driver.id,
               });
 
               await Drivers.findByIdAndUpdate(driver.id, {
