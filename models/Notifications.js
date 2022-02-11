@@ -11,6 +11,10 @@ const notificationSchema = new Schema(
     title: String,
     receiver: String,
     expiry_date: Date,
+    seen: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
