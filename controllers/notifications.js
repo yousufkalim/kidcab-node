@@ -25,23 +25,6 @@ exports.getAll = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
-/**
- * Get notification by id
- * @param {object} req
- * @param {object} res
- */
-exports.getById = async (req, res) => {
-  try {
-    const notificationId = req.params.notificationId;
-    const notification = await Notifications.findById(notificationId);
-    if (!notification) return res.status(404).send("notification not found");
-    else return res.status(202).json({ success: true, notification });
-  } catch (err) {
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
 /**
  * See Notification
  * @param {object} req
@@ -62,6 +45,24 @@ exports.seen = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+/**
+ * Get notification by id
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getById = async (req, res) => {
+  try {
+    const notificationId = req.params.notificationId;
+    const notification = await Notifications.findById(notificationId);
+    if (!notification) return res.status(404).send("notification not found");
+    else return res.status(202).json({ success: true, notification });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 /**
  * Delete Notification
  * @param {object} req
