@@ -25,6 +25,26 @@ exports.getAll = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+/**
+ * See Notification
+ * @param {object} req
+ * @param {object} res
+ */
+exports.seen = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    await Notifications.updateMany(
+      { receiver: userId, seen: false },
+      { seen: true }
+    );
+    return res
+      .status(202)
+      .json({ success: true, message: "Seen Successfully" });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 
 /**
  * Get notification by id
