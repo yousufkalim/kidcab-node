@@ -6,6 +6,8 @@ const Notifications = require("../models/Notifications");
 const Users = require("../models/Users");
 const cron = require("node-cron");
 const io = require("../index");
+const socket = require("../index");
+const Drivers = require("../models/Drivers");
 /**
  * Get all Notifications
  * @param {object} req
@@ -114,5 +116,39 @@ cron.schedule("0 5 */10 * *", async () => {
   const timeNow = new Date();
   const delNotifications = await Notifications.deleteMany({
     expiry_date: { $lt: timeNow },
+  });
+});
+//cron-job that will run after every 15days to notify drivers regarding
+//"0 7 */15 * *"
+cron.schedule("0 7 */15 * *", async () => {
+  const timeNow = new Date();
+  const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+  const fifteenDays = new Date(daysCount); //Set date after 15days
+  const driver = await Drivers.find({
+    $or: [
+      { criminal_record_date: { $lt: timeNow } },
+      { ris_date: { $lt: timeNow } },
+      { kbis_date: { $lt: timeNow } },
+      { proRc_date: { $lt: timeNow } },
+      { criminal_record_date: { $lt: timeNow } },
+    ],
+  });
+  driver.map(async (item) => {
+    console.log("item", item._id);
+    io.socket.emit(`receive_documentStatus${item.id}`, {
+      message: "Your documents will expire soon please update them ",
+    });
+
+    const notification = await Notifications.create({
+      title: "Your documents will expire soon please update them ",
+      expiry_date: fifteenDays,
+      receiver: item.id,
+    });
+
+    await Drivers.findByIdAndUpdate(item.id, {
+      $push: {
+        notifications: notification.id,
+      },
+    });
   });
 });
