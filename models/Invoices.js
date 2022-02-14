@@ -25,7 +25,7 @@ const invoiceSchema = new Schema(
 
     status: {
       type: String,
-      enum: ["pending", "paid", "late", "cancelled"],
+      enum: ["pending", "paid", "late", "canceled"],
     },
     comments: {
       type: String,
