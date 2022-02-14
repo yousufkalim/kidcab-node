@@ -36,6 +36,7 @@ router.put("/:tripId", trips.update); // Update a specific trip by it's id
 router.get("/status/:status", trips.getTripsByStatus); // Get all trips by status
 
 // Delete
+router.delete("/deleteMany", trips.deleteMany);
 router.delete("/:tripId", trips.delete); // delete a specific trip by it's id
 
 //Upcoming Rides
