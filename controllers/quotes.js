@@ -99,3 +99,20 @@ exports.delete = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+/**
+ * Delete multiple trips
+ * @param {object} req
+ * @param {object} res
+ */
+exports.deleteMany = async (req, res) => {
+  try {
+    const { quotesIds } = req.body;
+    const deletedQuote = await Quotes.deleteMany({ _id: { $in: quotesIds } });
+
+    res.json({ success: true, deletedQuote });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

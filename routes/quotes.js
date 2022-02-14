@@ -30,6 +30,7 @@ router.get("/:quoteId", quotes.getById); // Get one quote by it's id
 router.put("/:quoteId", quotes.update); // Update a specific quote by it's id
 
 // Delete
+router.delete("/deleteMany", quotes.deleteMany);
 router.delete("/:quoteId", quotes.delete); // delete a specific quote by it's id
 
 // Export
