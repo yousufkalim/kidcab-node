@@ -12,6 +12,7 @@ const { findDistance } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
 const io = require("../index");
+const geoLib = require("geo-lib");
 /**
  * Create Trip
  * @param {object} req
