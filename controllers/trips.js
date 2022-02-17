@@ -21,8 +21,13 @@ const geoLib = require("geo-lib");
 exports.create = async (req, res) => {
   try {
     const { invited_drivers, start_address, end_address, dates } = req.body;
+    var hours = req.body.time.split(":"); //split hours and minutes
+    const time = +hours[0] * (60000 * 60) + +hours[1] * 60000; //convert them to ms
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
+    //Function to find Distance
+    const result = await findDistance(start_address, end_address);
+    req.body.distance = parseFloat(result).toFixed(1);
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
@@ -30,17 +35,12 @@ exports.create = async (req, res) => {
             const drivers = await Drivers.find({
               _id: { $in: invited_drivers },
             });
-
+            date = new Date(date); //convert string date to obj
+            date.setTime(time); //assign time to each date
             req.body.invited_drivers = invited_drivers.map((driver) => ({
               driver: driver,
             }));
-
-            //Function to findDistance
-            const result = await findDistance(start_address, end_address);
-
-            req.body.distance = parseFloat(result).toFixed(1);
             const trip = await Trips.create({ ...req.body, rides: [], date }); //creating trip
-
             //This map will send notification to all driver then create notification for each driver
             drivers.map(async (driver) => {
               if (io.socket) {
@@ -59,13 +59,7 @@ exports.create = async (req, res) => {
                   notifications: notification.id,
                 },
               });
-
-              await sendEmail(
-                driver.email,
-                `${BASE_URL}/api/trips/${trip._id}/${driver._id}`
-              );
             });
-
             let datesLength = dates.length - 1;
             if (index === datesLength) {
               resolve(trip);
