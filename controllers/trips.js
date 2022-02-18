@@ -35,12 +35,25 @@ exports.create = async (req, res) => {
             const drivers = await Drivers.find({
               _id: { $in: invited_drivers },
             });
-            date = new Date(date); //convert string date to obj
-            date.setTime(time); //assign time to each date
+            const serverDate = new Date(date);
+            const year = `${serverDate.getFullYear()}`;
+            const month = `${serverDate.getMonth() + 1}`;
+            const day = `${serverDate.getDate()}`;
+            let dateStr = "";
+            dateStr = dateStr + year + "-";
+            dateStr = dateStr + (month.length == 1 ? `0${month}` : month) + "-";
+            dateStr = dateStr + (day.length == 1 ? `0${day}` : day);
+            const dateObj = new Date(dateStr);
+            const mints = time / (60 * 1000);
+            const newDateObj = addMinutes(dateObj, mints);
             req.body.invited_drivers = invited_drivers.map((driver) => ({
               driver: driver,
             }));
-            const trip = await Trips.create({ ...req.body, rides: [], date }); //creating trip
+            const trip = await Trips.create({
+              ...req.body,
+              rides: [],
+              date: newDateObj,
+            }); //creating trip
             //This map will send notification to all driver then create notification for each driver
             drivers.map(async (driver) => {
               if (io.socket) {
@@ -82,7 +95,7 @@ exports.create = async (req, res) => {
           .json({ success: false, message: "Internal server error" });
       });
   } catch (err) {
-    console.log("Error ----> ", err.message);
+    console.trace("Error ----> ", err.message);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
@@ -340,6 +353,21 @@ exports.getTripsByStatus = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const tripId = req.params.tripId;
+    if (req.body.time) {
+      var hours = req.body.time.split(":"); //split hours and minutes
+      const time = +hours[0] * (60000 * 60) + +hours[1] * 60000; //convert them to ms
+      const serverDate = new Date(req.body.date);
+      const year = `${serverDate.getFullYear()}`;
+      const month = `${serverDate.getMonth() + 1}`;
+      const day = `${serverDate.getDate()}`;
+      let dateStr = "";
+      dateStr = dateStr + year + "-";
+      dateStr = dateStr + (month.length == 1 ? `0${month}` : month) + "-";
+      dateStr = dateStr + (day.length == 1 ? `0${day}` : day);
+      const dateObj = new Date(dateStr);
+      const mints = time / (60 * 1000);
+      req.body.date = addMinutes(dateObj, mints);
+    }
     const { start_address, end_address, invited_drivers, assigned_drivers } =
       req.body;
     if (invited_drivers) {
@@ -405,3 +433,8 @@ exports.deleteMany = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+//
+function addMinutes(date, minutes) {
+  return new Date(date.getTime() + minutes * 60000);
+}
