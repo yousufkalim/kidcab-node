@@ -136,11 +136,11 @@ cron.schedule("0 7 */15 * *", async () => {
   driver.map(async (item) => {
     console.log("item", item._id);
     io.socket.emit(`receive_documentStatus${item.id}`, {
-      message: "Your documents will expire soon please update them ",
+      message: "Vos documents expireront bientôt, veuillez les mettre à jour ",
     });
 
     const notification = await Notifications.create({
-      title: "Your documents will expire soon please update them ",
+      title: "Vos documents expireront bientôt, veuillez les mettre à jour ",
       expiry_date: fifteenDays,
       receiver: item.id,
     });

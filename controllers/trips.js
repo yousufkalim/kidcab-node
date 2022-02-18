@@ -45,11 +45,11 @@ exports.create = async (req, res) => {
             drivers.map(async (driver) => {
               if (io.socket) {
                 io.socket.emit(`receive_rideRequest${driver.id}`, {
-                  message: "You have New Ride ",
+                  message: "Vous avez un nouveau trajet ",
                 });
               }
               const notification = await Notifications.create({
-                title: "You got new ride",
+                title: "Vous avez un nouveau trajet",
                 expiry_date: fifteenDays,
                 receiver: driver.id,
               });
