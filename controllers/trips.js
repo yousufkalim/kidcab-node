@@ -27,7 +27,7 @@ exports.create = async (req, res) => {
     const fifteenDays = new Date(daysCount); //Set date after 15days
     //Function to find Distance
     const result = await findDistance(start_address, end_address);
-    req.body.distance = parseFloat(result).toFixed(1);
+    req.body.distance = result ? parseFloat(result).toFixed(1) : 0;
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
@@ -65,6 +65,7 @@ exports.create = async (req, res) => {
               resolve(trip);
             }
           } catch (err) {
+            console.log("Error ---> ", err);
             reject(err);
           }
         });
