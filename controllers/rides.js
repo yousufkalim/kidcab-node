@@ -431,7 +431,7 @@ exports.completeRide = async (req, res) => {
     const findRide = await Rides.findById(rideId);
     if (findRide) {
       if (io.socket) {
-        io.socket.emit(`feedback${findRide.driver}`, {
+        io.emit(`feedback${findRide.driver}`, {
           message: feedback,
         });
       }
@@ -479,13 +479,13 @@ exports.startRide = async (req, res) => {
     if (updateRide) {
       if (io.socket) {
         io.socket.emit(`start${updateRide.client}`, {
-          message: "Ride has been Started",
+          message: "Le trajet a commencé",
           rideData: updateRide,
         });
       }
 
       const notification = await Notifications.create({
-        title: "Ride has been Started",
+        title: "Le trajet a commencé",
         expiry_date: fifteenDays,
         receiver: updateRide.client,
       });
@@ -522,12 +522,12 @@ exports.endRide = async (req, res) => {
     if (updateRide) {
       if (io.socket) {
         io.socket.emit(`endRide${updateRide.client}`, {
-          message: "Ride has been Ended",
+          message: "Le trajet a été terminé",
           rideData: updateRide,
         });
       }
       const notification = await Notifications.create({
-        title: "Ride has been Ended",
+        title: "Le trajet a été terminé",
         expiry_date: fifteenDays,
         receiver: updateRide.client,
       });
