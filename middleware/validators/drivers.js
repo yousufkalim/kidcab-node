@@ -18,6 +18,21 @@ exports.validateDriver = [
     .isLength({ min: 8 }),
 ];
 
+exports.validatePassword = [
+  check("oldPassword", "oldPassword minimum 8 digits are required.")
+    .notEmpty()
+    .trim()
+    .isLength({ min: 8 }),
+  check("newPassword", "newPassword minimum 8 digits are required.")
+    .notEmpty()
+    .trim()
+    .isLength({ min: 8 }),
+  check("confirmPassword", "confirmPassword minimum 8 digits are required.")
+    .notEmpty()
+    .trim()
+    .isLength({ min: 8 }),
+];
+
 /*
   ======================
   Result

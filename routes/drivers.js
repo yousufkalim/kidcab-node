@@ -7,6 +7,7 @@ const drivers = require("../controllers/drivers");
 const { upload } = require("../middleware/multer");
 const {
   validateDriver,
+  validatePassword,
   isValidated,
 } = require("../middleware/validators/drivers");
 
@@ -53,7 +54,12 @@ router.delete("/:driverId", drivers.delete); // delete a specific driver by it's
 router.put("/forgot/:email", drivers.forgot);
 
 //change password
-router.put("/password/:driverId", drivers.changePassword);
+router.put(
+  "/password/:driverId",
+  validatePassword,
+  isValidated,
+  drivers.changePassword
+);
 
 // Export
 module.exports = router;
