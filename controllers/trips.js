@@ -59,12 +59,8 @@ exports.create = async (req, res) => {
               ...req.body,
               rides: [],
               date: newDateObj,
-            }).populate({
-              path: "invited_drivers",
-              populate: {
-                path: "driver",
-              },
-            }); //creating trip
+            });
+            //creating trip
             //This map will send notification to all driver then create notification for each driver
             drivers.map(async (driver) => {
               // if (io.socket) {
@@ -98,6 +94,7 @@ exports.create = async (req, res) => {
               resolve(trip);
             }
           } catch (err) {
+            console.trace("Error ----> ", err.message);
             reject(err);
           }
         });
@@ -110,6 +107,7 @@ exports.create = async (req, res) => {
         res.json({ success: true, response });
       })
       .catch((err) => {
+        console.trace("Error ----> ", err.message);
         res
           .status(500)
           .json({ success: false, message: "Internal server error" });
