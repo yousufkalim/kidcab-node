@@ -12,6 +12,7 @@ const { findDistance } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
 const io = require("../index");
+const fcmservice = require("../utils/fcmService");
 const geoLib = require("geo-lib");
 /**
  * Create Trip
@@ -25,6 +26,11 @@ exports.create = async (req, res) => {
     const time = +hours[0] * (60000 * 60) + +hours[1] * 60000; //convert them to ms
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
+    var pubMsg = {
+      verb: "published",
+      actions: "Vous avez un nouveau trajet ",
+    }; //Message for fcm
+    var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
     //Function to find Distance
     const result = await findDistance(start_address, end_address);
     req.body.distance = parseFloat(result).toFixed(1);
@@ -53,25 +59,39 @@ exports.create = async (req, res) => {
               ...req.body,
               rides: [],
               date: newDateObj,
+            }).populate({
+              path: "invited_drivers",
+              populate: {
+                path: "driver",
+              },
             }); //creating trip
             //This map will send notification to all driver then create notification for each driver
             drivers.map(async (driver) => {
-              if (io.socket) {
-                io.socket.emit(`receive_rideRequest${driver.id}`, {
-                  message: "Vous avez un nouveau trajet ",
+              // if (io.socket) {
+              //   io.socket.emit(`receive_rideRequest${driver.id}`, {
+              //     message: "Vous avez un nouveau trajet ",
+              //   });
+              // }
+              if (driver?.fcmToken) {
+                fcmservice.sendPushMessage(
+                  driver.fcmToken,
+                  "Demande de course",
+                  pushMessage,
+                  pubMsg
+                );
+
+                const notification = await Notifications.create({
+                  title: "Vous avez un nouveau trajet",
+                  expiry_date: fifteenDays,
+                  receiver: driver.id,
+                });
+
+                await Drivers.findByIdAndUpdate(driver.id, {
+                  $push: {
+                    notifications: notification.id,
+                  },
                 });
               }
-              const notification = await Notifications.create({
-                title: "Vous avez un nouveau trajet",
-                expiry_date: fifteenDays,
-                receiver: driver.id,
-              });
-
-              await Drivers.findByIdAndUpdate(driver.id, {
-                $push: {
-                  notifications: notification.id,
-                },
-              });
             });
             let datesLength = dates.length - 1;
             if (index === datesLength) {
@@ -112,6 +132,7 @@ exports.accept = async (req, res) => {
     let driver = await Drivers.findById(driverId);
     const driver_id = driver._id;
     const price = trip.driver_price / trip.required_drivers;
+    console.log(price, "Price");
     //creating ride when driver accepts invitation
     const ride = await Rides.create({
       price: price,
@@ -197,7 +218,6 @@ exports.getAll = async (req, res) => {
           path: "passengers",
         },
       })
-
       .populate({
         path: "invited_drivers",
         populate: {
@@ -302,7 +322,14 @@ exports.getPastTrips = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const tripId = req.params.tripId;
-    const trip = await Trips.findById(tripId).populate("rides");
+    const trip = await Trips.findById(tripId)
+      .populate("rides")
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      });
     if (!trip) res.status(404).send("No Trips Found");
     res.json({ success: true, trip });
   } catch (err) {
