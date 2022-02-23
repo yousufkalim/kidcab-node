@@ -33,7 +33,7 @@ exports.create = async (req, res) => {
     var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
     //Function to find Distance
     const result = await findDistance(start_address, end_address);
-    req.body.distance = parseFloat(result).toFixed(1);
+    req.body.distance = result ? parseFloat(result).toFixed(1) : 0;
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
