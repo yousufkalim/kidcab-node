@@ -112,3 +112,15 @@ exports.delete = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+//get passengers of a specific client
+exports.getPassengerByClient = async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+    const passenger = await Passengers.find({ client: clientId });
+    if (!passenger) return res.status(404).send("No Passengers Found");
+    res.json({ success: true, passenger });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

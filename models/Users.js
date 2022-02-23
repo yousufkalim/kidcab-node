@@ -70,6 +70,7 @@ const clientSchema = new Schema(
       enum: ["admin", "user"],
       default: "user",
     },
+    fcmToken: String,
     notifications: [
       {
         type: Schema.Types.ObjectId,

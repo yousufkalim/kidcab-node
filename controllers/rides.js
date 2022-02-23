@@ -8,6 +8,7 @@ const Drivers = require("../models/Drivers");
 const Notifications = require("../models/Notifications");
 const io = require("../index");
 const moment = require("moment");
+const fcmservice = require("../utils/fcmService");
 
 /**
  * Create Ride
@@ -16,8 +17,9 @@ const moment = require("moment");
  */
 exports.create = async (req, res) => {
   try {
+    console.log(req.body);
     const ride = await Rides.create(req.body);
-    if (!ride) res.status(404).send("No Ride is created");
+    if (!ride) return res.status(404).send("No Ride is created");
     res.json({ success: true, ride });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -430,12 +432,31 @@ exports.completeRide = async (req, res) => {
     const fifteenDays = new Date(daysCount); //Set date after 15days
     const findRide = await Rides.findById(rideId);
     if (findRide) {
-      if (io.socket) {
-        io.emit(`feedback${findRide.driver}`, {
-          message: feedback,
-        });
-      }
+      var pubMsg = {
+        verb: "published",
+        actions: "retour d'information",
+      }; //Message for fcm
+      var pushMessage = feedback; //Notification title fcm
+      const driver = await Drivers.findById(findRide.driver);
+      const client = await Users.findById(findRide.clinet);
+      fcmservice.sendPushMessage(
+        driver.fcmToken,
+        "etour d'information",
+        pushMessage,
+        pubMsg
+      );
+      // fcmservice.sendPushMessage(
+      //   client.fcmToken,
+      //   "le client a été déposé",
+      //   "le client a été déposé",
+      //   "le client a été déposé"
+      // );
 
+      // if (io.socket) {
+      //   io.emit(`feedback${findRide.driver}`, {
+      //     message: feedback,
+      //   });
+      // }
       const notification = await Notifications.create({
         title: feedback,
         expiry_date: fifteenDays,
@@ -471,12 +492,24 @@ exports.startRide = async (req, res) => {
     const rideId = req.params.rideId;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
+    var pubMsg = {
+      verb: "published",
+      actions: "Le trajet a commencé",
+    }; //Message for fcm
+    var pushMessage = "Le trajet a commencé"; //Notification title fcm
     const updateRide = await Rides.findByIdAndUpdate(
       rideId,
       { status: "start" },
       { new: true }
     );
     if (updateRide) {
+      const client = await Users.findById(client.id);
+      fcmservice.sendPushMessage(
+        client.fcmToken,
+        "Le trajet a commencé",
+        pushMessage,
+        pubMsg
+      );
       if (io.socket) {
         io.socket.emit(`start${updateRide.client}`, {
           message: "Le trajet a commencé",
@@ -514,12 +547,24 @@ exports.endRide = async (req, res) => {
     const rideId = req.params.rideId;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
+    var pubMsg = {
+      verb: "published",
+      actions: "Le trajet a été terminé",
+    }; //Message for fcm
+    var pushMessage = "Le trajet a été terminé"; //Notification title fcm
     const updateRide = await Rides.findByIdAndUpdate(
       rideId,
       { status: "end" },
       { new: true }
     );
     if (updateRide) {
+      const client = await Users.findById(updateRide.client);
+      fcmservice.sendPushMessage(
+        client.fcmToken,
+        "Le trajet a été terminé",
+        pushMessage,
+        pubMsg
+      );
       if (io.socket) {
         io.socket.emit(`endRide${updateRide.client}`, {
           message: "Le trajet a été terminé",

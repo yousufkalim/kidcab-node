@@ -7,6 +7,8 @@ const Users = require("../models/Users");
 const cron = require("node-cron");
 const io = require("../index");
 const socket = require("../index");
+const fcmservice = require("../utils/fcmService");
+const Trips = require("../models/Trips");
 const Drivers = require("../models/Drivers");
 /**
  * Get all Notifications
@@ -119,11 +121,17 @@ cron.schedule("0 5 */10 * *", async () => {
   });
 });
 //cron-job that will run after every 15days to notify drivers regarding
-//"0 7 */15 * *"
 cron.schedule("0 7 */15 * *", async () => {
   const timeNow = new Date();
   const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
   const fifteenDays = new Date(daysCount); //Set date after 15days
+  var pubMsg = {
+    verb: "published",
+    actions: "Mise à jour des documents", //Documents Update
+  };
+  //Please update your documents they will be expired soon!
+  var pushMessage =
+    "Veuillez mettre à jour vos documents, ils seront bientôt expirés !";
   const driver = await Drivers.find({
     $or: [
       { criminal_record_date: { $lt: timeNow } },
@@ -134,7 +142,12 @@ cron.schedule("0 7 */15 * *", async () => {
     ],
   });
   driver.map(async (item) => {
-    console.log("item", item._id);
+    fcmservice.sendPushMessage(
+      item.fcmToken,
+      "Mise à jour des documents",
+      pushMessage,
+      pubMsg
+    );
     io.socket.emit(`receive_documentStatus${item.id}`, {
       message: "Vos documents expireront bientôt, veuillez les mettre à jour ",
     });
@@ -151,4 +164,56 @@ cron.schedule("0 7 */15 * *", async () => {
       },
     });
   });
+});
+//cron-job that will run after every  hours  to notify drivers regarding upcomming rides(24 hours)
+cron.schedule("* * * * *", async () => {
+  try {
+    const timeNow = new Date();
+    const count = new Date().getTime() + 86400000; //add 24 hours
+    const Daycount = new Date(count); //one day count
+    const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+    const fifteenDays = new Date(daysCount); //Set date after 15days
+    var pubMsg = {
+      verb: "published",
+      actions: "24 heures restantes pour rouler", //24 hours left for ride
+    };
+    //Please update your documents they will be expired soon!
+    var pushMessage = "24 heures restantes pour rouler!";
+    //find trips of drivers (limit 24 hours)
+    const trips = await Trips.find({
+      $and: [{ date: { $gt: timeNow } }, { date: { $lt: Daycount } }],
+    }).populate({
+      path: "invited_drivers",
+      populate: {
+        path: "driver",
+      },
+    });
+    for (let i = 0; i < trips.length; i++) {
+      trips[i].invited_drivers.map(async (item) => {
+        if (item.driver.fcmToken) {
+          fcmservice.sendPushMessage(
+            item.driver.fcmToken,
+            "Mise à jour des documents",
+            pushMessage,
+            pubMsg
+          );
+          const notification = await Notifications.create({
+            title:
+              "Vos documents expireront bientôt, veuillez les mettre à jour ",
+            expiry_date: fifteenDays,
+            receiver: item.driver.id,
+          });
+          await Drivers.findByIdAndUpdate(item.driver.id, {
+            $push: {
+              notifications: notification.id,
+            },
+          });
+        } else {
+          console.log("Not Found");
+        }
+      });
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
 });

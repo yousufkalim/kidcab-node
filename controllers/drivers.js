@@ -79,7 +79,9 @@ exports.login = async (req, res) => {
       req.body.password,
       driver.password
     );
-
+    console.log(req.body);
+    driver.fcmToken = req.body.fcmToken;
+    await driver.save();
     if (!validPassword) return res.status(401).send("Password is incorrect");
 
     const token = await generateAuthToken(driver);

@@ -13,6 +13,7 @@ const driverSchema = new Schema(
     last_name: { type: String, required: true },
     phone_number: { type: String, required: true },
     email: { type: String, required: true },
+    fcmToken: String,
     password: {
       type: String,
       required: true,
@@ -30,6 +31,7 @@ const driverSchema = new Schema(
       enum: ["individual", "fleet_manager"],
       required: true,
     },
+
     company: {
       company_name: String,
       siret_number: String,

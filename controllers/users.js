@@ -54,6 +54,8 @@ exports.login = async (req, res) => {
     const validPassword = bcrypt.compareSync(req.body.password, user.password);
     if (!validPassword)
       return res.status(401).send("Email or Password is incorrect");
+    user.fcmToken = req.body.fcmToken;
+    await user.save();
     const token = await generateAuthToken(user);
     res.json({ success: true, user, token }); // Success
   } catch (err) {
