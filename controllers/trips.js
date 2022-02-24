@@ -21,9 +21,7 @@ const geoLib = require("geo-lib");
  */
 exports.create = async (req, res) => {
   try {
-    const { invited_drivers, start_address, end_address, dates } = req.body;
-    var hours = req.body.time.split(":"); //split hours and minutes
-    const time = +hours[0] * (60000 * 60) + +hours[1] * 60000; //convert them to ms
+    const { invited_drivers, start_address, end_address, trip_type } = req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
     var pubMsg = {
@@ -34,6 +32,66 @@ exports.create = async (req, res) => {
     //Function to find Distance
     const result = await findDistance(start_address, end_address);
     req.body.distance = parseFloat(result).toFixed(1);
+    let dates = []; //to find date of days
+    //Working according to Trip Type
+    if (trip_type === "recurring") {
+      const s_date = new Date(req.body.startdate); //start date
+      const e_date = new Date(req.body.enddate); //end date
+      let selectedDays = req.body.days; //days selected by user(monday,tuesday)
+      let j = s_date;
+      //setting loop index
+      for (let i = 0; i < selectedDays.length; i++) {
+        //this loop will run for each day
+        for (; j <= e_date; j.setDate(j.getDate() + 1)) {
+          //this loop will work from start to end date and find when date is repeating
+          if (selectedDays[i].value === j.getDay()) {
+            let serverDate = new Date(j); //taking date coming from request
+            var hours = req.body.time[i].split(":"); //split hours and minutes
+            const time = +hours[0] * (60000 * 60) + +hours[1] * 60000; //convert them to ms
+            //formating date
+            const year = `${serverDate.getFullYear()}`;
+            const month = `${serverDate.getMonth() + 1}`;
+            const day = `${serverDate.getDate()}`;
+            let dateStr = "";
+            //covert it to string
+            dateStr = dateStr + year + "-";
+            dateStr = dateStr + (month.length == 1 ? `0${month}` : month) + "-";
+            dateStr = dateStr + (day.length == 1 ? `0${day}` : day);
+            const dateObj = new Date(dateStr);
+            const mints = time / (60 * 1000);
+            //add minutes(time of user ) to date
+            const newDateObj = addMinutes(dateObj, mints);
+            //pushing updated date into date(arr)
+            dates.push(new Date(newDateObj));
+          }
+        }
+        j = new Date(req.body.startdate); //After inner loop break this will reinitalize loop from start date
+      }
+    }
+    //if trip is simple
+    else {
+      var hours = req.body.time.split(":"); //split hours and minutes
+      const time = +hours[0] * (60000 * 60) + +hours[1] * 60000; //convert them to ms
+      req.body.dates.map((date) => {
+        //set each date's format
+        const serverDate = new Date(date);
+        //formating date
+        const year = `${serverDate.getFullYear()}`;
+        const month = `${serverDate.getMonth() + 1}`;
+        const day = `${serverDate.getDate()}`;
+        //covert it to string
+        let dateStr = "";
+        dateStr = dateStr + year + "-";
+        dateStr = dateStr + (month.length == 1 ? `0${month}` : month) + "-";
+        dateStr = dateStr + (day.length == 1 ? `0${day}` : day);
+        const dateObj = new Date(dateStr);
+        const mints = time / (60 * 1000);
+        //add minutes(time of user ) to date
+        const newDateObj = addMinutes(dateObj, mints);
+        //pushing updated date into date(arr)
+        dates.push(new Date(newDateObj));
+      });
+    }
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
@@ -41,33 +99,18 @@ exports.create = async (req, res) => {
             const drivers = await Drivers.find({
               _id: { $in: invited_drivers },
             });
-            const serverDate = new Date(date);
-            const year = `${serverDate.getFullYear()}`;
-            const month = `${serverDate.getMonth() + 1}`;
-            const day = `${serverDate.getDate()}`;
-            let dateStr = "";
-            dateStr = dateStr + year + "-";
-            dateStr = dateStr + (month.length == 1 ? `0${month}` : month) + "-";
-            dateStr = dateStr + (day.length == 1 ? `0${day}` : day);
-            const dateObj = new Date(dateStr);
-            const mints = time / (60 * 1000);
-            const newDateObj = addMinutes(dateObj, mints);
             req.body.invited_drivers = invited_drivers.map((driver) => ({
               driver: driver,
             }));
+            //create trip for each driver with specific date
             const trip = await Trips.create({
               ...req.body,
               rides: [],
-              date: newDateObj,
+              date: date,
             });
             //creating trip
             //This map will send notification to all driver then create notification for each driver
             drivers.map(async (driver) => {
-              // if (io.socket) {
-              //   io.socket.emit(`receive_rideRequest${driver.id}`, {
-              //     message: "Vous avez un nouveau trajet ",
-              //   });
-              // }
               if (driver?.fcmToken) {
                 fcmservice.sendPushMessage(
                   driver.fcmToken,
@@ -75,13 +118,14 @@ exports.create = async (req, res) => {
                   pushMessage,
                   pubMsg
                 );
-
+                //store notification in db
                 const notification = await Notifications.create({
                   title: "Vous avez un nouveau trajet",
                   expiry_date: fifteenDays,
                   receiver: driver.id,
+                  user_picture: driver.profile_pic,
                 });
-
+                //update driver with new notification
                 await Drivers.findByIdAndUpdate(driver.id, {
                   $push: {
                     notifications: notification.id,
@@ -100,7 +144,6 @@ exports.create = async (req, res) => {
         });
       });
     };
-
     //resolving all promises
     createTrips()
       .then((response) => {
@@ -130,7 +173,6 @@ exports.accept = async (req, res) => {
     let driver = await Drivers.findById(driverId);
     const driver_id = driver._id;
     const price = trip.driver_price / trip.required_drivers;
-    console.log(price, "Price");
     //creating ride when driver accepts invitation
     const ride = await Rides.create({
       price: price,
@@ -378,20 +420,22 @@ exports.getTripsByStatus = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const tripId = req.params.tripId;
+    let chk = true; //check to detect invited driver's status
     if (req.body.time) {
       var hours = req.body.time.split(":"); //split hours and minutes
       const time = +hours[0] * (60000 * 60) + +hours[1] * 60000; //convert them to ms
-      const serverDate = new Date(req.body.date);
-      const year = `${serverDate.getFullYear()}`;
-      const month = `${serverDate.getMonth() + 1}`;
-      const day = `${serverDate.getDate()}`;
-      let dateStr = "";
-      dateStr = dateStr + year + "-";
-      dateStr = dateStr + (month.length == 1 ? `0${month}` : month) + "-";
-      dateStr = dateStr + (day.length == 1 ? `0${day}` : day);
-      const dateObj = new Date(dateStr);
-      const mints = time / (60 * 1000);
-      req.body.date = addMinutes(dateObj, mints);
+      const serverDate = new Date(req.body.date); //setting server date
+      // moment(serverDate).format("yyyy-mm-dd");
+      const year = `${serverDate.getFullYear()}`; //get full year
+      const month = `${serverDate.getMonth() + 1}`; //get month (+1 as month starts from 0)
+      const day = `${serverDate.getDate()}`; //get date
+      let dateStr = ""; //create string
+      dateStr = dateStr + year + "-"; //assign year
+      dateStr = dateStr + (month.length == 1 ? `0${month}` : month) + "-"; //asign month
+      dateStr = dateStr + (day.length == 1 ? `0${day}` : day); //assign month
+      const dateObj = new Date(dateStr); //convert date into string again
+      const mints = time / (60 * 1000); //convert time into minutes in order to add into date
+      req.body.date = addMinutes(dateObj, mints); //function will return date with time
     }
     const { start_address, end_address, invited_drivers, assigned_drivers } =
       req.body;
@@ -400,22 +444,27 @@ exports.update = async (req, res) => {
         driver: driver,
       }));
     }
-
-    let result = geoLib.distance({
-      p1: {
-        lat: parseInt(start_address.lat),
-        lon: parseInt(start_address.lng),
-      },
-      p2: {
-        lat: parseInt(end_address.lat),
-        lon: parseInt(end_address.lng),
-      },
+    req.body.invited_drivers.forEach((driver) => {
+      //chk whether trip accepted by all drivers
+      if (driver.status !== "accepted") {
+        //if any of driver did not accept trip then chk will be false
+        chk = false;
+      }
     });
-    req.body.distance = parseFloat(result.distance).toFixed(1);
-
+    if (chk) {
+      // id chk is true, set status to confirmed.
+      req.body.status = "confirmed";
+    }
+    const result = await findDistance(start_address, end_address); //? Calculate distance.
+    req.body.distance = result ? parseFloat(result).toFixed(1) : 0; //asign distance
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
       assigned_drivers: assigned_drivers ? assigned_drivers : null,
+    }).populate({
+      path: "invited_drivers",
+      populate: {
+        path: "driver",
+      },
     });
     if (!updatedTrip) res.status(404).send("No Trip is Updated");
     res.json({ success: true, updatedTrip });
@@ -459,7 +508,7 @@ exports.deleteMany = async (req, res) => {
   }
 };
 
-//
+//add minutes(time) into date
 function addMinutes(date, minutes) {
   return new Date(date.getTime() + minutes * 60000);
 }

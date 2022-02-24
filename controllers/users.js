@@ -50,7 +50,7 @@ exports.login = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email });
     if (!user) return res.status(404).send("Email or Password is incorrect");
-    console.log(user.password);
+    console.log(req.body);
     const validPassword = bcrypt.compareSync(req.body.password, user.password);
     if (!validPassword)
       return res.status(401).send("Email or Password is incorrect");

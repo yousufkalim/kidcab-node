@@ -510,17 +510,18 @@ exports.startRide = async (req, res) => {
         pushMessage,
         pubMsg
       );
-      if (io.socket) {
-        io.socket.emit(`start${updateRide.client}`, {
-          message: "Le trajet a commencé",
-          rideData: updateRide,
-        });
-      }
+      // if (io.socket) {
+      //   io.socket.emit(`start${updateRide.client}`, {
+      //     message: "Le trajet a commencé",
+      //     rideData: updateRide,
+      //   });
+      // }
 
       const notification = await Notifications.create({
         title: "Le trajet a commencé",
         expiry_date: fifteenDays,
         receiver: updateRide.client,
+        user_picture: client.profile_pic,
       });
       await Users.findByIdAndUpdate(updateRide.client, {
         $push: {
@@ -565,12 +566,12 @@ exports.endRide = async (req, res) => {
         pushMessage,
         pubMsg
       );
-      if (io.socket) {
-        io.socket.emit(`endRide${updateRide.client}`, {
-          message: "Le trajet a été terminé",
-          rideData: updateRide,
-        });
-      }
+      // if (io.socket) {
+      //   io.socket.emit(`endRide${updateRide.client}`, {
+      //     message: "Le trajet a été terminé",
+      //     rideData: updateRide,
+      //   });
+      // }
       const notification = await Notifications.create({
         title: "Le trajet a été terminé",
         expiry_date: fifteenDays,

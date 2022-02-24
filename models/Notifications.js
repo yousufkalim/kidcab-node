@@ -11,6 +11,7 @@ const notificationSchema = new Schema(
     title: String,
     receiver: String,
     expiry_date: Date,
+    user_picture: String,
     seen: {
       type: Boolean,
       default: false,

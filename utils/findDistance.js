@@ -11,7 +11,6 @@ exports.findDistance = async (start_address, end_address) => {
     distance.units("imperial");
     var origins = [`${start_address.lat},${start_address.lng}`];
     var destinations = [`${end_address.lat},${end_address.lng}`];
-    console.log(origins, destinations, "Origins");
     return new Promise((resolve, reject) =>
       distance.matrix(origins, destinations, function (err, distances) {
         if (err) {
