@@ -47,49 +47,25 @@ exports.create = async (req, res) => {
           if (selectedDays[i].value === j.getDay()) {
             let serverDate = new Date(j); //taking date coming from request
             var hours = req.body.time[i].split(":"); //split hours and minutes
-            const time = +hours[0] * (60000 * 60) + +hours[1] * 60000; //convert them to ms
-            //formating date
-            const year = `${serverDate.getFullYear()}`;
-            const month = `${serverDate.getMonth() + 1}`;
-            const day = `${serverDate.getDate()}`;
-            let dateStr = "";
-            //covert it to string
-            dateStr = dateStr + year + "-";
-            dateStr = dateStr + (month.length == 1 ? `0${month}` : month) + "-";
-            dateStr = dateStr + (day.length == 1 ? `0${day}` : day);
-            const dateObj = new Date(dateStr);
-            const mints = time / (60 * 1000);
-            //add minutes(time of user ) to date
-            const newDateObj = addMinutes(dateObj, mints);
+            serverDate.setHours(parseInt(hours[0]));
+            serverDate.setMinutes(parseInt(hours[1]));
             //pushing updated date into date(arr)
-            dates.push(new Date(newDateObj));
+            dates.push(new Date(serverDate));
           }
         }
         j = new Date(req.body.startdate); //After inner loop break this will reinitalize loop from start date
       }
     }
-    //if trip is simple
+    //else if trip is simple
     else {
       var hours = req.body.time.split(":"); //split hours and minutes
-      const time = +hours[0] * (60000 * 60) + +hours[1] * 60000; //convert them to ms
       req.body.dates.map((date) => {
         //set each date's format
         const serverDate = new Date(date);
-        //formating date
-        const year = `${serverDate.getFullYear()}`;
-        const month = `${serverDate.getMonth() + 1}`;
-        const day = `${serverDate.getDate()}`;
-        //covert it to string
-        let dateStr = "";
-        dateStr = dateStr + year + "-";
-        dateStr = dateStr + (month.length == 1 ? `0${month}` : month) + "-";
-        dateStr = dateStr + (day.length == 1 ? `0${day}` : day);
-        const dateObj = new Date(dateStr);
-        const mints = time / (60 * 1000);
-        //add minutes(time of user ) to date
-        const newDateObj = addMinutes(dateObj, mints);
+        serverDate.setHours(parseInt(hours[0]));
+        serverDate.setMinutes(parseInt(hours[1]));
         //pushing updated date into date(arr)
-        dates.push(new Date(newDateObj));
+        dates.push(new Date(serverDate));
       });
     }
     const createTrips = () => {
@@ -123,7 +99,6 @@ exports.create = async (req, res) => {
                   title: "Vous avez un nouveau trajet",
                   expiry_date: fifteenDays,
                   receiver: driver.id,
-                  user_picture: driver.profile_pic,
                 });
                 //update driver with new notification
                 await Drivers.findByIdAndUpdate(driver.id, {
@@ -202,6 +177,10 @@ exports.accept = async (req, res) => {
       },
       { new: true }
     );
+    if (updatedTrip.assigned_drivers.length === updatedTrip.required_drivers) {
+      updatedTrip.status = "confirmed";
+      await updatedTrip.save();
+    }
 
     res.json({ success: true, trip: updatedTrip });
   } catch (err) {
@@ -420,22 +399,13 @@ exports.getTripsByStatus = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const tripId = req.params.tripId;
-    let chk = true; //check to detect invited driver's status
     if (req.body.time) {
       var hours = req.body.time.split(":"); //split hours and minutes
-      const time = +hours[0] * (60000 * 60) + +hours[1] * 60000; //convert them to ms
-      const serverDate = new Date(req.body.date); //setting server date
-      // moment(serverDate).format("yyyy-mm-dd");
-      const year = `${serverDate.getFullYear()}`; //get full year
-      const month = `${serverDate.getMonth() + 1}`; //get month (+1 as month starts from 0)
-      const day = `${serverDate.getDate()}`; //get date
-      let dateStr = ""; //create string
-      dateStr = dateStr + year + "-"; //assign year
-      dateStr = dateStr + (month.length == 1 ? `0${month}` : month) + "-"; //asign month
-      dateStr = dateStr + (day.length == 1 ? `0${day}` : day); //assign month
-      const dateObj = new Date(dateStr); //convert date into string again
-      const mints = time / (60 * 1000); //convert time into minutes in order to add into date
-      req.body.date = addMinutes(dateObj, mints); //function will return date with time
+      let serverDate = new Date(req.body.date); //setting server date
+      serverDate.setHours(parseInt(hours[0]));
+      serverDate.setMinutes(parseInt(hours[1]));
+      //pushing updated date into date(arr)
+      req.body.date = new Date(serverDate);
     }
     const { start_address, end_address, invited_drivers, assigned_drivers } =
       req.body;
@@ -444,17 +414,7 @@ exports.update = async (req, res) => {
         driver: driver,
       }));
     }
-    req.body.invited_drivers.forEach((driver) => {
-      //chk whether trip accepted by all drivers
-      if (driver.status !== "accepted") {
-        //if any of driver did not accept trip then chk will be false
-        chk = false;
-      }
-    });
-    if (chk) {
-      // id chk is true, set status to confirmed.
-      req.body.status = "confirmed";
-    }
+    const trip = await Trips.findById(tripId);
     const result = await findDistance(start_address, end_address); //? Calculate distance.
     req.body.distance = result ? parseFloat(result).toFixed(1) : 0; //asign distance
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {

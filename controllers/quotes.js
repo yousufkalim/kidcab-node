@@ -116,3 +116,25 @@ exports.deleteMany = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+/**
+ * Get  Qoute by status
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getQouteByStatus = async (req, res) => {
+  try {
+    console.log(req.params.status, "req.params.status");
+    const quotes = await Quotes.find({
+      status: req.params.status === "all" ? undefined : req.params.status,
+    })
+      .populate("client")
+      .populate("passengers");
+    console.log(quotes, "quotes");
+    if (!quotes) res.status(404).send("Qoutes Not Found");
+    res.json({ success: true, quotes });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
