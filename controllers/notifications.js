@@ -190,7 +190,7 @@ cron.schedule("* * * * *", async () => {
     });
     for (let i = 0; i < trips.length; i++) {
       trips[i].invited_drivers.map(async (item) => {
-        if (item.driver.fcmToken) {
+        if (item.driver?.fcmToken) {
           fcmservice.sendPushMessage(
             item.driver.fcmToken,
             "Mise à jour des documents",

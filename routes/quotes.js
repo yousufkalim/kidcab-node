@@ -28,6 +28,8 @@ router.get("/:quoteId", quotes.getById); // Get one quote by it's id
 
 // Update
 router.put("/:quoteId", quotes.update); // Update a specific quote by it's id
+//get
+router.get("/status/:status", quotes.getQouteByStatus); // Get all qoutes by status
 
 // Delete
 router.delete("/deleteMany", quotes.deleteMany);

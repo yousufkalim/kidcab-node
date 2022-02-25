@@ -7,6 +7,7 @@ const Users = require("../models/Users");
 const Drivers = require("../models/Drivers");
 const Notifications = require("../models/Notifications");
 const io = require("../index");
+const socket = require("../index");
 const moment = require("moment");
 const fcmservice = require("../utils/fcmService");
 
@@ -503,24 +504,25 @@ exports.startRide = async (req, res) => {
       { new: true }
     );
     if (updateRide) {
-      const client = await Users.findById(client.id);
+      const driver = await Drivers.findById(updateRide.driver);
+      const client = await Users.findById(updateRide.client);
       fcmservice.sendPushMessage(
         client.fcmToken,
         "Le trajet a commencé",
         pushMessage,
         pubMsg
       );
-      if (io.socket) {
-        io.socket.emit(`start${updateRide.client}`, {
-          message: "Le trajet a commencé",
-          rideData: updateRide,
-        });
-      }
+
+      io.socket.emit(`start${updateRide.client}`, {
+        message: "Le trajet a commencé",
+        rideData: updateRide,
+      });
 
       const notification = await Notifications.create({
         title: "Le trajet a commencé",
         expiry_date: fifteenDays,
         receiver: updateRide.client,
+        driver_picture: driver.profile_pic,
       });
       await Users.findByIdAndUpdate(updateRide.client, {
         $push: {
@@ -558,6 +560,8 @@ exports.endRide = async (req, res) => {
       { new: true }
     );
     if (updateRide) {
+      const driver = await Drivers.findById(updateRide.driver);
+      console.log(driver.profile_pic, "p");
       const client = await Users.findById(updateRide.client);
       fcmservice.sendPushMessage(
         client.fcmToken,
@@ -565,16 +569,17 @@ exports.endRide = async (req, res) => {
         pushMessage,
         pubMsg
       );
-      if (io.socket) {
-        io.socket.emit(`endRide${updateRide.client}`, {
-          message: "Le trajet a été terminé",
-          rideData: updateRide,
-        });
-      }
+
+      io.socket.emit(`endRide${updateRide.client}`, {
+        message: "Le trajet a été terminé",
+        rideData: updateRide,
+      });
+
       const notification = await Notifications.create({
         title: "Le trajet a été terminé",
         expiry_date: fifteenDays,
         receiver: updateRide.client,
+        driver_picture: driver.profile_pic,
       });
       await Users.findByIdAndUpdate(updateRide.client, {
         $push: {
