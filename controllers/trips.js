@@ -68,6 +68,7 @@ exports.create = async (req, res) => {
         dates.push(new Date(serverDate));
       });
     }
+
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
