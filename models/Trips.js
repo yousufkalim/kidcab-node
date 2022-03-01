@@ -80,7 +80,6 @@ const tripSchema = new Schema(
     quote: {
       type: Schema.Types.ObjectId,
       ref: "Quotes",
-      required: true,
     },
   },
   {

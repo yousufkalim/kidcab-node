@@ -21,6 +21,7 @@ const geoLib = require("geo-lib");
  */
 exports.create = async (req, res) => {
   try {
+    console.log(req.body);
     const { invited_drivers, start_address, end_address, trip_type } = req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
@@ -31,7 +32,7 @@ exports.create = async (req, res) => {
     var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
     //Function to find Distance
     const result = await findDistance(start_address, end_address);
-    req.body.distance = parseFloat(result).toFixed(1);
+    req.body.distance = result ? parseFloat(result).toFixed(1) : 0;
     let dates = []; //to find date of days
     //Working according to Trip Type
     if (trip_type === "recurring") {
@@ -340,7 +341,6 @@ exports.getPastTrips = async (req, res) => {
  */
 exports.getById = async (req, res) => {
   try {
-    const tripId = req.params.tripId;
     const trip = await Trips.findById(tripId)
       .populate("rides")
       .populate({
@@ -364,7 +364,7 @@ exports.getById = async (req, res) => {
  */
 exports.getTripsByStatus = async (req, res) => {
   try {
-    // const tripId = req.params.tripId;
+    console.log(req.params, "filter");
     const trips = await Trips.find({
       status: req.params.status === "all" ? undefined : req.params.status,
     })
@@ -467,8 +467,3 @@ exports.deleteMany = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
-//add minutes(time) into date
-function addMinutes(date, minutes) {
-  return new Date(date.getTime() + minutes * 60000);
-}
