@@ -341,6 +341,7 @@ exports.getPastTrips = async (req, res) => {
  */
 exports.getById = async (req, res) => {
   try {
+    const tripId = req.params.tripId;
     const trip = await Trips.findById(tripId)
       .populate("rides")
       .populate({
