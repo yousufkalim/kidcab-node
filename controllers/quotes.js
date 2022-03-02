@@ -124,17 +124,39 @@ exports.deleteMany = async (req, res) => {
  */
 exports.getQouteByStatus = async (req, res) => {
   try {
-    console.log(req.params.status, "req.params.status");
     const quotes = await Quotes.find({
       status: req.params.status === "all" ? undefined : req.params.status,
     })
       .populate("client")
       .populate("passengers");
-    console.log(quotes, "quotes");
     if (!quotes) res.status(404).send("Qoutes Not Found");
     res.json({ success: true, quotes });
   } catch (err) {
     console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get QuotesByDate By Date
+ * @param {object} req
+ * @param {object} res
+ */
+exports.QuotesByDate = async (req, res) => {
+  try {
+    const { start_date, end_date } = req.body;
+    console.log(req.body);
+    const qoutes = await Quotes.find({
+      $and: [
+        { "trip_info.start_date": { $gte: new Date(start_date) } },
+        { "trip_info.end_date": { $lte: new Date(end_date) } },
+      ],
+    })
+      .populate("client")
+      .populate("passengers");
+    if (qoutes) return res.status(200).json({ success: true, qoutes });
+  } catch (err) {
+    console.log(err.message);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

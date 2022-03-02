@@ -365,7 +365,6 @@ exports.getById = async (req, res) => {
  */
 exports.getTripsByStatus = async (req, res) => {
   try {
-    console.log(req.params, "filter");
     const trips = await Trips.find({
       status: req.params.status === "all" ? undefined : req.params.status,
     })
@@ -465,6 +464,39 @@ exports.deleteMany = async (req, res) => {
     res.json({ success: true, deletedTrip });
   } catch (err) {
     console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+/**
+ * Get Trips By Date
+ * @param {object} req
+ * @param {object} res
+ */
+exports.TripsByDate = async (req, res) => {
+  try {
+    const { start_date, end_date } = req.body;
+    const trips = await Trips.find({
+      $and: [
+        { date: { $gte: new Date(start_date) } },
+        { date: { $lte: new Date(end_date) } },
+      ],
+    })
+      .populate("client")
+      .populate({
+        path: "quote",
+        populate: {
+          path: "passengers",
+        },
+      })
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers");
+    if (trips) return res.status(200).json({ success: true, trips });
+  } catch (err) {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
