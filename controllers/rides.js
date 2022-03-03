@@ -446,18 +446,18 @@ exports.completeRide = async (req, res) => {
         pushMessage,
         pubMsg
       );
-      // fcmservice.sendPushMessage(
-      //   client.fcmToken,
-      //   "le client a été déposé",
-      //   "le client a été déposé",
-      //   "le client a été déposé"
-      // );
+      fcmservice.sendPushMessage(
+        client.fcmToken,
+        "le client a été déposé",
+        "le client a été déposé",
+        "le client a été déposé"
+      );
 
-      // if (io.socket) {
-      //   io.emit(`feedback${findRide.driver}`, {
-      //     message: feedback,
-      //   });
-      // }
+      if (io.socket) {
+        io.emit(`feedback${findRide.driver}`, {
+          message: feedback,
+        });
+      }
       const notification = await Notifications.create({
         title: feedback,
         expiry_date: fifteenDays,
@@ -512,11 +512,12 @@ exports.startRide = async (req, res) => {
         pushMessage,
         pubMsg
       );
-
-      io.socket.emit(`start${updateRide.client}`, {
-        message: "Le trajet a commencé",
-        rideData: updateRide,
-      });
+      if (io.socket) {
+        io.socket.emit(`start${updateRide.client}`, {
+          message: "Le trajet a commencé",
+          rideData: updateRide,
+        });
+      }
 
       const notification = await Notifications.create({
         title: "Le trajet a commencé",
@@ -569,12 +570,12 @@ exports.endRide = async (req, res) => {
         pushMessage,
         pubMsg
       );
-
-      io.socket.emit(`endRide${updateRide.client}`, {
-        message: "Le trajet a été terminé",
-        rideData: updateRide,
-      });
-
+      if (io.socket) {
+        io.socket.emit(`endRide${updateRide.client}`, {
+          message: "Le trajet a été terminé",
+          rideData: updateRide,
+        });
+      }
       const notification = await Notifications.create({
         title: "Le trajet a été terminé",
         expiry_date: fifteenDays,

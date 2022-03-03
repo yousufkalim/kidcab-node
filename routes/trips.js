@@ -47,6 +47,7 @@ router.get("/past/:clientId", trips.getPastTrips); // Get all past trips
 
 router.get("/:tripId/:driverId", trips.accept);
 router.get("/declineByDriver/:tripId/:driverId", trips.declineByDriver);
-
+//filter
+router.post("/tripsByDate/", trips.TripsByDate);
 // Export
 module.exports = router;

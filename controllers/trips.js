@@ -31,7 +31,7 @@ exports.create = async (req, res) => {
     var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
     //Function to find Distance
     const result = await findDistance(start_address, end_address);
-    req.body.distance = parseFloat(result).toFixed(1);
+    req.body.distance = result ? parseFloat(result).toFixed(1) : 0;
     let dates = []; //to find date of days
     //Working according to Trip Type
     if (trip_type === "recurring") {
@@ -365,7 +365,6 @@ exports.getById = async (req, res) => {
  */
 exports.getTripsByStatus = async (req, res) => {
   try {
-    // const tripId = req.params.tripId;
     const trips = await Trips.find({
       status: req.params.status === "all" ? undefined : req.params.status,
     })
@@ -468,8 +467,36 @@ exports.deleteMany = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
-//add minutes(time) into date
-function addMinutes(date, minutes) {
-  return new Date(date.getTime() + minutes * 60000);
-}
+/**
+ * Get Trips By Date
+ * @param {object} req
+ * @param {object} res
+ */
+exports.TripsByDate = async (req, res) => {
+  try {
+    const { start_date, end_date } = req.body;
+    const trips = await Trips.find({
+      $and: [
+        { date: { $gte: new Date(start_date) } },
+        { date: { $lte: new Date(end_date) } },
+      ],
+    })
+      .populate("client")
+      .populate({
+        path: "quote",
+        populate: {
+          path: "passengers",
+        },
+      })
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers");
+    if (trips) return res.status(200).json({ success: true, trips });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
