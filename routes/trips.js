@@ -49,5 +49,11 @@ router.get("/:tripId/:driverId", trips.accept);
 router.get("/declineByDriver/:tripId/:driverId", trips.declineByDriver);
 //filter
 router.post("/tripsByDate/", trips.TripsByDate);
+//day report
+router.post("/getDayReport/", trips.getDayReport);
+//addStop
+router.post("/addstop/:tripId", trips.addStop);
+//remainingDistance
+router.post("/remainingDistance/:tripId", trips.remainingDistance);
 // Export
 module.exports = router;

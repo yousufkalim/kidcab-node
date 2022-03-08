@@ -500,3 +500,78 @@ exports.TripsByDate = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+//Day Report
+exports.getDayReport = async (req, res) => {
+  try {
+    const today = new Date();
+    const lastweek = new Date().getTime() - 604800000;
+    const reports = await Trips.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: new Date(lastweek),
+            $lte: today,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$date" },
+          },
+          driver_price: { $sum: "$driver_price" },
+          turnover: { $sum: 1 },
+        },
+      },
+    ]);
+    return res.status(200).json({ success: true, reports });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+//Add stop to trip
+exports.addStop = async (req, res) => {
+  try {
+    const tripId = req.params.tripId;
+    console.log(tripId, "Trip");
+    const trip = await Trips.findById(tripId);
+    if (!trip) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not Found" });
+    }
+    const { addresses } = req.body;
+    const result = await findDistance(trip.start_address, addresses);
+    const Stopdistance = result ? parseFloat(result).toFixed(1) : 0;
+    req.body.distance = +Stopdistance + parseInt(trip.distance);
+    trip.distance = req.body.distance;
+    trip.addresses = addresses;
+    trip.save();
+    return res.json({ success: true, totalDistance: trip.distance });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+//Find remaining distance
+exports.remainingDistance = async (req, res) => {
+  try {
+    const tripId = req.params.tripId;
+    const trip = await Trips.findById(tripId);
+    if (!trip) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not Found" });
+    }
+    const { address } = req.body;
+    const result = await findDistance(trip.end_address, address);
+    const remainingDistance = parseInt(trip.distance) - parseInt(result);
+    return res.json({ success: true, remainingDistance: remainingDistance });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
