@@ -8,12 +8,11 @@ const Rides = require("../models/Rides");
 const Users = require("../models/Users");
 const Notifications = require("../models/Notifications");
 const moment = require("moment");
-const { findDistance } = require("../utils/findDistance");
+const { findDistance, findDistance1 } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
 const io = require("../index");
 const fcmservice = require("../utils/fcmService");
-const geoLib = require("geo-lib");
 /**
  * Create Trip
  * @param {object} req
@@ -21,7 +20,13 @@ const geoLib = require("geo-lib");
  */
 exports.create = async (req, res) => {
   try {
-    const { invited_drivers, start_address, end_address, trip_type } = req.body;
+    const {
+      invited_drivers,
+      start_address,
+      addresses,
+      end_address,
+      trip_type,
+    } = req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
     var pubMsg = {
@@ -29,9 +34,18 @@ exports.create = async (req, res) => {
       actions: "Vous avez un nouveau trajet ",
     }; //Message for fcm
     var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
-    //Function to find Distance
-    const result = await findDistance(start_address, end_address);
-    req.body.distance = result ? parseFloat(result).toFixed(1) : 0;
+    //if stetp not added by admin
+    if (Object.values(addresses).length < 1) {
+      const result = await findDistance(start_address, end_address);
+      req.body.distance = result.distance ? result.distance : 0;
+      req.body.average_time = result.time ? result.time : "00:00";
+    } else {
+      //if stetp  added by admin
+      const result = await findDistance1(start_address, addresses, end_address);
+      req.body.distance = result.distance ? result.distance : 0;
+      req.body.average_time = result.time ? result.time : "00:00";
+    }
+
     let dates = []; //to find date of days
     //Working according to Trip Type
     if (trip_type === "recurring") {
@@ -232,12 +246,7 @@ exports.getAll = async (req, res) => {
     const trips = await Trips.find()
       .populate("client")
       .populate("rides")
-      .populate({
-        path: "quote",
-        populate: {
-          path: "passengers",
-        },
-      })
+      .populate("passengers")
       .populate({
         path: "invited_drivers",
         populate: {
@@ -268,12 +277,7 @@ exports.getPendingByDriver = async (req, res) => {
     })
       .populate("client")
       .populate("rides")
-      .populate({
-        path: "quote",
-        populate: {
-          path: "passengers",
-        },
-      })
+      .populate("passengers")
       .populate({
         path: "invited_drivers",
         populate: {
@@ -369,12 +373,7 @@ exports.getTripsByStatus = async (req, res) => {
       status: req.params.status === "all" ? undefined : req.params.status,
     })
       .populate("client")
-      .populate({
-        path: "quote",
-        populate: {
-          path: "passengers",
-        },
-      })
+      .populate("passengers")
       .populate({
         path: "invited_drivers",
         populate: {
@@ -407,16 +406,30 @@ exports.update = async (req, res) => {
       //pushing updated date into date(arr)
       req.body.date = new Date(serverDate);
     }
-    const { start_address, end_address, invited_drivers, assigned_drivers } =
-      req.body;
+    const {
+      start_address,
+      end_address,
+      addresses,
+      invited_drivers,
+      assigned_drivers,
+    } = req.body;
     if (invited_drivers) {
       req.body.invited_drivers = invited_drivers.map((driver) => ({
         driver: driver,
       }));
     }
     const trip = await Trips.findById(tripId);
-    const result = await findDistance(start_address, end_address); //? Calculate distance.
-    req.body.distance = result ? parseFloat(result).toFixed(1) : 0; //asign distance
+    //if stetp not added by admin
+    if (Object.values(addresses).length < 1) {
+      const result = await findDistance(start_address, end_address);
+      req.body.distance = result.distance ? result.distance : 0;
+      req.body.average_time = result.time ? result.time : "00:00";
+    } else {
+      //if stetp  added by admin
+      const result = await findDistance1(start_address, addresses, end_address);
+      req.body.distance = result.distance ? result.distance : 0;
+      req.body.average_time = result.time ? result.time : "00:00";
+    }
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
       assigned_drivers: assigned_drivers ? assigned_drivers : null,
@@ -482,12 +495,7 @@ exports.TripsByDate = async (req, res) => {
       ],
     })
       .populate("client")
-      .populate({
-        path: "quote",
-        populate: {
-          path: "passengers",
-        },
-      })
+      .populate("passengers")
       .populate({
         path: "invited_drivers",
         populate: {
@@ -569,6 +577,7 @@ exports.remainingDistance = async (req, res) => {
     const { address } = req.body;
     const result = await findDistance(trip.end_address, address);
     const remainingDistance = parseInt(trip.distance) - parseInt(result);
+    return console.log(trip.average_time, "time");
     return res.json({ success: true, remainingDistance: remainingDistance });
   } catch (err) {
     console.log("Error ----> ", err);

@@ -10,6 +10,7 @@ const tripSchema = new Schema(
     date: {
       type: Date,
     },
+    average_time: String,
     status: {
       type: String,
       required: true,
@@ -75,10 +76,12 @@ const tripSchema = new Schema(
       ref: "users",
       required: true,
     },
-    quote: {
-      type: Schema.Types.ObjectId,
-      ref: "Quotes",
-    },
+    passengers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "passengers",
+      },
+    ],
   },
   {
     timestamps: true,
