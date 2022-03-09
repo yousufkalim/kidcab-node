@@ -60,5 +60,7 @@ router.put("/startRide/:rideId", rides.startRide);
 router.put("/endRide/:rideId", rides.endRide);
 //get upcoming ride
 router.get("/getLatestRide/:driverId", rides.getLatestRide);
+//add stop
+
 // Export
 module.exports = router;

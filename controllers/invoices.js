@@ -61,7 +61,7 @@ exports.getById = async (req, res) => {
   }
 };
 /**
- * Get trip by status
+ * Get Invoice by status
  * @param {object} req
  * @param {object} res
  */
@@ -140,6 +140,22 @@ exports.deleteMany = async (req, res) => {
     });
 
     res.json({ success: true, deletedInvoice });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get Invoice by overdue
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getLateInvoices = async (req, res) => {
+  try {
+    const invoices = await Invoices.find({ status: "late" }).count();
+    if (invoices < 1) return res.status(404).json("No invoices Found");
+    else return res.json({ success: true, invoices: invoices });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });

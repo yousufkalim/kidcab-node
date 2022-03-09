@@ -35,5 +35,9 @@ router.delete("/:invoiceId", invoices.delete); // delete a specific invoice by i
 
 //testing status route
 router.get("/status/:status", invoices.getInvoicesByStatus); // Get all trips by status
+
+//get Late Invoices
+router.post("/getLateInvoices/", invoices.getLateInvoices); // Get all trips by status
+
 // Export
 module.exports = router;
