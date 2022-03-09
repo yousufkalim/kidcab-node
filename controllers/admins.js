@@ -144,7 +144,16 @@ exports.getById = async (req, res) => {
  */
 exports.update = async (req, res) => {
   try {
+    console.log("Body ---> ", req.body);
     const adminId = req.params.adminId; // Getting admin id from URL parameter
+    const { address } = req.body;
+    const { name } = req.body;
+    req.body.name = JSON.parse(name);
+
+    if (req.file) {
+      req.body.logo = req.file.path;
+    }
+
     const admin = await Admin.findByIdAndUpdate(adminId, req.body, {
       new: true,
     }); // Updating the user
@@ -165,6 +174,7 @@ exports.delete = async (req, res) => {
   try {
     const adminId = req.params.adminId; // Getting admin id from URL parameter
     const admin = await Admin.findByIdAndDelete(adminId); // Deleting the admin
+
     res.json({ success: true, admin }); // Success
   } catch (err) {
     // Error handling

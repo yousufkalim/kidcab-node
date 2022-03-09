@@ -5,8 +5,8 @@
 const { check, validationResult } = require("express-validator");
 
 exports.validateAdmin = [
-  check("first_name", "Name is required.").notEmpty().trim(),
-  check("last_name", "Name is required.").notEmpty().trim(),
+  // check("first_name", "Name is required.").notEmpty().trim(),
+  // check("last_name", "Name is required.").notEmpty().trim(),
 
   check("email", "Email is required.").notEmpty().isEmail().trim(),
   check("password", "Password is required.")
