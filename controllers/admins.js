@@ -56,11 +56,16 @@ exports.create = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const admin = await Admin.findOne({ email: req.body.email });
-    if (!admin) return res.status(404).send("Email or Password is incorrect");
-    
+    if (!admin)
+      return res
+        .status(404)
+        .send({ success: false, message: "User not found" });
+
     const validPassword = bcrypt.compareSync(req.body.password, admin.password);
     if (!validPassword)
-      return res.status(400).send("Email or Password is incorrect");
+      return res
+        .status(400)
+        .send({ success: false, message: "Email or Password is incorrect" });
     const token = await generateAuthToken(admin);
     res.json({ success: true, admin, token }); // Success
   } catch (err) {
