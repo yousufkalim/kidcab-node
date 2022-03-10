@@ -37,12 +37,12 @@ exports.create = async (req, res) => {
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
-      req.body.distance = result.distance ? result.distance : 0;
+      req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
       req.body.average_time = result.time ? result.time : "00:00";
     } else {
       //if stetp  added by admin
       const result = await findDistance1(start_address, addresses, end_address);
-      req.body.distance = result.distance ? result.distance : 0;
+      req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
       req.body.average_time = result.time ? result.time : "00:00";
     }
 
@@ -422,13 +422,13 @@ exports.update = async (req, res) => {
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
-      req.body.distance = result.distance ? result.distance : 0;
-      req.body.average_time = result.time ? result.time : "00:00";
+      req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
+      req.body.average_time = result.time ? result.time : 0;
     } else {
       //if stetp  added by admin
       const result = await findDistance1(start_address, addresses, end_address);
-      req.body.distance = result.distance ? result.distance : 0;
-      req.body.average_time = result.time ? result.time : "00:00";
+      req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
+      req.body.average_time = result.time ? result.time : 0;
     }
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
@@ -527,6 +527,7 @@ exports.getDayReport = async (req, res) => {
           _id: {
             $dateToString: { format: "%Y-%m-%d", date: "$date" },
           },
+
           driver_price: { $sum: "$driver_price" },
           turnover: { $sum: 1 },
         },
@@ -543,7 +544,6 @@ exports.getDayReport = async (req, res) => {
 exports.addStop = async (req, res) => {
   try {
     const tripId = req.params.tripId;
-    console.log(tripId, "Trip");
     const trip = await Trips.findById(tripId);
     if (!trip) {
       return res
@@ -551,13 +551,16 @@ exports.addStop = async (req, res) => {
         .json({ success: false, message: "Trip not Found" });
     }
     const { addresses } = req.body;
-    const result = await findDistance(trip.start_address, addresses);
-    const Stopdistance = result ? parseFloat(result).toFixed(1) : 0;
-    req.body.distance = +Stopdistance + parseInt(trip.distance);
-    trip.distance = req.body.distance;
+    const result = await findDistance1(
+      trip.start_address,
+      addresses,
+      trip.end_address
+    );
+    trip.distance = result.distance ? result.distance.toFixed(1) : 0;
+    trip.average_time = result.time ? result.time : 0;
     trip.addresses = addresses;
-    trip.save();
-    return res.json({ success: true, totalDistance: trip.distance });
+    await trip.save();
+    return res.json({ success: true, trip });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -576,9 +579,19 @@ exports.remainingDistance = async (req, res) => {
     }
     const { address } = req.body;
     const result = await findDistance(trip.end_address, address);
-    const remainingDistance = parseInt(trip.distance) - parseInt(result);
-    return console.log(trip.average_time, "time");
-    return res.json({ success: true, remainingDistance: remainingDistance });
+    const remainingDistance =
+      parseInt(trip.distance) > parseInt(result.distance)
+        ? parseInt(trip.distance) - parseInt(result.distance)
+        : parseInt(result.distance) - parseInt(trip.distance);
+    const remainingTime =
+      parseInt(trip.average_time) > parseInt(result.time)
+        ? parseInt(trip.average_time) - parseInt(result.time)
+        : parseInt(result.time) - parseInt(trip.average_time);
+    return res.json({
+      success: true,
+      remainingDistance: remainingDistance,
+      remainingTime: remainingTime,
+    });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });

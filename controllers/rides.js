@@ -432,6 +432,7 @@ exports.completeRide = async (req, res) => {
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
     const findRide = await Rides.findById(rideId);
+    const findTrip = await Trips.findOne({ rides: rideId });
     if (findRide) {
       var pubMsg = {
         verb: "published",
@@ -454,7 +455,7 @@ exports.completeRide = async (req, res) => {
       );
 
       if (io.socket) {
-        io.emit(`feedback${findRide.driver}`, {
+        io.socket.emit(`feedback${findRide.driver}`, {
           message: feedback,
         });
       }
@@ -469,7 +470,9 @@ exports.completeRide = async (req, res) => {
         },
       });
       findRide.status = "completed";
+      findTrip.status = "completed";
       await findRide.save();
+      await findTrip.save();
       return res
         .status(202)
         .json({ success: true, message: "Ride Updated Successfully" });

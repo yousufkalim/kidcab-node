@@ -7,7 +7,6 @@ const API_KEY = process.env.GOOGLE_API_KEY;
 exports.findDistance1 = async (start_address, step_address, end_address) => {
   try {
     let result = {};
-    console.log("step");
     let Distance = 0;
     let time = 0;
     distance.key(API_KEY);
@@ -34,7 +33,8 @@ exports.findDistance1 = async (start_address, step_address, end_address) => {
               if (distances.rows[0].elements[j].status == "OK") {
                 Distance =
                   Distance +
-                  parseInt(distances.rows[i].elements[j].distance.text);
+                  parseInt(distances.rows[i].elements[j].distance.text) *
+                    1.60934;
                 time =
                   time + parseInt(distances.rows[i].elements[j].duration.value);
               } else {
@@ -44,7 +44,6 @@ exports.findDistance1 = async (start_address, step_address, end_address) => {
               }
             }
           }
-          time = secondsToHms(time);
           result = { distance: Distance, time: time };
         }
         resolve(result);
@@ -91,7 +90,6 @@ exports.findDistance = async (start_address, end_address) => {
               }
             }
           }
-          time = secondsToHms(time);
           result = {
             distance: Distance,
             time: time,
@@ -104,13 +102,3 @@ exports.findDistance = async (start_address, end_address) => {
     console.log(err.message);
   }
 };
-
-//To calculate time from minutes
-function secondsToHms(d) {
-  d = Number(d);
-  var h = Math.floor(d / 3600);
-  var m = Math.floor((d % 3600) / 60);
-  var hDisplay = h > 0 ? h + ":" : "";
-  var mDisplay = m > 0 ? m : "";
-  return hDisplay + mDisplay;
-}

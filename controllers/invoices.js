@@ -60,6 +60,30 @@ exports.getById = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+/**
+ * Get invoice by Clientid
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getByClient = async (req, res) => {
+  try {
+    const clientId = req.params.clinetId;
+    const invoices = await Invoices.find().populate("trip");
+    const clientInvoices = invoices.filter((i) => {
+      if (i.trip) {
+        if (i.trip.client == clientId) {
+          return i;
+        }
+      }
+    });
+    if (!clientInvoices) res.status(404).send("Invoices does not found");
+    res.json({ success: true, clientInvoices });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 /**
  * Get Invoice by status
  * @param {object} req
