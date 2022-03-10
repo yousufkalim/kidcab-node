@@ -60,7 +60,7 @@ exports.login = async (req, res) => {
     
     const validPassword = bcrypt.compareSync(req.body.password, admin.password);
     if (!validPassword)
-      return res.status(401).send("Email or Password is incorrect");
+      return res.status(400).send("Email or Password is incorrect");
     const token = await generateAuthToken(admin);
     res.json({ success: true, admin, token }); // Success
   } catch (err) {
@@ -145,6 +145,17 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const adminId = req.params.adminId; // Getting admin id from URL parameter
+    const { name } = req.body;
+    req.body.name = JSON.parse(name);
+
+    if (req.file) {
+      req.body.logo = req.file.path;
+    }
+
+    if (req.body.password) {
+      req.body.password = bcrypt.hashSync(req.body.password, 10);
+    }
+
     const admin = await Admin.findByIdAndUpdate(adminId, req.body, {
       new: true,
     }); // Updating the user
@@ -165,6 +176,7 @@ exports.delete = async (req, res) => {
   try {
     const adminId = req.params.adminId; // Getting admin id from URL parameter
     const admin = await Admin.findByIdAndDelete(adminId); // Deleting the admin
+
     res.json({ success: true, admin }); // Success
   } catch (err) {
     // Error handling
