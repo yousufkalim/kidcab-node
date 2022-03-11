@@ -521,6 +521,7 @@ exports.getDayReport = async (req, res) => {
             $gte: new Date(lastweek),
             $lte: today,
           },
+          status: "completed",
         },
       },
       {
