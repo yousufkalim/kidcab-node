@@ -156,7 +156,8 @@ exports.getClientUpcomingRides = async (req, res) => {
             path: "passengers",
           },
         },
-      });
+      })
+      .sort({ date: 1 });
 
     if (!upcomingRides) res.status(404).send("No rides Found");
     res.json({ success: true, upcomingRides });
@@ -193,7 +194,8 @@ exports.getClientPastRides = async (req, res) => {
             path: "passengers",
           },
         },
-      });
+      })
+      .sort({ date: -1 });
 
     if (!pastRides) res.status(404).send("No rides Found");
     res.json({ success: true, pastRides });
@@ -338,7 +340,8 @@ exports.getDriverUpcomingRides = async (req, res) => {
             path: "passengers",
           },
         },
-      });
+      })
+      .sort({ date: 1 });
 
     if (!rides) res.status(404).send("No rides Found");
     res.json({ success: true, rides });
@@ -375,7 +378,8 @@ exports.getDriverPastRides = async (req, res) => {
             path: "passengers",
           },
         },
-      });
+      })
+      .sort({ date: -1 });
     if (!rides) res.status(404).send("No rides Found");
     res.json({ success: true, rides });
   } catch (err) {

@@ -284,7 +284,8 @@ exports.getPendingByDriver = async (req, res) => {
           path: "driver",
         },
       })
-      .populate("assigned_drivers");
+      .populate("assigned_drivers")
+      .sort({ date: 1 });
 
     if (!trips) res.status(404).send("No Trips Found");
 
@@ -303,13 +304,12 @@ exports.getPendingByDriver = async (req, res) => {
 
 exports.getUpcomingTrips = async (req, res) => {
   try {
-    const trips = await Trips.find({ client: req.params.clientId }).populate(
-      "rides"
-    );
+    const trips = await Trips.find({ client: req.params.clientId })
+      .populate("rides")
+      .sort({ date: 1 });
     var current = moment();
-
     let upcomingTrips = trips.filter((a) => moment(current).isBefore(a.date));
-    if (!trips) res.status(404).send("No Trips Found");
+    if (!upcomingTrips) return res.status(404).send("No Trips Found");
     res.json({ success: true, upcomingTrips });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -324,11 +324,12 @@ exports.getUpcomingTrips = async (req, res) => {
  */
 exports.getPastTrips = async (req, res) => {
   try {
-    const trips = await Trips.find({ client: req.params.clientId }).populate(
-      "rides"
-    );
+    const trips = await Trips.find({
+      client: req.params.clientId,
+    })
+      .populate("rides")
+      .sort({ date: -1 });
     var current = moment();
-
     let pastTrips = trips.filter((a) => moment(current).isAfter(a.date));
     if (!trips) return res.status(404).send("No Trips Found");
     res.json({ success: true, pastTrips });
@@ -528,7 +529,7 @@ exports.getDayReport = async (req, res) => {
             $dateToString: { format: "%Y-%m-%d", date: "$date" },
           },
 
-          driver_price: { $sum: "$driver_price" },
+          driver_price: { $sum: "$client_price" },
           turnover: { $sum: 1 },
         },
       },
