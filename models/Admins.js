@@ -22,16 +22,15 @@ const adminSchema = new mongoose.Schema(
       lowercase: true,
     },
 
+    company_name: String,
     address: String,
     siret_number: String,
     vat_number: String,
     legal_form: String,
     share_captial: String,
     rcs_city: String,
-    bank_account: String,
     bank_name: String,
     iban: String,
-    bic: String,
 
     password: {
       type: String,
