@@ -25,7 +25,7 @@ router.post("/", validateInvoice, isValidated, invoices.create);
 // Read
 router.get("/", invoices.getAll); // Get all invoices at once
 router.get("/:invoiceId", invoices.getById); // Get one invoice by it's id
-
+router.get("/getByClient/:clinetId", invoices.getByClient); //Get-Invoice by ClientId
 // Update
 router.put("/:invoiceId", invoices.update); // Update a specific invoice by it's id
 

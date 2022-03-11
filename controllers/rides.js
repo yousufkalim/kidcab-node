@@ -156,7 +156,8 @@ exports.getClientUpcomingRides = async (req, res) => {
             path: "passengers",
           },
         },
-      });
+      })
+      .sort({ date: 1 });
 
     if (!upcomingRides) res.status(404).send("No rides Found");
     res.json({ success: true, upcomingRides });
@@ -193,7 +194,8 @@ exports.getClientPastRides = async (req, res) => {
             path: "passengers",
           },
         },
-      });
+      })
+      .sort({ date: -1 });
 
     if (!pastRides) res.status(404).send("No rides Found");
     res.json({ success: true, pastRides });
@@ -338,7 +340,8 @@ exports.getDriverUpcomingRides = async (req, res) => {
             path: "passengers",
           },
         },
-      });
+      })
+      .sort({ date: 1 });
 
     if (!rides) res.status(404).send("No rides Found");
     res.json({ success: true, rides });
@@ -375,7 +378,8 @@ exports.getDriverPastRides = async (req, res) => {
             path: "passengers",
           },
         },
-      });
+      })
+      .sort({ date: -1 });
     if (!rides) res.status(404).send("No rides Found");
     res.json({ success: true, rides });
   } catch (err) {
@@ -432,6 +436,7 @@ exports.completeRide = async (req, res) => {
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
     const findRide = await Rides.findById(rideId);
+    const findTrip = await Trips.findOne({ rides: rideId });
     if (findRide) {
       var pubMsg = {
         verb: "published",
@@ -454,7 +459,7 @@ exports.completeRide = async (req, res) => {
       );
 
       if (io.socket) {
-        io.emit(`feedback${findRide.driver}`, {
+        io.socket.emit(`feedback${findRide.driver}`, {
           message: feedback,
         });
       }
@@ -469,7 +474,9 @@ exports.completeRide = async (req, res) => {
         },
       });
       findRide.status = "completed";
+      findTrip.status = "completed";
       await findRide.save();
+      await findTrip.save();
       return res
         .status(202)
         .json({ success: true, message: "Ride Updated Successfully" });

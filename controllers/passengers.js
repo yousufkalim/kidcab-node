@@ -11,7 +11,6 @@ const Users = require("../models/Users");
  * @param {object} res
  */
 exports.create = async (req, res) => {
-  console.log("passenger Create Controller");
   try {
     if (req.file) {
       req.body.profile_pic = req.file.path;
