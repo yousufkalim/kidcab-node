@@ -7,27 +7,37 @@ const mongoose = require("mongoose");
 // Schema
 const adminSchema = new mongoose.Schema(
   {
-    name: {
-      first_name: { type: String, required: true },
-      last_name: { type: String, required: true },
-    },
-    profile_pic: {
+    name: { first_name: String, last_name: String },
+    logo: {
       type: String,
     },
 
+    phone_number: {
+      type: Number,
+    },
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
     },
-    phone_number: {
-      type: Number,
-    },
+
+    address: String,
+    siret_number: String,
+    vat_number: String,
+    legal_form: String,
+    share_captial: String,
+    rcs_city: String,
+    bank_account: String,
+    bank_name: String,
+    iban: String,
+    bic: String,
+
     password: {
       type: String,
       minlength: 8,
     },
+
     tokens: [
       {
         token: {

@@ -34,7 +34,7 @@ router.get("/", auth, admins.getAll); // Get all admins at once
 router.get("/:adminId", auth, admins.getById); // Get one admin by it's id
 
 // Update
-router.put("/:adminId", auth, admins.update); // Update a specific admin by it's id
+router.put("/:adminId", upload.single("logo"), auth, admins.update); // Update a specific admin by it's id
 
 // Delete
 router.delete("/:adminId", auth, admins.delete); // delete a specific admin by it's id
