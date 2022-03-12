@@ -117,7 +117,6 @@ exports.update = async (req, res) => {
   try {
     const driverId = req.params.driverId;
     const { email, bank_info, address, company, vehicles } = req.body;
-
     req.body.bank_info = JSON.parse(bank_info);
     req.body.address = JSON.parse(address);
     if (company) {
