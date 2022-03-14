@@ -7,20 +7,10 @@ exports.validateQuote = [
   check("total_price", "Total Price is required").notEmpty().trim().isNumeric(),
   check("vat", "VAT is required").notEmpty().trim(),
   check("status", "Status is required").notEmpty().trim(),
-  check("passengers", "At least one Passenger ID is required")
-    .notEmpty()
-    .trim()
-    .isMongoId(),
   check("client", "At least one Client ID is required")
     .notEmpty()
     .trim()
     .isMongoId(),
-  // check("trip_info.start_address.lat", "start address is required")
-  //   .notEmpty()
-  //   .trim(),
-  // check("trip_info.end_address.lat", "end address is required")
-  //   .notEmpty()
-  //   .trim(),
 ];
 
 /**
