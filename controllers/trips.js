@@ -529,7 +529,6 @@ exports.getDayReport = async (req, res) => {
           _id: {
             $dateToString: { format: "%Y-%m-%d", date: "$date" },
           },
-
           driver_price: { $sum: "$client_price" },
           turnover: { $sum: 1 },
         },
