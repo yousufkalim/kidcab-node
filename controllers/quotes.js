@@ -11,10 +11,8 @@ const Quotes = require("../models/Quotes");
  */
 exports.create = async (req, res) => {
   try {
-    console.log("creating quote...");
     const { trip_info } = req.body;
     req.body.trip_info = JSON.parse(trip_info);
-    console.log(req.body);
     const quote = await Quotes.create(req.body);
     if (!quote) res.status(501).send("No Quote is created");
     // Done

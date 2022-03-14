@@ -62,18 +62,12 @@ const quoteSchema = new Schema(
         postal_code: String,
       },
     },
-    passengers: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "passengers",
-        required: true,
-      },
-    ],
     client: {
       type: Schema.Types.ObjectId,
       ref: "users",
       required: true,
     },
+    comment: String,
   },
   {
     timestamps: true,

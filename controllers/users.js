@@ -14,8 +14,7 @@ const { generateAuthToken } = require("../middleware/auth");
  */
 exports.create = async (req, res) => {
   try {
-    console.log("user created");
-    let { email, password, bank_info, address } = req.body;
+    let { email, password, bank_info } = req.body;
     const existingUser = await Users.findOne({ email });
 
     if (existingUser) {
@@ -28,7 +27,9 @@ exports.create = async (req, res) => {
       req.body.profile_pic = req.file.path;
     }
     req.body.bank_info = JSON.parse(bank_info);
-    req.body.address = JSON.parse(address);
+    if (Object.values(req.body.address).length > 0) {
+      req.body.address = JSON.parse(req.body.address);
+    }
 
     req.body.password = bcrypt.hashSync(password, parseInt(bcryptSalt));
     const NewUser = await Users.create(req.body);
