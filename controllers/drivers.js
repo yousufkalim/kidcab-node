@@ -19,7 +19,7 @@ exports.create = async (req, res) => {
     const existingDriver = await Drivers.findOne({ email });
 
     if (existingDriver) {
-      res
+      return res
         .status(400)
         .json({ success: false, message: "Driver already exists" });
     }
@@ -42,7 +42,7 @@ exports.create = async (req, res) => {
 
     const driver = await Drivers.create(data);
 
-    if (driver) res.json({ success: true, files: driver });
+    if (driver) return res.json({ success: true, files: driver });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
