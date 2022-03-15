@@ -28,7 +28,6 @@ exports.validateUser = [
     .notEmpty()
     .trim()
     .isLength({ min: 11 }),
-  // check("gender", "Gender is required.").notEmpty(),
   check("role", "Role is required.").notEmpty(),
   check("number", "Number is required.").notEmpty().isNumeric().trim(),
 ];
