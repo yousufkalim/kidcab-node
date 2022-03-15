@@ -20,6 +20,7 @@ const {
  */
 
 // Create - quote Signup
+router.post("/pdf", quotes.deletePdf);
 router.post("/", validateQuote, isValidated, quotes.create);
 
 // Read

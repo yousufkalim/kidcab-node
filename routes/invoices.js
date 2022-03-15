@@ -20,6 +20,7 @@ const {
  */
 
 // Create - Invoice Signup
+router.post("/pdf", invoices.deletePdf);
 router.post("/", validateInvoice, isValidated, invoices.create);
 
 // Read
