@@ -18,7 +18,6 @@ const { upload } = require("../middleware/multer");
 //* Read
 router.get("/", company.getData); //? Get company data
 router.post("/", upload.single("logo"), auth, company.createUpdate); //? Create / Update company.
-router.delete("/", auth, company.delete); //? delete company data
 
 //* Export
 module.exports = router;
