@@ -255,3 +255,16 @@ exports.ExportPdf = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+exports.deletePdf = async (req, res) => {
+  const filename = req.body.file;
+  try {
+    fs.unlinkSync(path.join(__dirname, `../uploads/invoice/${filename}`));
+    return res.status(200).json({ success: true });
+
+    //file removed
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

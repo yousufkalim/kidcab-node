@@ -32,6 +32,7 @@ router.put("/:quoteId", quotes.update); // Update a specific quote by it's id
 router.get("/status/:status", quotes.getQouteByStatus); // Get all qoutes by status
 
 // Delete
+router.delete("/pdf", quotes.deletePdf);
 router.delete("/deleteMany", quotes.deleteMany);
 router.delete("/:quoteId", quotes.delete); // delete a specific quote by it's id
 //filter
