@@ -124,15 +124,15 @@ exports.update = async (req, res) => {
       req.body.company = JSON.parse(req.body.company);
     }
 
-    if (Object.values(req.body.address).length > 0) {
+    if (req.body.address) {
       req.body.address = JSON.parse(address);
     }
 
-    if (Object.values(req.body.vehicles).length > 0) {
+    if (req.body.vehicles) {
       req.body.vehicles = JSON.parse(vehicles);
     }
 
-    if (Object.values(req.body.vehicles).length > 0) {
+    if (req.body.vehicles) {
       req.body.vehicles = JSON.parse(vehicles);
     }
 
@@ -151,8 +151,6 @@ exports.update = async (req, res) => {
       if (!updatedDriver) return res.status(404).send("Rating can't update");
       return res.json({ success: true, updatedDriver });
     }
-    return console.log("req", req.body);
-
     const updatedDriver = await Drivers.findByIdAndUpdate(driverId, req.body, {
       new: true,
     }).populate("vehicles");

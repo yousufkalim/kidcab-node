@@ -16,6 +16,10 @@ const tripSchema = new Schema(
       required: true,
       enum: ["pending", "confirmed", "cancelled", "completed"],
     },
+    required_drivers: {
+      type: Number,
+      default: 1,
+    },
     start_address: {
       lat: String,
       lng: String,
