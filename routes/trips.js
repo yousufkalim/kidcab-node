@@ -30,6 +30,7 @@ router.get("/getPendingByDriver/:driverId", trips.getPendingByDriver); // Get al
 router.get("/:tripId", trips.getById); // Get one trip by it's id
 
 // Update ride
+router.put("/event/:tripId", trips.updateEvent); // Update a specific trip by it's id
 router.put("/:tripId", trips.update); // Update a specific trip by it's id
 
 //testing status route
