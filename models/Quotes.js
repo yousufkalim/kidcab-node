@@ -61,6 +61,10 @@ const quoteSchema = new Schema(
         city: String,
         postal_code: String,
       },
+      unit_price: {
+        type: Number,
+        required: true,
+      },
     },
     client: {
       type: Schema.Types.ObjectId,

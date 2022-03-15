@@ -448,6 +448,20 @@ exports.update = async (req, res) => {
   }
 };
 
+exports.updateEvent = async (req, res) => {
+  try {
+    const tripId = req.params.tripId;
+    const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
+      ...req.body,
+    });
+    if (!updatedTrip) res.status(404).send("No Trip is Updated");
+    res.json({ success: true, updatedTrip });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 /**
  * Delete trip
  * @param {object} req
