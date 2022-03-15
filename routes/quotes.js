@@ -36,5 +36,6 @@ router.delete("/deleteMany", quotes.deleteMany);
 router.delete("/:quoteId", quotes.delete); // delete a specific quote by it's id
 //filter
 router.post("/QuotesByDate/", quotes.QuotesByDate);
+router.post("/export_pdf/", quotes.ExportPdf);
 // Export
 module.exports = router;

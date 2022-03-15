@@ -38,6 +38,7 @@ router.get("/status/:status", invoices.getInvoicesByStatus); // Get all trips by
 
 //get Late Invoices
 router.post("/getLateInvoices/", invoices.getLateInvoices); // Get all trips by status
+router.post("/export_pdf/", invoices.ExportPdf);
 
 // Export
 module.exports = router;
