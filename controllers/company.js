@@ -53,24 +53,3 @@ exports.createUpdate = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
-/**
- ** Delete company page data
- * @param {object} req
- * @param {object} res
- */
-exports.delete = async (req, res) => {
-  try {
-    await Company.findOneAndDelete().then(() => {
-      //? find first document in db and delete it
-      return res.json({
-        success: true,
-        message: "Company Data Deleted Sucessfully",
-      });
-    });
-  } catch (err) {
-    //? Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
