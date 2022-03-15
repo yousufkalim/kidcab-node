@@ -20,7 +20,6 @@ const {
  */
 
 // Create - Invoice Signup
-router.post("/pdf", invoices.deletePdf);
 router.post("/", validateInvoice, isValidated, invoices.create);
 
 // Read
@@ -31,6 +30,7 @@ router.get("/getByClient/:clinetId", invoices.getByClient); //Get-Invoice by Cli
 router.put("/:invoiceId", invoices.update); // Update a specific invoice by it's id
 
 // Delete
+router.delete("/pdf", invoices.deletePdf);
 router.delete("/deleteMany", invoices.deleteMany);
 router.delete("/:invoiceId", invoices.delete); // delete a specific invoice by it's id
 
