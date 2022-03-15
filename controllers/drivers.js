@@ -116,23 +116,44 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const driverId = req.params.driverId;
-    const { email, bank_info, address, company, vehicles } = req.body;
-    req.body.bank_info = JSON.parse(bank_info);
-    req.body.address = JSON.parse(address);
-    if (company) {
-      req.body.company = JSON.parse(company);
+    const { email, bank_info, address, vehicles } = req.body;
+    if (Object.values(req.body.bank_info).length > 0) {
+      req.body.bank_info = JSON.parse(bank_info);
     }
-    req.body.vehicles = JSON.parse(vehicles);
+    if (req.body.company) {
+      req.body.company = JSON.parse(req.body.company);
+    }
 
-    const imageKeys = Object.keys(req.files);
+    if (Object.values(req.body.address).length > 0) {
+      req.body.address = JSON.parse(address);
+    }
 
-    const data = Object.assign(
-      {},
-      req.body,
-      ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
-    );
+    if (Object.values(req.body.vehicles).length > 0) {
+      req.body.vehicles = JSON.parse(vehicles);
+    }
 
-    const updatedDriver = await Drivers.findByIdAndUpdate(driverId, data, {
+    if (Object.values(req.body.vehicles).length > 0) {
+      req.body.vehicles = JSON.parse(vehicles);
+    }
+
+    if (req.files) {
+      console.log("inside files");
+      const imageKeys = Object.keys(req.files);
+
+      const data = Object.assign(
+        {},
+        req.body,
+        ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
+      );
+      const updatedDriver = await Drivers.findByIdAndUpdate(driverId, data, {
+        new: true,
+      }).populate("vehicles");
+      if (!updatedDriver) return res.status(404).send("Rating can't update");
+      return res.json({ success: true, updatedDriver });
+    }
+    return console.log("req", req.body);
+
+    const updatedDriver = await Drivers.findByIdAndUpdate(driverId, req.body, {
       new: true,
     }).populate("vehicles");
 
