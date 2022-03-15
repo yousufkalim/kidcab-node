@@ -8,29 +8,13 @@ const mongoose = require("mongoose");
 const adminSchema = new mongoose.Schema(
   {
     name: { first_name: String, last_name: String },
-    logo: {
-      type: String,
-    },
 
-    phone_number: {
-      type: Number,
-    },
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
     },
-
-    company_name: String,
-    address: String,
-    siret_number: String,
-    vat_number: String,
-    legal_form: String,
-    share_captial: String,
-    rcs_city: String,
-    bank_name: String,
-    iban: String,
 
     password: {
       type: String,
