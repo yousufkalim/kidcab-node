@@ -3,6 +3,11 @@
  * @author Arooj Ishfaq
  */
 const Quotes = require("../models/Quotes");
+const Admin = require("../models/Admins");
+const fs = require("fs");
+const pdf = require("pdf-creator-node");
+const path = require("path");
+const moment = require("moment");
 
 /**
  * Create Quote
@@ -153,6 +158,131 @@ exports.QuotesByDate = async (req, res) => {
       .populate("client")
       .populate("passengers");
     if (qoutes) return res.status(200).json({ success: true, qoutes });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ *
+ * @param {object} req
+ * @param {object} res
+ * @returns Exported pdf
+ */
+
+exports.ExportPdf = async (req, res) => {
+  try {
+    const quoteIds = req.body.quotes;
+
+    const admin = await Admin.findOne();
+    let quotes = await Quotes.find({ _id: { $in: quoteIds } })
+      .populate("client")
+      .populate("passengers")
+      .lean();
+
+    if (quotes.length === 0) res.status(404).send("No Quote Found");
+
+    let filteredQuotes = {};
+    let total_price_without_tax = 0;
+    let total_price_with_tax = 0;
+
+    quotes.map((quote) => {
+      if (!filteredQuotes[quote.client._id]) {
+        filteredQuotes[quote.client._id] = [];
+
+        // Getting unit price
+        quote["unit_price"] = (
+          quote.total_price / quote.trip_info.total_trips
+        ).toFixed(2);
+
+        // Adding description for a quote if not exists
+        if (!quote.description || quote.description === "") {
+          quote["description"] = `Trip for ${
+            quote.client.first_name + " " + quote.client.last_name
+          }`;
+        }
+
+        // Calculating Total Price with and without tax (VAT)
+        total_price_without_tax = total_price_without_tax + quote.total_price;
+        total_price_with_tax =
+          total_price_with_tax +
+          (quote.total_price + (quote.total_price * quote.vat) / 100);
+
+        // Changing format for issue data as desired
+        quote["issue_date"] = moment(quote.issue_date).format("DD MMMM YYYY");
+        // Pushing data in the array
+        filteredQuotes[quote.client._id].push(quote);
+      } else {
+        // Getting unit price
+        quote["unit_price"] = (
+          quote.total_price / quote.trip_info.total_trips
+        ).toFixed(2);
+
+        // Adding description for a quote if not exists
+        if (quote.description || quote.description === "") {
+          quote["description"] = `Trip for ${
+            quote.client.first_name + " " + quote.client.last_name
+          }`;
+        }
+
+        // Calculating Total Price with and without tax (VAT)
+        total_price_without_tax = total_price_without_tax + quote.total_price;
+        total_price_with_tax =
+          total_price_with_tax +
+          (quote.total_price + (quote.total_price * quote.vat) / 100);
+
+        // Changing format for issue data as desired
+        quote["issue_date"] = moment(quote.issue_date).format("DD MMMM YYYY");
+        // Pushing data in the array
+        filteredQuotes[quote.client._id].push(quote);
+      }
+    });
+
+    const quoteTemplate = fs.readFileSync(
+      path.join(__dirname, "../template/quote.html"),
+      "utf-8"
+    );
+
+    let obj = {};
+
+    let files = [];
+    Object.entries(filteredQuotes).map(async ([key, value]) => {
+      obj = {
+        quotes: value,
+        admin_name: admin.name.first_name + " " + admin.name.last_name,
+        admin_email: admin.email,
+        admin_address: admin.address,
+        admin_company_name: admin.company_name,
+        total_price_without_tax: total_price_without_tax,
+        total_price_with_tax: total_price_with_tax,
+      };
+      let clientName = [];
+      if (value.length > 0) {
+        clientName = value[0].client.first_name + value[0].client.last_name;
+      }
+      const filename = Math.random() + clientName + ".pdf";
+      const document = {
+        html: quoteTemplate,
+        data: obj,
+        path: `./uploads/quotes/${filename}`,
+      };
+      await pdf
+        .create(document, {
+          formate: "A4",
+          orientation: "portrait",
+          border: "10mm",
+        })
+        .then((e) => {
+          total_price_without_tax = 0;
+          total_price_with_tax = 0;
+          const filepath = `${process.env.BASE_URL}/uploads/quotes/${filename}`;
+          files.push(filepath);
+          return res.status(200).json({ success: true, files });
+        });
+    });
+
+    // }
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ success: false, message: "Internal server error" });

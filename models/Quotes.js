@@ -68,6 +68,7 @@ const quoteSchema = new Schema(
       required: true,
     },
     comment: String,
+    description: String,
   },
   {
     timestamps: true,

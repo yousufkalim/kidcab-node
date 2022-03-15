@@ -3,6 +3,11 @@
  * @author Arooj Ishfaq
  */
 const Invoices = require("../models/Invoices");
+const Admin = require("../models/Admins");
+const fs = require("fs");
+const pdf = require("pdf-creator-node");
+const path = require("path");
+const moment = require("moment");
 
 /**
  * Create Invoice
@@ -27,15 +32,7 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const invoices = await Invoices.find()
-      .populate({
-        path: "trip",
-        populate: { path: "client" },
-      })
-      .populate({
-        path: "trip",
-        populate: { path: "quote" },
-      });
+    const invoices = await Invoices.find().populate("client");
     if (!invoices) res.status(404).send("Invoices does not found");
     res.json({ success: true, invoices });
   } catch (err) {
@@ -69,10 +66,10 @@ exports.getById = async (req, res) => {
 exports.getByClient = async (req, res) => {
   try {
     const clientId = req.params.clinetId;
-    const invoices = await Invoices.find().populate("trip");
+    const invoices = await Invoices.find().populate("client");
     const clientInvoices = invoices.filter((i) => {
-      if (i.trip) {
-        if (i.trip.client == clientId) {
+      if (i.client) {
+        if (i.client._id == clientId) {
           return i;
         }
       }
@@ -94,15 +91,8 @@ exports.getInvoicesByStatus = async (req, res) => {
     // const tripId = req.params.tripId;
     const invoices = await Invoices.find({
       status: req.params.status === "all" ? undefined : req.params.status,
-    })
-      .populate({
-        path: "trip",
-        populate: { path: "client" },
-      })
-      .populate({
-        path: "trip",
-        populate: { path: "quote" },
-      });
+    }).populate("client");
+
     if (!invoices) res.status(404).send("No invoices Found");
     res.json({ success: true, invoices });
   } catch (err) {
@@ -182,6 +172,86 @@ exports.getLateInvoices = async (req, res) => {
     else return res.json({ success: true, invoices: invoices });
   } catch (err) {
     console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.ExportPdf = async (req, res) => {
+  try {
+    const invoiceIds = req.body.invoices;
+    const admin = await Admin.findOne();
+    let invoices = await Invoices.find({ _id: { $in: invoiceIds } })
+      .populate("client")
+      .lean();
+    if (invoices.length === 0) res.status(404).send("No invoice Found");
+
+    let filteredInvoices = {};
+    let total_price = 0;
+    invoices.map((invoice) => {
+      if (!filteredInvoices[invoice.client._id]) {
+        filteredInvoices[invoice.client._id] = [];
+
+        // Changing format for issue data as desired
+        invoice["issue_date"] = moment(invoice.issue_date).format(
+          "DD MMMM YYYY"
+        );
+
+        // Calculating Total Price
+        total_price = total_price + invoice.total_price;
+        filteredInvoices[invoice.client._id].push(invoice);
+      } else {
+        // Changing format for issue data as desired
+        invoice["issue_date"] = moment(invoice.issue_date).format(
+          "DD MMMM YYYY"
+        );
+
+        // Calculating Total Price
+        total_price = total_price + invoice.total_price;
+
+        filteredInvoices[invoice.client._id].push(invoice);
+      }
+    });
+
+    const invoiceTemplate = fs.readFileSync(
+      path.join(__dirname, "../template/invoice.html"),
+      "utf-8"
+    );
+    let obj = {};
+    let files = [];
+    Object.entries(filteredInvoices).map(async ([key, value]) => {
+      obj = {
+        invoices: value,
+        admin_name: admin.name.first_name + " " + admin.name.last_name,
+        admin_email: admin.email,
+        admin_address: admin.address,
+        admin_company_name: admin.company_name,
+        total_price: total_price,
+      };
+      let clientName = [];
+      if (value.length > 0) {
+        clientName = value[0].client.first_name + value[0].client.last_name;
+      }
+      const filename = Math.random() + clientName + ".pdf";
+      const document = {
+        html: invoiceTemplate,
+        data: obj,
+        path: `./uploads/invoice/${filename}`,
+      };
+      await pdf
+        .create(document, {
+          formate: "A4",
+          orientation: "portrait",
+          border: "10mm",
+        })
+        .then((e) => {
+          total_price = 0;
+          const filepath = `${process.env.BASE_URL}/uploads/invoice/${filename}`;
+          files.push(filepath);
+          return res.status(200).json({ success: true, files });
+        });
+    });
+  } catch (err) {
+    console.log(err.message);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

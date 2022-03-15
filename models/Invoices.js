@@ -29,10 +29,10 @@ const invoiceSchema = new Schema(
     comments: {
       type: String,
     },
-    trip: {
+    client: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "trips",
+      ref: "users",
     },
   },
   {
