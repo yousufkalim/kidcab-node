@@ -18,7 +18,7 @@ const tripSchema = new Schema(
     },
     required_drivers: {
       type: Number,
-      default: 1,
+      default: "1",
     },
     start_address: {
       lat: String,
@@ -53,10 +53,6 @@ const tripSchema = new Schema(
       type: Number,
       required: true,
     },
-    required_drivers: {
-      type: Number,
-    },
-
     assigned_drivers: [{ type: Schema.Types.ObjectId, ref: "drivers" }],
     invited_drivers: [
       {
