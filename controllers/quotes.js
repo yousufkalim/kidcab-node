@@ -245,9 +245,8 @@ exports.ExportPdf = async (req, res) => {
     );
 
     let obj = {};
-
     let files = [];
-    Object.entries(filteredQuotes).map(async ([key, value]) => {
+    const saveFiles = Object.entries(filteredQuotes).map(([key, value]) => {
       obj = {
         quotes: value,
         admin_name: admin.name.first_name + " " + admin.name.last_name,
@@ -267,22 +266,22 @@ exports.ExportPdf = async (req, res) => {
         data: obj,
         path: `./uploads/quotes/${filename}`,
       };
-      await pdf
-        .create(document, {
-          formate: "A4",
-          orientation: "portrait",
-          border: "10mm",
-        })
-        .then((e) => {
-          total_price_without_tax = 0;
-          total_price_with_tax = 0;
-          const filepath = `${process.env.BASE_URL}/uploads/quotes/${filename}`;
-          files.push(filepath);
-          return res.status(200).json({ success: true, files });
-        });
+
+      total_price_without_tax = 0;
+      total_price_with_tax = 0;
+      const filepath = `${process.env.BASE_URL}/uploads/quotes/${filename}`;
+      files.push(filepath);
+
+      return pdf.create(document, {
+        formate: "A4",
+        orientation: "portrait",
+        border: "10mm",
+      });
     });
 
-    // }
+    await Promise.all(saveFiles);
+
+    res.status(200).json({ success: true, files });
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ success: false, message: "Internal server error" });
