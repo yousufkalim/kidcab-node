@@ -4,10 +4,12 @@
  */
 const Invoices = require("../models/Invoices");
 const Admin = require("../models/Admins");
+const Users = require("../models/Users");
 const fs = require("fs");
 const pdf = require("pdf-creator-node");
 const path = require("path");
 const moment = require("moment");
+const { sendEmail } = require("../utils/sendEmailInvoice");
 
 /**
  * Create Invoice
@@ -18,6 +20,8 @@ exports.create = async (req, res) => {
   try {
     const invoice = await Invoices.create(req.body);
     await invoice.save();
+    const user = await Users.findById(invoice.client);
+    sendEmail(user, invoice);
     res.json({ success: true, invoice });
   } catch (err) {
     console.log("Error ----> ", err);
