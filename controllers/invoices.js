@@ -218,7 +218,7 @@ exports.ExportPdf = async (req, res) => {
     );
     let obj = {};
     let files = [];
-    Object.entries(filteredInvoices).map(async ([key, value]) => {
+    const saveFiles = Object.entries(filteredInvoices).map(([key, value]) => {
       obj = {
         invoices: value,
         admin_name: admin.name.first_name + " " + admin.name.last_name,
@@ -237,19 +237,19 @@ exports.ExportPdf = async (req, res) => {
         data: obj,
         path: `./uploads/invoice/${filename}`,
       };
-      await pdf
-        .create(document, {
-          formate: "A4",
-          orientation: "portrait",
-          border: "10mm",
-        })
-        .then((e) => {
-          total_price = 0;
-          const filepath = `${process.env.BASE_URL}/uploads/invoice/${filename}`;
-          files.push(filepath);
-          return res.status(200).json({ success: true, files });
-        });
+
+      total_price = 0;
+      const filepath = `${process.env.BASE_URL}/uploads/invoice/${filename}`;
+      files.push(filepath);
+      return pdf.create(document, {
+        formate: "A4",
+        orientation: "portrait",
+        border: "10mm",
+      });
     });
+
+    await Promise.all(saveFiles);
+    return res.status(200).json({ success: true, files });
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ success: false, message: "Internal server error" });
