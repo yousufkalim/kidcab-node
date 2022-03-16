@@ -19,7 +19,7 @@ exports.create = async (req, res) => {
     const existingDriver = await Drivers.findOne({ email });
 
     if (existingDriver) {
-      res
+      return res
         .status(400)
         .json({ success: false, message: "Driver already exists" });
     }
@@ -42,7 +42,7 @@ exports.create = async (req, res) => {
 
     const driver = await Drivers.create(data);
 
-    if (driver) res.json({ success: true, files: driver });
+    if (driver) return res.json({ success: true, files: driver });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -116,23 +116,42 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const driverId = req.params.driverId;
-    const { email, bank_info, address, company, vehicles } = req.body;
-    req.body.bank_info = JSON.parse(bank_info);
-    req.body.address = JSON.parse(address);
-    if (company) {
-      req.body.company = JSON.parse(company);
+    const { email, bank_info, address, vehicles } = req.body;
+    if (Object.values(req.body.bank_info).length > 0) {
+      req.body.bank_info = JSON.parse(bank_info);
     }
-    req.body.vehicles = JSON.parse(vehicles);
+    if (req.body.company) {
+      req.body.company = JSON.parse(req.body.company);
+    }
 
-    const imageKeys = Object.keys(req.files);
+    if (req.body.address) {
+      req.body.address = JSON.parse(address);
+    }
 
-    const data = Object.assign(
-      {},
-      req.body,
-      ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
-    );
+    if (req.body.vehicles) {
+      req.body.vehicles = JSON.parse(vehicles);
+    }
 
-    const updatedDriver = await Drivers.findByIdAndUpdate(driverId, data, {
+    if (req.body.vehicles) {
+      req.body.vehicles = JSON.parse(vehicles);
+    }
+
+    if (req.files) {
+      console.log("inside files");
+      const imageKeys = Object.keys(req.files);
+
+      const data = Object.assign(
+        {},
+        req.body,
+        ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
+      );
+      const updatedDriver = await Drivers.findByIdAndUpdate(driverId, data, {
+        new: true,
+      }).populate("vehicles");
+      if (!updatedDriver) return res.status(404).send("Rating can't update");
+      return res.json({ success: true, updatedDriver });
+    }
+    const updatedDriver = await Drivers.findByIdAndUpdate(driverId, req.body, {
       new: true,
     }).populate("vehicles");
 

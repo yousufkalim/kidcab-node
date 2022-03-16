@@ -16,6 +16,10 @@ const tripSchema = new Schema(
       required: true,
       enum: ["pending", "confirmed", "cancelled", "completed"],
     },
+    required_drivers: {
+      type: Number,
+      default: "1",
+    },
     start_address: {
       lat: String,
       lng: String,
@@ -49,10 +53,6 @@ const tripSchema = new Schema(
       type: Number,
       required: true,
     },
-    required_drivers: {
-      type: Number,
-    },
-
     assigned_drivers: [{ type: Schema.Types.ObjectId, ref: "drivers" }],
     invited_drivers: [
       {
