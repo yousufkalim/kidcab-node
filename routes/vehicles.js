@@ -10,7 +10,7 @@ const {
 } = require("../middleware/validators/vehicles");
 const { upload } = require("../middleware/multer");
 const uploadImages = upload.fields([
-  { name: "inspection_info" },
+  { name: "graycard" },
   { name: "registration_card" },
   { name: "insurance_certificate" },
 ]);

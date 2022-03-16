@@ -8,10 +8,7 @@ exports.validateDriver = [
   check("first_name", "First Name is required.").notEmpty().trim(),
   check("last_name", "Last Name is required.").notEmpty().trim(),
   check("email", "Email is required.").notEmpty().isEmail().trim(),
-
   check("role", "Role is required").notEmpty().trim(),
-  // check("criminal_record", "Criminal Record is required").notEmpty().trim(),
-
   check("password", "Password is required.")
     .notEmpty()
     .trim()

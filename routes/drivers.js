@@ -32,6 +32,10 @@ const uploadImages = upload.fields([
   { name: "kbis_image" },
   { name: "proRc_image" },
   { name: "ris_image" },
+  { name: "kbis_extract" },
+  { name: "rib" },
+  { name: "professional_liability" },
+  { name: "insurance_civil_liability" },
 ]);
 
 // Create
