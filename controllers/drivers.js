@@ -163,7 +163,43 @@ exports.update = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+//updateDriver
+/**
+ * Update driver
+ * @param {object} req
+ * @param {object} res
+ */
+exports.updateDriver = async (req, res) => {
+  try {
+    const driverId = req.params.driverId;
+    const { email, bank_info, address, vehicles } = req.body;
 
+    if (req.body.bank_info) {
+      req.body.bank_info = JSON.parse(bank_info);
+    }
+
+    if (req.body.company) {
+      req.body.company = JSON.parse(req.body.company);
+    }
+
+    console.log(req.body.address, "req.body.address");
+    if (req.body.address != undefined) {
+      req.body.address = JSON.parse(address);
+    }
+    if (req.body.vehicles) {
+      req.body.vehicles = JSON.parse(vehicles);
+    }
+    const updatedDriver = await Drivers.findByIdAndUpdate(driverId, req.body, {
+      new: true,
+    }).populate("vehicles");
+
+    if (!updatedDriver) return res.status(404).send("Rating can't update");
+    res.json({ success: true, updatedDriver });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 /**
  * Delete driver
  * @param {object} req
