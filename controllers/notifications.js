@@ -10,6 +10,7 @@ const socket = require("../index");
 const fcmservice = require("../utils/fcmService");
 const Trips = require("../models/Trips");
 const Drivers = require("../models/Drivers");
+const Admin = require("../models/Admins");
 /**
  * Get all Notifications
  * @param {object} req
@@ -229,7 +230,7 @@ cron.schedule("0 0 23 * *", async () => {
   const twoDays = new Date(twoDaysCount); //Set date after 2days
   const oneDayCount = new Date().getTime() + 86400000; //Find date of after 1day
   const oneDay = new Date(oneDayCount); //Set date after 15days
-
+  const admin = await Admin.find();
   var pubMsg = {
     verb: "published",
     actions: "Mise à jour des documents", //Documents Update
@@ -293,6 +294,7 @@ cron.schedule("0 0 23 * *", async () => {
       message: `les documents de ${item.first_name} expirent quinze sept jour`,
     });
     await createNotification(item?.id, fifteenDays);
+    await createNotificationAdmin(admin[0]?._id, item.first_name, fifteenDays);
   });
   //sending notification before 7 days
   drivers7Days.map(async (item) => {
@@ -310,6 +312,7 @@ cron.schedule("0 0 23 * *", async () => {
       message: `les documents de ${item.first_name} expirent après sept jour`,
     });
     await createNotification(item?.id, fifteenDays);
+    await createNotificationAdmin(admin[0]?._id, item.first_name, fifteenDays);
   });
   //sending notification before 2 days
   drivers2Days.map(async (item) => {
@@ -326,6 +329,7 @@ cron.schedule("0 0 23 * *", async () => {
       message: `les documents de ${item.first_name} expirent après deux jour`,
     });
     await createNotification(item?.id, fifteenDays);
+    await createNotificationAdmin(admin[0]?._id, item.first_name, fifteenDays);
   });
   //sending notification before 1 day
   drivers1Day.map(async (item) => {
@@ -342,6 +346,7 @@ cron.schedule("0 0 23 * *", async () => {
       message: `les documents de ${item.first_name} expirent après un jour`,
     });
     await createNotification(item?.id, fifteenDays);
+    await createNotificationAdmin(admin[0]?._id, item.first_name, fifteenDays);
   });
 });
 //function that will create notification in Db  for drivers
@@ -356,5 +361,14 @@ const createNotification = async (driverId, fifteenDays) => {
     $push: {
       notifications: notification.id,
     },
+  });
+};
+
+//function that will create notification in Db  for admins
+const createNotificationAdmin = async (adminId, first_name, fifteenDays) => {
+  await Notifications.create({
+    title: `Le document de ${first_name} expirera bientôt `,
+    expiry_date: fifteenDays,
+    receiver: adminId,
   });
 };

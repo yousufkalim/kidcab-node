@@ -37,6 +37,7 @@ exports.create = async (req, res) => {
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
+      return console.log(result, "r");
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
       req.body.average_time = result.time ? result.time : "00:00";
     } else {
