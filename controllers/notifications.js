@@ -224,12 +224,16 @@ cron.schedule("0 0 23 * *", async () => {
   const timeNow = new Date();
   const daysCount = new Date().getTime() + 1296000000; //Find date of after 15days
   const fifteenDays = new Date(daysCount); //Set date after 15days
+  fifteenDays = moment(fifteenDays).format("yyyy-mm-dd");
   const sevenDaysCount = new Date().getTime() + 604800000; //Find date of after 7days
   const sevenDays = new Date(sevenDaysCount); //Set date after 7days
+  sevenDays = moment(sevenDays).format("yyyy-mm-dd");
   const twoDaysCount = new Date().getTime() + 172800000; //Find date of after 2days
   const twoDays = new Date(twoDaysCount); //Set date after 2days
+  twoDays = moment(twoDays).format("yyyy-mm-dd");
   const oneDayCount = new Date().getTime() + 86400000; //Find date of after 1day
   const oneDay = new Date(oneDayCount); //Set date after 15days
+  oneDay = moment(oneDay).format("yyyy-mm-dd");
   const admin = await Admin.find();
   var pubMsg = {
     verb: "published",
@@ -241,114 +245,143 @@ cron.schedule("0 0 23 * *", async () => {
   //driver notification 15 days before
   const drivers15Days = await Drivers.find({
     $or: [
-      { criminal_record_date: { $lte: fifteenDays } },
-      { ris_date: { $lte: fifteenDays } },
-      { kbis_date: { $lte: fifteenDays } },
-      { proRc_date: { $lte: fifteenDays } },
-      { criminal_record_date: { $lte: fifteenDays } },
+      { criminal_record_date: { $eq: fifteenDays } },
+      { ris_date: { $eq: fifteenDays } },
+      { kbis_date: { $eq: fifteenDays } },
+      { proRc_date: { $eq: fifteenDays } },
+      { criminal_record_date: { $eq: fifteenDays } },
     ],
   });
   //driver notification 7 days before
   const drivers7Days = await Drivers.find({
     $or: [
-      { criminal_record_date: { $lte: sevenDays } },
-      { ris_date: { $lte: sevenDays } },
-      { kbis_date: { $lte: sevenDays } },
-      { proRc_date: { $lte: sevenDays } },
-      { criminal_record_date: { $lte: sevenDays } },
+      { criminal_record_date: { $eq: sevenDays } },
+      { ris_date: { $eq: sevenDays } },
+      { kbis_date: { $eq: sevenDays } },
+      { proRc_date: { $eq: sevenDays } },
+      { criminal_record_date: { $eq: sevenDays } },
     ],
   });
   //driver notification 2 days before
   const drivers2Days = await Drivers.find({
     $or: [
-      { criminal_record_date: { $lte: twoDays } },
-      { ris_date: { $lte: twoDays } },
-      { kbis_date: { $lte: twoDays } },
-      { proRc_date: { $lte: twoDays } },
-      { criminal_record_date: { $lte: twoDays } },
+      { criminal_record_date: { $eq: twoDays } },
+      { ris_date: { $eq: twoDays } },
+      { kbis_date: { $eq: twoDays } },
+      { proRc_date: { $eq: twoDays } },
+      { criminal_record_date: { $eq: twoDays } },
     ],
   });
 
   //driver notification 1 day before
   const drivers1Day = await Drivers.find({
     $or: [
-      { criminal_record_date: { $lte: oneDay } },
-      { ris_date: { $lte: oneDay } },
-      { kbis_date: { $lte: oneDay } },
-      { proRc_date: { $lte: oneDay } },
-      { criminal_record_date: { $lte: oneDay } },
+      { criminal_record_date: { $eq: oneDay } },
+      { ris_date: { $eq: oneDay } },
+      { kbis_date: { $eq: oneDay } },
+      { proRc_date: { $$eq: oneDay } },
+      { criminal_record_date: { $eq: oneDay } },
     ],
   });
   //sending notification before 15 days
-  drivers15Days.map(async (item) => {
-    fcmservice.sendPushMessage(
-      item?.fcmToken,
-      "Mise à jour des documents",
-      pushMessage,
-      pubMsg
-    );
-    io.socket.emit(`receive_documentStatus${item.id}`, {
-      message: "Vos documents expireront bientôt, veuillez les mettre à jour ",
+  if (drivers15Days.length > 0) {
+    drivers15Days.map(async (item) => {
+      fcmservice.sendPushMessage(
+        item?.fcmToken,
+        "Mise à jour des documents",
+        pushMessage,
+        pubMsg
+      );
+      io.socket.emit(`receive_documentStatus${item.id}`, {
+        message:
+          "Vos documents expireront bientôt, veuillez les mettre à jour ",
+      });
+      io.socket.emit(`admin`, {
+        message: `les documents de ${item.first_name} expirent quinze sept jour`,
+      });
+      await createNotification(item?.id, fifteenDays);
+      await createNotificationAdmin(
+        admin[0]?._id,
+        item.first_name,
+        fifteenDays
+      );
     });
-    io.socket.emit(`admin`, {
-      message: `les documents de ${item.first_name} expirent quinze sept jour`,
-    });
-    await createNotification(item?.id, fifteenDays);
-    await createNotificationAdmin(admin[0]?._id, item.first_name, fifteenDays);
-  });
-  //sending notification before 7 days
-  drivers7Days.map(async (item) => {
-    fcmservice.sendPushMessage(
-      item?.fcmToken,
-      "Mise à jour des documents",
-      pushMessage,
-      pubMsg
-    );
-    io.socket.emit(`receive_documentStatus${item.id}`, {
-      message: "Vos documents expireront bientôt, veuillez les mettre à jour ",
-    });
+  }
+  if (drivers7Days.length > 0) {
+    //sending notification before 7 days
+    drivers7Days.map(async (item) => {
+      fcmservice.sendPushMessage(
+        item?.fcmToken,
+        "Mise à jour des documents",
+        pushMessage,
+        pubMsg
+      );
+      io.socket.emit(`receive_documentStatus${item.id}`, {
+        message:
+          "Vos documents expireront bientôt, veuillez les mettre à jour ",
+      });
 
-    io.socket.emit(`admin`, {
-      message: `les documents de ${item.first_name} expirent après sept jour`,
+      io.socket.emit(`admin`, {
+        message: `les documents de ${item.first_name} expirent après sept jour`,
+      });
+      await createNotification(item?.id, fifteenDays);
+      await createNotificationAdmin(
+        admin[0]?._id,
+        item.first_name,
+        fifteenDays
+      );
     });
-    await createNotification(item?.id, fifteenDays);
-    await createNotificationAdmin(admin[0]?._id, item.first_name, fifteenDays);
-  });
-  //sending notification before 2 days
-  drivers2Days.map(async (item) => {
-    fcmservice.sendPushMessage(
-      item?.fcmToken,
-      "Mise à jour des documents",
-      pushMessage,
-      pubMsg
-    );
-    io.socket.emit(`receive_documentStatus${item.id}`, {
-      message: "Vos documents expireront bientôt, veuillez les mettre à jour ",
+  }
+  if (drivers2Days.length > 0) {
+    //sending notification before 2 days
+    drivers2Days.map(async (item) => {
+      fcmservice.sendPushMessage(
+        item?.fcmToken,
+        "Mise à jour des documents",
+        pushMessage,
+        pubMsg
+      );
+      io.socket.emit(`receive_documentStatus${item.id}`, {
+        message:
+          "Vos documents expireront bientôt, veuillez les mettre à jour ",
+      });
+      io.socket.emit(`admin`, {
+        message: `les documents de ${item.first_name} expirent après deux jour`,
+      });
+      await createNotification(item?.id, fifteenDays);
+      await createNotificationAdmin(
+        admin[0]?._id,
+        item.first_name,
+        fifteenDays
+      );
     });
-    io.socket.emit(`admin`, {
-      message: `les documents de ${item.first_name} expirent après deux jour`,
+  }
+  if (drivers1Day.length > 0) {
+    //sending notification before 1 day
+    drivers1Day.map(async (item) => {
+      fcmservice.sendPushMessage(
+        item?.fcmToken,
+        "Mise à jour des documents",
+        pushMessage,
+        pubMsg
+      );
+      io.socket.emit(`receive_documentStatus${item.id}`, {
+        message:
+          "Vos documents expireront bientôt, veuillez les mettre à jour ",
+      });
+      io.socket.emit(`admin`, {
+        message: `les documents de ${item.first_name} expirent après un jour`,
+      });
+      await createNotification(item?.id, fifteenDays);
+      await createNotificationAdmin(
+        admin[0]?._id,
+        item.first_name,
+        fifteenDays
+      );
     });
-    await createNotification(item?.id, fifteenDays);
-    await createNotificationAdmin(admin[0]?._id, item.first_name, fifteenDays);
-  });
-  //sending notification before 1 day
-  drivers1Day.map(async (item) => {
-    fcmservice.sendPushMessage(
-      item?.fcmToken,
-      "Mise à jour des documents",
-      pushMessage,
-      pubMsg
-    );
-    io.socket.emit(`receive_documentStatus${item.id}`, {
-      message: "Vos documents expireront bientôt, veuillez les mettre à jour ",
-    });
-    io.socket.emit(`admin`, {
-      message: `les documents de ${item.first_name} expirent après un jour`,
-    });
-    await createNotification(item?.id, fifteenDays);
-    await createNotificationAdmin(admin[0]?._id, item.first_name, fifteenDays);
-  });
+  }
 });
+
 //function that will create notification in Db  for drivers
 const createNotification = async (driverId, fifteenDays) => {
   const notification = await Notifications.create({
