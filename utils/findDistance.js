@@ -4,6 +4,64 @@
  */
 var distance = require("google-distance-matrix");
 const API_KEY = process.env.GOOGLE_API_KEY;
+// exports.findDistance1 = async (start_address, step_address, end_address) => {
+//   try {
+//     distance.key(API_KEY);
+//     distance.mode("driving");
+//     distance.units("metric");
+//     var origins = [`${start_address.lat},${start_address.lng}`];
+//     var destinations = [`${step_address[0].lat},${step_address[0].lng}`];
+//     // step_address[]
+//     let step_address = [
+//       `28.539619, 77.259109`,
+//       `5.31176, 83.00978`,
+//       `28.539619,77.259109`,
+//       `5.31176, 83.00978`,
+//       `28.539619,77.259109`,
+//     ];
+//     var result = {};
+//     let Distance = 0;
+//     let time = 0;
+//     return new Promise((resolve, reject) =>
+//       distance.matrix(origins, destinations, function (err, distances) {
+//         if (err) {
+//           reject(err.message);
+//         }
+//         if (!distances) {
+//           return console.log("no distances");
+//         }
+//         if (distances.status == "OK") {
+//           for (var l = 0; l < address.length; l++) {
+//             console.log(origins, "o");
+//             console.log(destinations, "d");
+//             var origin = distances.origin_addresses[0];
+//             var destination = distances.destination_addresses[0];
+//             if (distances.rows[0].elements[0].status == "OK") {
+//               Distance =
+//                 Distance +
+//                 parseInt(distances.rows[0].elements[0].distance.text);
+//               time =
+//                 time + parseInt(distances.rows[0].elements[0].duration.value);
+//             } else {
+//               console.log(
+//                 destination + " is not reachable by land from " + origin
+//               );
+//             }
+//             origins = address[l];
+//             destinations = address[l + 1];
+//           }
+//           result = {
+//             distance: Distance,
+//             time: time,
+//           };
+//         }
+//         resolve(result);
+//       })
+//     );
+//   } catch (err) {
+//     console.log(err.message);
+//   }
+// };
 exports.findDistance1 = async (start_address, step_address, end_address) => {
   try {
     let result = {};

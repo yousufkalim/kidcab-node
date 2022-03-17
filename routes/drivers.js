@@ -51,6 +51,9 @@ router.get("/:driverId", drivers.getById); // Get one driver by it's id
 // Update
 router.put("/:driverId", uploadImages, drivers.update); // Update a specific driver by it's id
 
+// Update driver for json
+router.put("/updateDriver/:driverId", drivers.updateDriver); // Update a specific driver by it's id
+
 // Delete
 router.delete("/:driverId", drivers.delete); // delete a specific driver by it's id
 

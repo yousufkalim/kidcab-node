@@ -36,14 +36,16 @@ const tripSchema = new Schema(
       city: String,
       postal_code: String,
     },
-    addresses: {
-      lat: String,
-      lng: String,
-      label: String,
-      label2: String,
-      city: String,
-      postal_code: String,
-    },
+    addresses: [
+      {
+        lat: String,
+        lng: String,
+        label: String,
+        label2: String,
+        city: String,
+        postal_code: String,
+      },
+    ],
     distance: Number,
     client_price: {
       type: Number,
