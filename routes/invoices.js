@@ -28,7 +28,7 @@ router.get("/:invoiceId", invoices.getById); // Get one invoice by it's id
 router.get("/getByClient/:clinetId", invoices.getByClient); //Get-Invoice by ClientId
 // Update
 router.put("/:invoiceId", invoices.update); // Update a specific invoice by it's id
-
+router.post("/setstatus", invoices.setStatus); // Update a selected invoices
 // Delete
 router.delete("/pdf", invoices.deletePdf);
 router.delete("/deleteMany", invoices.deleteMany);

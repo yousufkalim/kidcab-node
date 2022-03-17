@@ -27,13 +27,13 @@ const vehicleSchema = new Schema(
       type: String,
       required: true,
     },
-    gray_card: {
-      type: String,
-      required: true,
-    },
+    graycard: String,
     inspection_info: String,
     inspection_expiry_date: Date,
     registration_card: String,
+    graycard: String,
+    graycard_expiry_date: Date,
+    inspection_date: Date,
     insurance_certificate: String,
     insurance_expiry_date: Date,
     driver: {

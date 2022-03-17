@@ -123,7 +123,31 @@ exports.update = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
+/**
+ * Update invoice
+ * @param {object} req
+ * @param {object} res
+ */
+exports.setStatus = async (req, res) => {
+  try {
+    let { value, invoices } = req.body;
+    let updatedinvoices = [];
+    for (let i = 0; i < invoices.length; i++) {
+      let invoice = await Invoices.findByIdAndUpdate(
+        invoices[i]._id,
+        { status: value },
+        {
+          new: true,
+        }
+      );
+      updatedinvoices.push(invoice);
+    }
+    return res.json({ success: true, updatedinvoices });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 /**
  * Delete invoice
  * @param {object} req

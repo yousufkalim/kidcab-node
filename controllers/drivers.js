@@ -14,34 +14,38 @@ const { sendEmail } = require("../utils/sendEmail");
  */
 exports.create = async (req, res) => {
   try {
-    const { email, password, bank_info, address, company, vehicles } = req.body;
-
+    const { email, password } = req.body;
     const existingDriver = await Drivers.findOne({ email });
-
     if (existingDriver) {
       return res
         .status(400)
         .json({ success: false, message: "Driver already exists" });
     }
-
-    req.body.bank_info = JSON.parse(bank_info);
-    req.body.address = JSON.parse(address);
-    if (company) {
-      req.body.company = JSON.parse(company);
+    if (req.body.bank_info) {
+      req.body.bank_info = JSON.parse(req.body.bank_info);
     }
-    req.body.vehicles = JSON.parse(vehicles);
-
+    if (req.body.address) {
+      req.body.address = JSON.parse(req.body.address);
+    }
+    if (req.body.company) {
+      req.body.company = JSON.parse(req.body.company);
+    }
+    if (req.body.vehicles) {
+      req.body.vehicles = JSON.parse(req.body.vehicles);
+    }
     req.body.password = bcrypt.hashSync(password, parseInt(bcryptSalt));
-    const imageKeys = Object.keys(req.files);
+    if (req.files) {
+      const imageKeys = Object.keys(req.files);
 
-    const data = Object.assign(
-      {},
-      req.body,
-      ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
-    );
-
-    const driver = await Drivers.create(data);
-
+      const data = Object.assign(
+        {},
+        req.body,
+        ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
+      );
+      const driver = await Drivers.create(data);
+      if (driver) return res.json({ success: true, files: driver });
+    }
+    const driver = await Drivers.create(req.body);
     if (driver) return res.json({ success: true, files: driver });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -117,27 +121,24 @@ exports.update = async (req, res) => {
   try {
     const driverId = req.params.driverId;
     const { email, bank_info, address, vehicles } = req.body;
-    if (Object.values(req.body.bank_info).length > 0) {
+
+    if (req.body.bank_info) {
       req.body.bank_info = JSON.parse(bank_info);
     }
+
     if (req.body.company) {
       req.body.company = JSON.parse(req.body.company);
     }
 
-    if (req.body.address) {
+    console.log(req.body.address, "req.body.address");
+    if (req.body.address != undefined) {
       req.body.address = JSON.parse(address);
     }
-
-    if (req.body.vehicles) {
-      req.body.vehicles = JSON.parse(vehicles);
-    }
-
     if (req.body.vehicles) {
       req.body.vehicles = JSON.parse(vehicles);
     }
 
     if (req.files) {
-      console.log("inside files");
       const imageKeys = Object.keys(req.files);
 
       const data = Object.assign(

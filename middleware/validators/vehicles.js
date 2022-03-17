@@ -6,7 +6,6 @@ exports.validateVehicle = [
   check("model", "Model is required").notEmpty().trim(),
   check("color", "Color is required").notEmpty().trim(),
   check("engine_type", "Engine Type is required").notEmpty().trim(),
-  check("gray_card", "Gray Card is required").notEmpty().trim(),
 ];
 
 /**

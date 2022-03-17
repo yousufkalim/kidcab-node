@@ -60,6 +60,10 @@ const driverSchema = new Schema(
     proRc_date: Date,
     license_card_front: String,
     license_card_back: String,
+    kbis_extract: String,
+    rib: String,
+    professional_liability: String,
+    insurance_civil_liability: String,
 
     bank_info: {
       account_number: {
