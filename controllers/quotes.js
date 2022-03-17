@@ -4,11 +4,12 @@
  */
 const Quotes = require("../models/Quotes");
 const Admin = require("../models/Admins");
+const Users = require("../models/Users");
 const fs = require("fs");
 const pdf = require("pdf-creator-node");
 const path = require("path");
 const moment = require("moment");
-
+const { sendEmail } = require("../utils/sendEmailQuote");
 /**
  * Create Quote
  * @param {object} req
@@ -20,6 +21,8 @@ exports.create = async (req, res) => {
     req.body.trip_info = JSON.parse(trip_info);
     const quote = await Quotes.create(req.body);
     if (!quote) res.status(501).send("No Quote is created");
+    const user = await Users.findById(quote.client);
+    sendEmail(user, quote);
     // Done
     res.json({ success: true, quote });
   } catch (err) {
