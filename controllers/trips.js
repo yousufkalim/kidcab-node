@@ -294,6 +294,12 @@ exports.getPendingByDriver = async (req, res) => {
           path: "driver",
         },
       })
+      .populate({
+        path: "client",
+        populate: {
+          path: "passengers",
+        },
+      })
       .populate("assigned_drivers")
       .sort({ date: 1 });
 
