@@ -29,7 +29,9 @@ exports.getData = async (req, res) => {
 exports.createUpdate = async (req, res) => {
   try {
     let company = await Company.findOne(); //? get first document in db.
-
+    if (req.file) {
+      req.body.logo = req.file.path;
+    }
     if (company) {
       //? if company have data update it.
       await Company.findOneAndUpdate(req.body).then(() => {

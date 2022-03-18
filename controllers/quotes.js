@@ -5,11 +5,13 @@
 const Quotes = require("../models/Quotes");
 const Admin = require("../models/Admins");
 const Users = require("../models/Users");
+const Company = require("../models/Company");
 const fs = require("fs");
 const pdf = require("pdf-creator-node");
 const path = require("path");
 const moment = require("moment");
 const { sendEmail } = require("../utils/sendEmailQuote");
+const url = process.env.BASE_URL;
 /**
  * Create Quote
  * @param {object} req
@@ -177,7 +179,7 @@ exports.QuotesByDate = async (req, res) => {
 exports.ExportPdf = async (req, res) => {
   try {
     const quoteIds = req.body.quotes;
-
+    const company = await Company.findOne();
     const admin = await Admin.findOne();
     let quotes = await Quotes.find({ _id: { $in: quoteIds } })
       .populate("client")
@@ -252,10 +254,11 @@ exports.ExportPdf = async (req, res) => {
     const saveFiles = Object.entries(filteredQuotes).map(([key, value]) => {
       obj = {
         quotes: value,
-        admin_name: admin.name.first_name + " " + admin.name.last_name,
+        admin_name: "Maxime Chevallier",
         admin_email: admin.email,
-        admin_address: admin.address,
-        admin_company_name: admin.company_name,
+        admin_address: company.address,
+        admin_company_name: company.company_name,
+        logo: `${url}/${company.logo}`,
         total_price_without_tax: total_price_without_tax,
         total_price_with_tax: total_price_with_tax,
       };
