@@ -5,11 +5,13 @@
 const Invoices = require("../models/Invoices");
 const Admin = require("../models/Admins");
 const Users = require("../models/Users");
+const Company = require("../models/Company");
 const fs = require("fs");
 const pdf = require("pdf-creator-node");
 const path = require("path");
 const moment = require("moment");
 const { sendEmail } = require("../utils/sendEmailInvoice");
+const url = process.env.BASE_URL;
 
 /**
  * Create Invoice
@@ -208,6 +210,7 @@ exports.ExportPdf = async (req, res) => {
   try {
     const invoiceIds = req.body.invoices;
     const admin = await Admin.findOne();
+    const company = await Company.findOne();
     let invoices = await Invoices.find({ _id: { $in: invoiceIds } })
       .populate("client")
       .lean();
@@ -249,11 +252,12 @@ exports.ExportPdf = async (req, res) => {
     const saveFiles = Object.entries(filteredInvoices).map(([key, value]) => {
       obj = {
         invoices: value,
-        admin_name: admin.name.first_name + " " + admin.name.last_name,
+        admin_name: "Maxime Chevallier",
         admin_email: admin.email,
-        admin_address: admin.address,
-        admin_company_name: admin.company_name,
+        admin_address: company.address,
+        admin_company_name: company.company_name,
         total_price: total_price,
+        logo: `${url}/${company.logo}`,
       };
       let clientName = [];
       if (value.length > 0) {
