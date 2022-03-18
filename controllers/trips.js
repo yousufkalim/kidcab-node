@@ -37,7 +37,6 @@ exports.create = async (req, res) => {
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
-      return console.log(result, "r");
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
       req.body.average_time = result.time ? result.time : "00:00";
     } else {
@@ -222,7 +221,17 @@ exports.declineByDriver = async (req, res) => {
         },
       },
       { new: true }
-    );
+    )
+      .populate("client")
+      .populate("rides")
+      .populate("passengers")
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers");
 
     if (!declinedTrip) {
       return res
@@ -306,7 +315,16 @@ exports.getPendingByDriver = async (req, res) => {
 exports.getUpcomingTrips = async (req, res) => {
   try {
     const trips = await Trips.find({ client: req.params.clientId })
+      .populate("client")
       .populate("rides")
+      .populate("passengers")
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers")
       .sort({ date: 1 });
     var current = moment();
     let upcomingTrips = trips.filter((a) => moment(current).isBefore(a.date));
@@ -328,7 +346,16 @@ exports.getPastTrips = async (req, res) => {
     const trips = await Trips.find({
       client: req.params.clientId,
     })
+      .populate("client")
       .populate("rides")
+      .populate("passengers")
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers")
       .sort({ date: -1 });
     var current = moment();
     let pastTrips = trips.filter((a) => moment(current).isAfter(a.date));
@@ -349,13 +376,16 @@ exports.getById = async (req, res) => {
   try {
     const tripId = req.params.tripId;
     const trip = await Trips.findById(tripId)
+      .populate("client")
       .populate("rides")
+      .populate("passengers")
       .populate({
         path: "invited_drivers",
         populate: {
           path: "driver",
         },
-      });
+      })
+      .populate("assigned_drivers");
     if (!trip) res.status(404).send("No Trips Found");
     res.json({ success: true, trip });
   } catch (err) {
@@ -435,12 +465,17 @@ exports.update = async (req, res) => {
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
       assigned_drivers: assigned_drivers ? assigned_drivers : null,
-    }).populate({
-      path: "invited_drivers",
-      populate: {
-        path: "driver",
-      },
-    });
+    })
+      .populate("client")
+      .populate("rides")
+      .populate("passengers")
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers");
     if (!updatedTrip) res.status(404).send("No Trip is Updated");
     res.json({ success: true, updatedTrip });
   } catch (err) {
@@ -454,7 +489,17 @@ exports.updateEvent = async (req, res) => {
     const tripId = req.params.tripId;
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
-    });
+    })
+      .populate("client")
+      .populate("rides")
+      .populate("passengers")
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers");
     if (!updatedTrip) res.status(404).send("No Trip is Updated");
     res.json({ success: true, updatedTrip });
   } catch (err) {
