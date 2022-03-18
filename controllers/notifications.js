@@ -37,6 +37,24 @@ exports.getAll = async (req, res) => {
  * @param {object} req
  * @param {object} res
  */
+
+exports.getAllAdmin = async (req, res) => {
+  try {
+    const admin = await Admin.findOne();
+
+    const notifications = await Notifications.find({
+      receiver: admin._id,
+      seen: false,
+    }).sort({ createdAt: -1 });
+    if (!notifications)
+      return res.status(404).json("notifications does not found");
+    return res.status(202).json({ success: true, notifications });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 exports.seen = async (req, res) => {
   try {
     const userId = req.params.userId;

@@ -14,6 +14,7 @@ const notifications = require("../controllers/notifications");
  */
 
 // Read
+router.get("/getAllAdmin", notifications.getAllAdmin); // Get all quotes at once
 router.get("/getAll/:userId", notifications.getAll); // Get all quotes at once
 router.get("/:notificationId", notifications.getById); // Get one quote by it's id
 // Delete
