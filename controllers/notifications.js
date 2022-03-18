@@ -240,7 +240,7 @@ cron.schedule("* * * * *", async () => {
 });
 
 //expiry date, with admin notification and driver notification 15 days before exp, 1 week before exp, 2 days and day before
-cron.schedule("*/10 * * * * *", async () => {
+cron.schedule("0 0 23 * *", async () => {
   try {
     let timeNow = new Date();
     let daysCount = new Date().getTime() + 1296000000; //Find date of after 15days
