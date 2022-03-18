@@ -59,12 +59,7 @@ exports.create = async (req, res) => {
         for (; j <= e_date; j.setDate(j.getDate() + 1)) {
           //this loop will work from start to end date and find when date is repeating
           if (selectedDays[i].value === j.getDay()) {
-            let serverDate = new Date(j); //taking date coming from request
-            var hours = req.body.time[i].split(":"); //split hours and minutes
-            serverDate.setHours(parseInt(hours[0]));
-            serverDate.setMinutes(parseInt(hours[1]));
-            //pushing updated date into date(arr)
-            dates.push(new Date(serverDate));
+            dates.push(j);
           }
         }
         j = new Date(req.body.startdate); //After inner loop break this will reinitalize loop from start date
@@ -72,13 +67,7 @@ exports.create = async (req, res) => {
     }
     //else if trip is simple
     else {
-      var hours = req.body.time.split(":"); //split hours and minutes
       req.body.dates.map((date) => {
-        //set each date's format
-        const serverDate = new Date(date);
-        serverDate.setHours(parseInt(hours[0]));
-        serverDate.setMinutes(parseInt(hours[1]));
-        //pushing updated date into date(arr)
         dates.push(new Date(serverDate));
       });
     }
@@ -99,6 +88,7 @@ exports.create = async (req, res) => {
               rides: [],
               date: date,
             });
+            console.log("trip", trip);
             //creating trip
             //This map will send notification to all driver then create notification for each driver
             drivers.map(async (driver) => {

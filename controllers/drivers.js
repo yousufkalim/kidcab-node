@@ -121,7 +121,6 @@ exports.update = async (req, res) => {
   try {
     const driverId = req.params.driverId;
     const { email, bank_info, address, vehicles } = req.body;
-
     if (req.body.bank_info) {
       req.body.bank_info = JSON.parse(bank_info);
     }
@@ -129,8 +128,6 @@ exports.update = async (req, res) => {
     if (req.body.company) {
       req.body.company = JSON.parse(req.body.company);
     }
-
-    console.log(req.body.address, "req.body.address");
     if (req.body.address != undefined) {
       req.body.address = JSON.parse(address);
     }
@@ -173,7 +170,6 @@ exports.updateDriver = async (req, res) => {
   try {
     const driverId = req.params.driverId;
     const { email, bank_info, address, vehicles } = req.body;
-
     if (req.body.bank_info) {
       req.body.bank_info = JSON.parse(bank_info);
     }
@@ -181,8 +177,6 @@ exports.updateDriver = async (req, res) => {
     if (req.body.company) {
       req.body.company = JSON.parse(req.body.company);
     }
-
-    console.log(req.body.address, "req.body.address");
     if (req.body.address != undefined) {
       req.body.address = JSON.parse(address);
     }
