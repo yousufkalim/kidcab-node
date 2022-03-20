@@ -20,13 +20,8 @@ const fcmservice = require("../utils/fcmService");
  */
 exports.create = async (req, res) => {
   try {
-    const {
-      invited_drivers,
-      start_address,
-      addresses,
-      end_address,
-      trip_type,
-    } = req.body;
+    const { invited_drivers, start_address, addresses, end_address, dates } =
+      req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
     var pubMsg = {
@@ -44,32 +39,6 @@ exports.create = async (req, res) => {
       const result = await findDistance1(start_address, addresses, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
       req.body.average_time = result.time ? result.time : "00:00";
-    }
-
-    let dates = []; //to find date of days
-    //Working according to Trip Type
-    if (trip_type === "recurring") {
-      const s_date = new Date(req.body.startdate); //start date
-      const e_date = new Date(req.body.enddate); //end date
-      let selectedDays = req.body.days; //days selected by user(monday,tuesday)
-      let j = s_date;
-      //setting loop index
-      for (let i = 0; i < selectedDays.length; i++) {
-        //this loop will run for each day
-        for (; j <= e_date; j.setDate(j.getDate() + 1)) {
-          //this loop will work from start to end date and find when date is repeating
-          if (selectedDays[i].value === j.getDay()) {
-            dates.push(j);
-          }
-        }
-        j = new Date(req.body.startdate); //After inner loop break this will reinitalize loop from start date
-      }
-    }
-    //else if trip is simple
-    else {
-      req.body.dates.map((date) => {
-        dates.push(new Date(serverDate));
-      });
     }
 
     const createTrips = () => {
