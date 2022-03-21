@@ -8,7 +8,11 @@ const Rides = require("../models/Rides");
 const Users = require("../models/Users");
 const Notifications = require("../models/Notifications");
 const moment = require("moment");
-const { findDistance, findDistance1 } = require("../utils/findDistance");
+const {
+  findDistance,
+  findDistance1,
+  findDistance2,
+} = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
 const io = require("../index");
@@ -36,11 +40,10 @@ exports.create = async (req, res) => {
       req.body.average_time = result.time ? result.time : "00:00";
     } else {
       //if stetp  added by admin
-      const result = await findDistance1(start_address, addresses, end_address);
+      const result = await findDistance2(start_address, addresses, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
       req.body.average_time = result.time ? result.time : "00:00";
     }
-
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
@@ -395,14 +398,6 @@ exports.getTripsByStatus = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const tripId = req.params.tripId;
-    if (req.body.time) {
-      var hours = req.body.time.split(":"); //split hours and minutes
-      let serverDate = new Date(req.body.date); //setting server date
-      serverDate.setHours(parseInt(hours[0]));
-      serverDate.setMinutes(parseInt(hours[1]));
-      //pushing updated date into date(arr)
-      req.body.date = new Date(serverDate);
-    }
     const {
       start_address,
       end_address,
@@ -423,7 +418,7 @@ exports.update = async (req, res) => {
       req.body.average_time = result.time ? result.time : 0;
     } else {
       //if stetp  added by admin
-      const result = await findDistance1(start_address, addresses, end_address);
+      const result = await findDistance2(start_address, addresses, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
       req.body.average_time = result.time ? result.time : 0;
     }
@@ -534,17 +529,19 @@ exports.TripsByDate = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-//Day Report
-exports.getDayReport = async (req, res) => {
+//Weekly Report
+exports.getDailyReport = async (req, res) => {
   try {
-    const today = new Date();
-    const lastweek = new Date().getTime() - 604800000;
+    let today = new Date();
+    let nextday = today.getTime() + 86400000;
+    today = moment(today).format("YYYY-MM-DD");
+    nextday = moment(nextday).format("YYYY-MM-DD");
     const reports = await Trips.aggregate([
       {
         $match: {
           date: {
-            $gte: new Date(lastweek),
-            $lte: today,
+            $gte: new Date(today),
+            $lte: new Date(nextday),
           },
           status: "completed",
         },
@@ -565,6 +562,7 @@ exports.getDayReport = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+//Daily Report
 
 //Add stop to trip
 exports.addStop = async (req, res) => {
@@ -577,7 +575,7 @@ exports.addStop = async (req, res) => {
         .json({ success: false, message: "Trip not Found" });
     }
     const { addresses } = req.body;
-    const result = await findDistance1(
+    const result = await findDistance2(
       trip.start_address,
       addresses,
       trip.end_address

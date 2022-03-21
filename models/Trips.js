@@ -78,6 +78,7 @@ const tripSchema = new Schema(
       ref: "users",
       required: true,
     },
+    comment: String,
     passengers: [
       {
         type: Schema.Types.ObjectId,
