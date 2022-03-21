@@ -51,7 +51,9 @@ router.get("/declineByDriver/:tripId/:driverId", trips.declineByDriver);
 //filter
 router.post("/tripsByDate/", trips.TripsByDate);
 //day report
-router.post("/getDayReport/", trips.getDayReport);
+router.post("/getDayReport/", trips.getDailyReport);
+//day report
+// router.post("/getDayReport/", trips.getDayReport);
 //addStop
 router.post("/addstop/:tripId", trips.addStop);
 //remainingDistance
