@@ -4,7 +4,7 @@
  */
 var distance = require("google-distance-matrix");
 const API_KEY = process.env.GOOGLE_API_KEY;
-exports.findDistance2 = async (start_address, step_address, end_address) => {
+exports.findDistance2 = async (start_address, step_addresses, end_address) => {
   try {
     console.log("inside");
     distance.key(API_KEY);
@@ -13,34 +13,8 @@ exports.findDistance2 = async (start_address, step_address, end_address) => {
     var result = {};
     let Distance = 0;
     let time = 0;
-    var origins = [`${start_address.lat},${start_address.lng}`];
     var addresses = [];
-    let step_addresses = [
-      {
-        label: "Pencréac’H 29600 Morlaix",
-        label2: "Pencréac’H 29600 Morlaix,29, Finistère, Bretagne",
-        postal_code: "29600",
-        lat: "48.596819",
-        lng: "-3.837081",
-        city: "Morlaix",
-      },
-      {
-        label: "N 1 97410 Saint-Pierre",
-        label2: "N 1 97410 Saint-Pierre,974, La Réunion",
-        postal_code: "97410",
-        lat: "-21.311913",
-        lng: "55.437155",
-        city: "Saint-Pierre",
-      },
-      {
-        label: "Pairs 16420 Saint-Christophe",
-        label2: "Pairs 16420 Saint-Christophe,16, Charente, Nouvelle-Aquitaine",
-        postal_code: "16420",
-        lat: "45.977226",
-        lng: "0.836006",
-        city: "Saint-Christophe",
-      },
-    ];
+    var origins = [`${start_address.lat},${start_address.lng}`];
     var destinations = [`${step_addresses[0].lat},${step_addresses[0].lng}`];
     step_addresses = step_addresses.splice(1);
     step_addresses[step_addresses.length] = end_address;
