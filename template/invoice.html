@@ -30,9 +30,7 @@
                     </div>
                     <div
                         style="display: flex; flex-direction: row; display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center; justify-content: flex-start;align-items: flex-end; width: 20%; margin: 10px;">
-                        <img height="30" width="100"
-                            src={{logo}}
-                            alt="">
+                        <img height="30" width="100" src={{logo}} alt="">
                     </div>
 
 
@@ -183,7 +181,7 @@
 
                             <td align="center" valign="top" bgcolor="#ffe77b"
                                 style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 35px; font-family: Open Sans, sans-serif;text-align: center;">
-                                Status
+                                Statut
                             </td>
                             <td align="right" valign="top" bgcolor="#ffe77b"
                                 style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 65px; font-family: Open Sans, sans-serif;text-align: center;">
@@ -206,7 +204,7 @@
                                 </td>
                                 <td align="right" valign="top" bgcolor="#ffe77b"
                                     style="background-color: #fff; width: 65px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
-                                    €{{total_price}}
+                                    {{total_price}}€
                                 </td>
                                 {{/invoices}}
 
@@ -229,16 +227,27 @@
                                     style="background-color:#fff; margin: 10px; font-family: Open Sans, sans-serif;">
                                     <div
                                         style="width: 70px;background-color: #C0C0C0; padding: 3px;font-family: Open Sans, sans-serif;">
-                                        <strong>€{{total_price}}</strong>
+                                        <strong>{{total_price}}€</strong>
                                     </div>
                                 </td>
                             </tr>
+
         </tr>
+
     </table>
+
     </div>
 
     </div>
     </td>
+    </tr>
+    <tr>
+        <td>
+            <div style='margin-top:40px;'>
+                Conditions générales :
+                <a href="https://kidcab.fr/cgu-cgv/">https://kidcab.fr/cgu-cgv/</a>
+            </div>
+        </td>
     </tr>
     </table>
 </body>
