@@ -223,18 +223,14 @@ exports.ExportPdf = async (req, res) => {
         filteredInvoices[invoice.client._id] = [];
 
         // Changing format for issue data as desired
-        invoice["issue_date"] = moment(invoice.issue_date).format(
-          "DD MMMM YYYY"
-        );
+        invoice["issue_date"] = moment(invoice.issue_date).format("DD/MM/YYYY");
 
         // Calculating Total Price
         total_price = total_price + invoice.total_price;
         filteredInvoices[invoice.client._id].push(invoice);
       } else {
         // Changing format for issue data as desired
-        invoice["issue_date"] = moment(invoice.issue_date).format(
-          "DD MMMM YYYY"
-        );
+        invoice["issue_date"] = moment(invoice.issue_date).format("DD/MM/YYYY");
 
         // Calculating Total Price
         total_price = total_price + invoice.total_price;
