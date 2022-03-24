@@ -8,11 +8,7 @@ const Rides = require("../models/Rides");
 const Users = require("../models/Users");
 const Notifications = require("../models/Notifications");
 const moment = require("moment");
-const {
-  findDistance,
-  findDistance1,
-  findDistance2,
-} = require("../utils/findDistance");
+const { findDistance, findDistance2 } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
 const io = require("../index");
@@ -28,21 +24,15 @@ exports.create = async (req, res) => {
       req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
-    var pubMsg = {
-      verb: "published",
-      actions: "Vous avez un nouveau trajet ",
-    }; //Message for fcm
-    var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
+
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
-      req.body.average_time = result.time ? result.time : "00:00";
     } else {
       //if stetp  added by admin
       const result = await findDistance2(start_address, addresses, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
-      req.body.average_time = result.time ? result.time : "00:00";
     }
     const createTrips = () => {
       return new Promise((resolve, reject) => {
@@ -60,7 +50,6 @@ exports.create = async (req, res) => {
               rides: [],
               date: date,
             });
-            console.log("trip", trip);
             //creating trip
             //This map will send notification to all driver then create notification for each driver
             drivers.map(async (driver) => {
@@ -225,7 +214,8 @@ exports.getAll = async (req, res) => {
           path: "driver",
         },
       })
-      .populate("assigned_drivers");
+      .populate("assigned_drivers")
+      .sort({ date: 1 });
     if (!trips) res.status(404).send("No Trips Found");
     res.json({ success: true, trips });
   } catch (err) {
@@ -380,8 +370,8 @@ exports.getTripsByStatus = async (req, res) => {
           path: "driver",
         },
       })
-      .populate("assigned_drivers");
-
+      .populate("assigned_drivers")
+      .sort({ date: 1 });
     if (!trips) res.status(404).send("No Trips Found");
     res.json({ success: true, trips });
   } catch (err) {
@@ -398,6 +388,7 @@ exports.getTripsByStatus = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const tripId = req.params.tripId;
+    const findTrip = await Trips.findById(tripId);
     const {
       start_address,
       end_address,
@@ -410,17 +401,52 @@ exports.update = async (req, res) => {
         driver: driver,
       }));
     }
+    if (req.body.status === "pending") {
+      const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+      const fifteenDays = new Date(daysCount); //Set date after 15days
+      var pubMsg = {
+        verb: "published",
+        actions: "Vous avez un nouveau trajet ",
+      }; //Message for fcm
+      var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
+      let newDriver = req.body.invited_drivers.filter(
+        (o1) => !findTrip.invited_drivers.some((o2) => o1.driver == o2.driver)
+      );
+      const drivers = await Drivers.find({
+        _id: { $in: newDriver.driver },
+      });
+      drivers.map(async (driver) => {
+        if (driver?.fcmToken) {
+          fcmservice.sendPushMessage(
+            driver.fcmToken,
+            "Demande de course",
+            pushMessage,
+            pubMsg
+          );
+          //store notification in db
+          const notification = await Notifications.create({
+            title: "Vous avez un nouveau trajet",
+            expiry_date: fifteenDays,
+            receiver: driver.id,
+          });
+          //update driver with new notification
+          await Drivers.findByIdAndUpdate(driver.id, {
+            $push: {
+              notifications: notification.id,
+            },
+          });
+        }
+      });
+    }
     const trip = await Trips.findById(tripId);
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
-      req.body.average_time = result.time ? result.time : 0;
     } else {
       //if stetp  added by admin
       const result = await findDistance2(start_address, addresses, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
-      req.body.average_time = result.time ? result.time : 0;
     }
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
@@ -523,7 +549,8 @@ exports.TripsByDate = async (req, res) => {
           path: "driver",
         },
       })
-      .populate("assigned_drivers");
+      .populate("assigned_drivers")
+      .sort({ date: 1 });
     if (trips) return res.status(200).json({ success: true, trips });
   } catch (err) {
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -533,15 +560,15 @@ exports.TripsByDate = async (req, res) => {
 exports.getDailyReport = async (req, res) => {
   try {
     let today = new Date();
-    let nextday = today.getTime() + 86400000;
+    let lastweek = today.getTime() - 604800000;
     today = moment(today).format("YYYY-MM-DD");
-    nextday = moment(nextday).format("YYYY-MM-DD");
+    lastweek = moment(lastweek).format("YYYY-MM-DD");
     const reports = await Trips.aggregate([
       {
         $match: {
           date: {
-            $gte: new Date(today),
-            $lte: new Date(nextday),
+            $gte: new Date(lastweek),
+            $lte: new Date(today),
           },
           status: "completed",
         },
@@ -562,7 +589,6 @@ exports.getDailyReport = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-//Daily Report
 
 //Add stop to trip
 exports.addStop = async (req, res) => {
@@ -581,7 +607,6 @@ exports.addStop = async (req, res) => {
       trip.end_address
     );
     trip.distance = result.distance ? result.distance.toFixed(1) : 0;
-    trip.average_time = result.time ? result.time : 0;
     trip.addresses = addresses;
     await trip.save();
     return res.json({ success: true, trip });
@@ -607,14 +632,10 @@ exports.remainingDistance = async (req, res) => {
       parseInt(trip.distance) > parseInt(result.distance)
         ? parseInt(trip.distance) - parseInt(result.distance)
         : parseInt(result.distance) - parseInt(trip.distance);
-    const remainingTime =
-      parseInt(trip.average_time) > parseInt(result.time)
-        ? parseInt(trip.average_time) - parseInt(result.time)
-        : parseInt(result.time) - parseInt(trip.average_time);
+
     return res.json({
       success: true,
       remainingDistance: remainingDistance,
-      remainingTime: remainingTime,
     });
   } catch (err) {
     console.log("Error ----> ", err);

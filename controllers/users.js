@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
 const Users = require("../models/Users");
 const { generateAuthToken } = require("../middleware/auth");
+const Passengers = require("../models/Passengers");
 /**
  * Create User - Signup
  * @param {object} req
@@ -51,7 +52,6 @@ exports.login = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email });
     if (!user) return res.status(404).send("Email or Password is incorrect");
-    console.log(req.body);
     const validPassword = bcrypt.compareSync(req.body.password, user.password);
     if (!validPassword)
       return res.status(401).send("Email or Password is incorrect");
@@ -107,7 +107,6 @@ exports.update = async (req, res) => {
   try {
     const userId = req.params.userId;
     let { bank_info, address } = req.body;
-    console.log("user update body", req.body);
 
     if (req.file) {
       req.body.profile_pic = req.file.path;
@@ -145,8 +144,12 @@ exports.update = async (req, res) => {
  */
 exports.delete = async (req, res) => {
   try {
+    console.log("Inside Delete");
     const userId = req.params.userId; // Getting user id from URL parameter
     const user = await Users.findByIdAndDelete(userId); // Deleting the user
+    const passengers = await Passengers.deleteMany({
+      _id: { $in: user.passengers },
+    });
     if (!user)
       res.status(404).send({
         success: false,
@@ -202,7 +205,7 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-//forget password recovery
+//forget password recoverycons
 exports.forgot = async (req, res) => {
   try {
     let { email } = req.params;
