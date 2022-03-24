@@ -15,7 +15,6 @@ exports.create = async (req, res) => {
     if (req.file) {
       req.body.profile_pic = req.file.path;
     }
-    console.log(req.body);
     const passenger = await Passengers.create(req.body);
     await Users.findByIdAndUpdate(req.body.client, {
       $push: {
@@ -70,10 +69,19 @@ exports.getById = async (req, res) => {
  */
 exports.update = async (req, res) => {
   try {
-    const passengerId = req.params.passengerId;
     if (req.file) {
       req.body.profile_pic = req.file.path;
     }
+    const passengerId = req.params.passengerId;
+    const previousClient = await Passengers.findById(passengerId);
+    if (previousClient) {
+      const user = await Users.findByIdAndUpdate(previousClient.client, {
+        $pull: {
+          passengers: passengerId,
+        },
+      });
+    }
+
     const updatedPassenger = await Passengers.findByIdAndUpdate(
       passengerId,
       req.body,
@@ -81,6 +89,9 @@ exports.update = async (req, res) => {
         new: true,
       }
     );
+    await Users.findByIdAndUpdate(req.body.client, {
+      $push: { passengers: passengerId },
+    });
     if (!updatedPassenger) return res.status(404).send("No Passenger Update");
     res.json({ success: true, updatedPassenger });
   } catch (err) {

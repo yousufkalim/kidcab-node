@@ -20,44 +20,42 @@ exports.findDistance2 = async (start_address, step_addresses, end_address) => {
     addresses.map((i) => {
       ad1.push(`${i.lat},${i.lng}`);
     });
-    return new Promise((resolve, reject) =>
-      distance.matrix(origins, destinations, function (err, distances) {
-        if (err) {
-          reject(err.message);
-        }
-        if (!distances) {
-          return console.log("no distances");
-        }
-        if (distances.status == "OK") {
-          for (var l = 0; l <= ad1.length; l++) {
-            if (destinations && origins) {
-              console.log("origin", origins);
-              console.log(destinations, "destinations");
-              var origin = distances.origin_addresses[0];
-              var destination = distances.destination_addresses[0];
-              if (distances.rows[0].elements[0].status == "OK") {
-                Distance =
-                  Distance +
-                  parseInt(distances.rows[0].elements[0].distance.text);
-                time =
-                  time + parseInt(distances.rows[0].elements[0].duration.value);
-              } else {
-                console.log(
-                  destination + " is not reachable by land from " + origin
-                );
-              }
-              origins = ad1[l];
-              destinations = ad1[l + 1];
-            }
+    return new Promise((resolve, reject) => {
+      for (var l = 0; l <= ad1.length; l++) {
+        distance.matrix(origins, destinations, function (err, distances) {
+          if (err) {
+            reject(err.message);
           }
-          result = {
-            distance: Distance,
-            time: time,
-          };
-        }
-        resolve(result);
-      })
-    );
+          if (!distances) {
+            return console.log("no distances");
+          }
+          if (distances.status == "OK") {
+            for (var i = 0; i < origins.length; i++) {
+              for (var j = 0; j < destinations.length; j++) {
+                var origin = distances.origin_addresses[i];
+                var destination = distances.destination_addresses[j];
+                console.log(origin, destination);
+                if (distances.rows[0].elements[j].status == "OK") {
+                  Distance =
+                    Distance +
+                    parseInt(distances.rows[i].elements[j].distance.text);
+                } else {
+                  console.log(
+                    destination + " is not reachable by land from " + origin
+                  );
+                }
+              }
+            }
+            result = {
+              distance: Distance,
+            };
+          }
+        });
+        origins[0] = ad1[l];
+        destinations[0] = ad1[l + 1];
+      }
+      resolve(result);
+    });
   } catch (err) {
     console.log(err.message);
   }
@@ -66,14 +64,12 @@ exports.findDistance2 = async (start_address, step_addresses, end_address) => {
 exports.findDistance = async (start_address, end_address) => {
   try {
     distance.key(API_KEY);
-    console.log("not step");
     distance.mode("driving");
     distance.units("metric");
     var origins = [`${start_address.lat},${start_address.lng}`];
     var destinations = [`${end_address.lat},${end_address.lng}`];
     var result = {};
     let Distance = 0;
-    let time = 0;
     return new Promise((resolve, reject) =>
       distance.matrix(origins, destinations, function (err, distances) {
         if (err) {
@@ -100,7 +96,6 @@ exports.findDistance = async (start_address, end_address) => {
           }
           result = {
             distance: Distance,
-            time: time,
           };
         }
         resolve(result);

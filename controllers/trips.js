@@ -37,12 +37,10 @@ exports.create = async (req, res) => {
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
-      req.body.average_time = result.time ? result.time : "00:00";
     } else {
       //if stetp  added by admin
       const result = await findDistance2(start_address, addresses, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
-      req.body.average_time = result.time ? result.time : "00:00";
     }
     const createTrips = () => {
       return new Promise((resolve, reject) => {
@@ -60,7 +58,6 @@ exports.create = async (req, res) => {
               rides: [],
               date: date,
             });
-            console.log("trip", trip);
             //creating trip
             //This map will send notification to all driver then create notification for each driver
             drivers.map(async (driver) => {
@@ -415,12 +412,10 @@ exports.update = async (req, res) => {
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
-      req.body.average_time = result.time ? result.time : 0;
     } else {
       //if stetp  added by admin
       const result = await findDistance2(start_address, addresses, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
-      req.body.average_time = result.time ? result.time : 0;
     }
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
@@ -533,15 +528,15 @@ exports.TripsByDate = async (req, res) => {
 exports.getDailyReport = async (req, res) => {
   try {
     let today = new Date();
-    let nextday = today.getTime() + 86400000;
+    let lastweek = today.getTime() - 604800000;
     today = moment(today).format("YYYY-MM-DD");
-    nextday = moment(nextday).format("YYYY-MM-DD");
+    lastweek = moment(lastweek).format("YYYY-MM-DD");
     const reports = await Trips.aggregate([
       {
         $match: {
           date: {
-            $gte: new Date(today),
-            $lte: new Date(nextday),
+            $gte: new Date(lastweek),
+            $lte: new Date(today),
           },
           status: "completed",
         },
@@ -562,7 +557,6 @@ exports.getDailyReport = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-//Daily Report
 
 //Add stop to trip
 exports.addStop = async (req, res) => {
@@ -581,7 +575,6 @@ exports.addStop = async (req, res) => {
       trip.end_address
     );
     trip.distance = result.distance ? result.distance.toFixed(1) : 0;
-    trip.average_time = result.time ? result.time : 0;
     trip.addresses = addresses;
     await trip.save();
     return res.json({ success: true, trip });
@@ -607,14 +600,10 @@ exports.remainingDistance = async (req, res) => {
       parseInt(trip.distance) > parseInt(result.distance)
         ? parseInt(trip.distance) - parseInt(result.distance)
         : parseInt(result.distance) - parseInt(trip.distance);
-    const remainingTime =
-      parseInt(trip.average_time) > parseInt(result.time)
-        ? parseInt(trip.average_time) - parseInt(result.time)
-        : parseInt(result.time) - parseInt(trip.average_time);
+
     return res.json({
       success: true,
       remainingDistance: remainingDistance,
-      remainingTime: remainingTime,
     });
   } catch (err) {
     console.log("Error ----> ", err);

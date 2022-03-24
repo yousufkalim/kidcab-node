@@ -7,6 +7,7 @@ const Users = require("../models/Users");
 const Drivers = require("../models/Drivers");
 const Notifications = require("../models/Notifications");
 const io = require("../index");
+const Trips = require("../models/Trips");
 const socket = require("../index");
 const moment = require("moment");
 const fcmservice = require("../utils/fcmService");
@@ -436,7 +437,7 @@ exports.completeRide = async (req, res) => {
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
     const findRide = await Rides.findById(rideId);
-    const findTrip = await Trips.findOne({ rides: rideId });
+    const findTrip = await Trips.findById(findRide.trip);
     if (findRide) {
       var pubMsg = {
         verb: "published",
@@ -444,15 +445,15 @@ exports.completeRide = async (req, res) => {
       }; //Message for fcm
       var pushMessage = feedback; //Notification title fcm
       const driver = await Drivers.findById(findRide.driver);
-      const client = await Users.findById(findRide.clinet);
+      const client = await Users.findById(findRide.client);
       fcmservice.sendPushMessage(
-        driver.fcmToken,
+        driver?.fcmToken,
         "etour d'information",
         pushMessage,
         pubMsg
       );
       fcmservice.sendPushMessage(
-        client.fcmToken,
+        client?.fcmToken,
         "le client a été déposé",
         "le client a été déposé",
         "le client a été déposé"
@@ -569,7 +570,6 @@ exports.endRide = async (req, res) => {
     );
     if (updateRide) {
       const driver = await Drivers.findById(updateRide.driver);
-      console.log(driver.profile_pic, "p");
       const client = await Users.findById(updateRide.client);
       fcmservice.sendPushMessage(
         client.fcmToken,
@@ -594,6 +594,9 @@ exports.endRide = async (req, res) => {
           notifications: notification.id,
         },
       });
+      const findTrip = await Trips.findById(updateRide.trip);
+      findTrip.status = "completed";
+      await findTrip.save();
       return res.status(202).json({ success: true, updateRide });
     } else
       return res
