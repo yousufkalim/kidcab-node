@@ -144,12 +144,11 @@ exports.update = async (req, res) => {
  */
 exports.delete = async (req, res) => {
   try {
+    console.log("Inside Delete");
     const userId = req.params.userId; // Getting user id from URL parameter
     const user = await Users.findByIdAndDelete(userId); // Deleting the user
-    await Users.findByIdAndUpdate(deletedPassenger.client, {
-      $pull: {
-        passengers: deletedPassenger._id,
-      },
+    const passengers = await Passengers.deleteMany({
+      _id: { $in: user.passengers },
     });
     if (!user)
       res.status(404).send({
@@ -206,7 +205,7 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-//forget password recovery
+//forget password recoverycons
 exports.forgot = async (req, res) => {
   try {
     let { email } = req.params;

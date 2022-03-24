@@ -8,11 +8,7 @@ const Rides = require("../models/Rides");
 const Users = require("../models/Users");
 const Notifications = require("../models/Notifications");
 const moment = require("moment");
-const {
-  findDistance,
-  findDistance1,
-  findDistance2,
-} = require("../utils/findDistance");
+const { findDistance, findDistance2 } = require("../utils/findDistance");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
 const io = require("../index");
@@ -28,11 +24,7 @@ exports.create = async (req, res) => {
       req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
-    var pubMsg = {
-      verb: "published",
-      actions: "Vous avez un nouveau trajet ",
-    }; //Message for fcm
-    var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
+
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
@@ -222,7 +214,8 @@ exports.getAll = async (req, res) => {
           path: "driver",
         },
       })
-      .populate("assigned_drivers");
+      .populate("assigned_drivers")
+      .sort({ date: 1 });
     if (!trips) res.status(404).send("No Trips Found");
     res.json({ success: true, trips });
   } catch (err) {
@@ -377,8 +370,8 @@ exports.getTripsByStatus = async (req, res) => {
           path: "driver",
         },
       })
-      .populate("assigned_drivers");
-
+      .populate("assigned_drivers")
+      .sort({ date: 1 });
     if (!trips) res.status(404).send("No Trips Found");
     res.json({ success: true, trips });
   } catch (err) {
@@ -395,6 +388,7 @@ exports.getTripsByStatus = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const tripId = req.params.tripId;
+    const findTrip = await Trips.findById(tripId);
     const {
       start_address,
       end_address,
@@ -406,6 +400,43 @@ exports.update = async (req, res) => {
       req.body.invited_drivers = invited_drivers.map((driver) => ({
         driver: driver,
       }));
+    }
+    if (req.body.status === "pending") {
+      const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+      const fifteenDays = new Date(daysCount); //Set date after 15days
+      var pubMsg = {
+        verb: "published",
+        actions: "Vous avez un nouveau trajet ",
+      }; //Message for fcm
+      var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
+      let newDriver = req.body.invited_drivers.filter(
+        (o1) => !findTrip.invited_drivers.some((o2) => o1.driver == o2.driver)
+      );
+      const drivers = await Drivers.find({
+        _id: { $in: newDriver.driver },
+      });
+      drivers.map(async (driver) => {
+        if (driver?.fcmToken) {
+          fcmservice.sendPushMessage(
+            driver.fcmToken,
+            "Demande de course",
+            pushMessage,
+            pubMsg
+          );
+          //store notification in db
+          const notification = await Notifications.create({
+            title: "Vous avez un nouveau trajet",
+            expiry_date: fifteenDays,
+            receiver: driver.id,
+          });
+          //update driver with new notification
+          await Drivers.findByIdAndUpdate(driver.id, {
+            $push: {
+              notifications: notification.id,
+            },
+          });
+        }
+      });
     }
     const trip = await Trips.findById(tripId);
     //if stetp not added by admin
@@ -518,7 +549,8 @@ exports.TripsByDate = async (req, res) => {
           path: "driver",
         },
       })
-      .populate("assigned_drivers");
+      .populate("assigned_drivers")
+      .sort({ date: 1 });
     if (trips) return res.status(200).json({ success: true, trips });
   } catch (err) {
     res.status(500).json({ success: false, message: "Internal server error" });
