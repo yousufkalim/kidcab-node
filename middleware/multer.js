@@ -14,7 +14,7 @@ exports.upload = multer({
     },
     // Creating a unique filename to avoid duplication error
     filename: function (req, file, cb) {
-      cb(null, Date.now() + "-" + file.originalname); // Callback
+      cb(null, Date.now() + "---" + file.originalname); // Callback
     },
   }),
   // File size limit upto 5 mb

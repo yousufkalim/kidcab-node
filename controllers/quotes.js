@@ -215,7 +215,7 @@ exports.ExportPdf = async (req, res) => {
           (quote.total_price + (quote.total_price * quote.vat) / 100);
 
         // Changing format for issue data as desired
-        quote["issue_date"] = moment(quote.issue_date).format("DD MMMM YYYY");
+        quote["issue_date"] = moment(quote.issue_date).format("DD/MM/YYYY");
         // Pushing data in the array
         filteredQuotes[quote.client._id].push(quote);
       } else {
@@ -238,7 +238,7 @@ exports.ExportPdf = async (req, res) => {
           (quote.total_price + (quote.total_price * quote.vat) / 100);
 
         // Changing format for issue data as desired
-        quote["issue_date"] = moment(quote.issue_date).format("DD MMMM YYYY");
+        quote["issue_date"] = moment(quote.issue_date).format("DD/MM/YYYY");
         // Pushing data in the array
         filteredQuotes[quote.client._id].push(quote);
       }
@@ -258,6 +258,7 @@ exports.ExportPdf = async (req, res) => {
         admin_email: admin.email,
         admin_address: company.address,
         admin_company_name: company.company_name,
+        quote_number: value.quote_number,
         logo: `${url}/${company.logo}`,
         total_price_without_tax: total_price_without_tax,
         total_price_with_tax: total_price_with_tax,

@@ -30,9 +30,7 @@
           </div>
           <div
             style="display: flex; flex-direction: row; display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center; justify-content: flex-start;align-items: flex-end; width: 20%; margin: 10px;">
-            <img height="30" width="100"
-              src={{logo}}
-              alt="">
+            <img height="30" width="100" src={{logo}} alt="">
           </div>
 
 
@@ -200,11 +198,11 @@
               <tr>
                 <td align="left" valign="top" bgcolor="#ffe77b"
                   style="background-color: #fff; width: 250px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;">
-                  {{description}}
+                  {{description}} - Devis n°({{quote_number}})
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
                   style="background-color: #fff; width: 85px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
-                  €{{unit_price}}
+                  {{unit_price}}€
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
                   style="background-color: #fff; width: 35px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
@@ -212,7 +210,7 @@
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
                   style="background-color: #fff; width: 65px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
-                  €{{total_price}}
+                  {{total_price}}€
                 </td>
                 {{/quotes}}
 
@@ -231,7 +229,7 @@
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
                   style="background-color:#fff; margin: 10px;font-family: Open Sans, sans-serif;">
-                  €{{total_price_without_tax}}
+                  {{total_price_without_tax}}€
                 </td>
               </tr>
 
@@ -258,13 +256,21 @@
                 <td align="right" valign="top" bgcolor="#ffe77b"
                   style="background-color:#fff; margin: 10px; font-family: Open Sans, sans-serif;">
                   <div style="width: 70px;background-color: #C0C0C0; padding: 3px;font-family: Open Sans, sans-serif;">
-                    <strong>€{{total_price_with_tax}}</strong>
+                    <strong>{{total_price_with_tax}}€</strong>
                   </div>
                 </td>
               </tr>
             </table>
           </div>
 
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div style='margin-top:40px;'>
+          Conditions générales :
+          <a href="https://kidcab.fr/cgu-cgv/">https://kidcab.fr/cgu-cgv/</a>
         </div>
       </td>
     </tr>
