@@ -203,6 +203,9 @@ exports.delete = async (req, res) => {
   try {
     const companyId = req.params.companyId;
     const company = await Drivers.findByIdAndDelete(companyId);
+    const vehicles = await Drivers.deleteMany({
+      _id: { $in: company.vehicles },
+    });
     res.json({ success: true, company });
   } catch (err) {
     console.log("Error ----> ", err);

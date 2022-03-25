@@ -24,7 +24,11 @@ exports.create = async (req, res) => {
       req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
-
+    var pubMsg = {
+      verb: "published",
+      actions: "Vous avez un nouveau trajet ",
+    }; //Message for fcm
+    var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
@@ -112,17 +116,15 @@ exports.accept = async (req, res) => {
   try {
     let trip = await Trips.findById(tripId);
     let driver = await Drivers.findById(driverId);
+    console.log(driver, "d");
     const driver_id = driver._id;
     const price = trip.driver_price / trip.required_drivers;
     //creating ride when driver accepts invitation
-    const ride = await Rides.create({
-      price: price,
-      client: trip.client,
-      driver: driver_id,
-      vehicle: driver.vehicles[0],
-      trip: trip._id,
-      date: trip.date,
-    });
+    if (trip.date > new Date()) {
+      return res
+        .status(404)
+        .json({ success: false, message: "cannot accept future trips" });
+    }
 
     if (!trip || !driver) {
       return res
@@ -133,6 +135,14 @@ exports.accept = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Trip already booked" });
     }
+    const ride = await Rides.create({
+      price: price,
+      client: trip.client,
+      driver: driver_id,
+      vehicle: driver.vehicles[0],
+      trip: trip._id,
+      date: trip.date,
+    });
 
     //updating trip after creating ride
     const updatedTrip = await Trips.findByIdAndUpdate(
@@ -582,6 +592,7 @@ exports.getDailyReport = async (req, res) => {
           turnover: { $sum: 1 },
         },
       },
+      { $sort: { _id: 1 } },
     ]);
     return res.status(200).json({ success: true, reports });
   } catch (err) {
@@ -637,6 +648,41 @@ exports.remainingDistance = async (req, res) => {
       success: true,
       remainingDistance: remainingDistance,
     });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+//Monthly Revenue
+exports.getMonthlyReport = async (req, res) => {
+  try {
+    let setMonday = new Date();
+    setMonday.setDate(setMonday.getDate() - ((setMonday.getDay() + 6) % 7)); //set last monday
+    let findMonday = setMonday.getTime() - 604800000; //start monday to the set monday
+    setMonday = moment(setMonday).format("YYYY-MM-DD"); //format
+    findMonday = moment(findMonday).format("YYYY-MM-DD"); //format
+    const reports = await Trips.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: new Date(findMonday),
+            $lte: new Date(setMonday),
+          },
+          status: "completed",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$date" },
+          },
+          client_price: { $sum: "$client_price" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+    return res.status(200).json({ success: true, reports });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
