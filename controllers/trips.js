@@ -116,17 +116,15 @@ exports.accept = async (req, res) => {
   try {
     let trip = await Trips.findById(tripId);
     let driver = await Drivers.findById(driverId);
+    console.log(driver, "d");
     const driver_id = driver._id;
     const price = trip.driver_price / trip.required_drivers;
     //creating ride when driver accepts invitation
-    const ride = await Rides.create({
-      price: price,
-      client: trip.client,
-      driver: driver_id,
-      vehicle: driver.vehicles[0],
-      trip: trip._id,
-      date: trip.date,
-    });
+    if (trip.date > new Date()) {
+      return res
+        .status(404)
+        .json({ success: false, message: "cannot accept future trips" });
+    }
 
     if (!trip || !driver) {
       return res
@@ -137,6 +135,14 @@ exports.accept = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Trip already booked" });
     }
+    const ride = await Rides.create({
+      price: price,
+      client: trip.client,
+      driver: driver_id,
+      vehicle: driver.vehicles[0],
+      trip: trip._id,
+      date: trip.date,
+    });
 
     //updating trip after creating ride
     const updatedTrip = await Trips.findByIdAndUpdate(
@@ -586,6 +592,7 @@ exports.getDailyReport = async (req, res) => {
           turnover: { $sum: 1 },
         },
       },
+      { $sort: { _id: 1 } },
     ]);
     return res.status(200).json({ success: true, reports });
   } catch (err) {
@@ -650,16 +657,17 @@ exports.remainingDistance = async (req, res) => {
 //Monthly Revenue
 exports.getMonthlyReport = async (req, res) => {
   try {
-    let today = new Date();
-    let TwentyEight_Days = today.getTime() - 2419200000;
-    today = moment(today).format("YYYY-MM-DD");
-    TwentyEight_Days = moment(TwentyEight_Days).format("YYYY-MM-DD");
+    let setMonday = new Date();
+    setMonday.setDate(setMonday.getDate() - ((setMonday.getDay() + 6) % 7)); //set last monday
+    let findMonday = setMonday.getTime() - 604800000; //start monday to the set monday
+    setMonday = moment(setMonday).format("YYYY-MM-DD"); //format
+    findMonday = moment(findMonday).format("YYYY-MM-DD"); //format
     const reports = await Trips.aggregate([
       {
         $match: {
           date: {
-            $gte: new Date(TwentyEight_Days),
-            $lte: new Date(today),
+            $gte: new Date(findMonday),
+            $lte: new Date(setMonday),
           },
           status: "completed",
         },
