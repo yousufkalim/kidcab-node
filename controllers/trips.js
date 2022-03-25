@@ -24,7 +24,11 @@ exports.create = async (req, res) => {
       req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
-
+    var pubMsg = {
+      verb: "published",
+      actions: "Vous avez un nouveau trajet ",
+    }; //Message for fcm
+    var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
@@ -637,6 +641,40 @@ exports.remainingDistance = async (req, res) => {
       success: true,
       remainingDistance: remainingDistance,
     });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+//Monthly Revenue
+exports.getMonthlyReport = async (req, res) => {
+  try {
+    let today = new Date();
+    let TwentyEight_Days = today.getTime() - 2419200000;
+    today = moment(today).format("YYYY-MM-DD");
+    TwentyEight_Days = moment(TwentyEight_Days).format("YYYY-MM-DD");
+    const reports = await Trips.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: new Date(TwentyEight_Days),
+            $lte: new Date(today),
+          },
+          status: "completed",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$date" },
+          },
+          client_price: { $sum: "$client_price" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+    return res.status(200).json({ success: true, reports });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });

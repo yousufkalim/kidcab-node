@@ -52,6 +52,8 @@ router.get("/declineByDriver/:tripId/:driverId", trips.declineByDriver);
 router.post("/tripsByDate/", trips.TripsByDate);
 //day report
 router.post("/getDayReport/", trips.getDailyReport);
+//getMonthlyReport
+router.post("/getMonthlyReport/", trips.getMonthlyReport);
 //day report
 // router.post("/getDayReport/", trips.getDayReport);
 //addStop

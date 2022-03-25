@@ -116,6 +116,11 @@ exports.delete = async (req, res) => {
   try {
     const vehicleId = req.params.vehicleId;
     const deletedVehicle = await Vehicles.findByIdAndDelete(vehicleId);
+    await Drivers.findByIdAndUpdate(deletedVehicle.driver, {
+      $pull: {
+        vehicles: deletedVehicle._id,
+      },
+    });
     if (!deletedVehicle) res.status(501).send("No Vehicle is deleted");
     res.json({ success: true, deletedVehicle });
   } catch (err) {
