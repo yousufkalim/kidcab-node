@@ -116,7 +116,6 @@ exports.accept = async (req, res) => {
   try {
     let trip = await Trips.findById(tripId);
     let driver = await Drivers.findById(driverId);
-    console.log(driver, "d");
     const driver_id = driver._id;
     const price = trip.driver_price / trip.required_drivers;
     //creating ride when driver accepts invitation
@@ -654,7 +653,7 @@ exports.remainingDistance = async (req, res) => {
   }
 };
 
-//Monthly Revenue
+// //Monthly Revenue
 exports.getMonthlyReport = async (req, res) => {
   try {
     let setMonday = new Date();
@@ -687,4 +686,74 @@ exports.getMonthlyReport = async (req, res) => {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
+};
+//5weeks Revenue
+exports.getRevenue = async (req, res) => {
+  try {
+    let setMonday = new Date();
+    setMonday.setDate(setMonday.getDate() - ((setMonday.getDay() + 6) % 7)); //set last monday
+    let findMonday = setMonday.getTime() - 3024000000; //start monday to the set monday
+    let Fir_week = setMonday.getTime() - 604800000; //Fir week
+    let S_week = setMonday.getTime() - 1209600000; //second week
+    let T_week = setMonday.getTime() - 1814400000; //Third week
+    let Fo_week = setMonday.getTime() - 2419200000; //Fourth week
+    let Fi_week = findMonday; //Fifth week
+    setMonday = moment(setMonday).format("YYYY-MM-DD"); //format
+    findMonday = moment(findMonday).format("YYYY-MM-DD"); //format
+    let reports = await Trips.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: new Date(findMonday),
+            $lte: new Date(setMonday),
+          },
+          status: "completed",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $week: "$date",
+          },
+          client_price: { $sum: "$client_price" },
+          count: {
+            $sum: { $cond: [{ $eq: ["$client_price", "none"] }, 0, 1] },
+          },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+    if (reports.length < 5) {
+      let dates = [findMonday, Fo_week, T_week, S_week, Fir_week];
+      let Weeks = await findWeeks([dates]);
+      let missingWeek = Weeks.filter(
+        (o1) => !reports.some((o2) => o1 === o2._id)
+      );
+      missingWeek.map((e) => {
+        reports.push({
+          _id: e,
+          client_price: 0,
+          count: 0,
+        });
+      });
+    }
+    reports = reports.sort((a, b) => Number(a._id) - Number(b._id));
+    return res.status(200).json({ success: true, reports });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+//Find week by date
+let findWeeks = async ([dates]) => {
+  let weeks = dates.map((i) => {
+    i = new Date(i);
+    var oneJan = new Date(i.getFullYear(), 0, 1);
+    // calculating number of days in given year before a given date
+    var numberOfDays = Math.floor((i - oneJan) / (24 * 60 * 60 * 1000));
+    // adding 1 since to current date and returns value starting from 0
+    var result = Math.ceil((i.getDay() + 1 + numberOfDays) / 7);
+    return result;
+  });
+  return weeks;
 };

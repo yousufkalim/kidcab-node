@@ -144,7 +144,6 @@ exports.update = async (req, res) => {
  */
 exports.delete = async (req, res) => {
   try {
-    console.log("Inside Delete");
     const userId = req.params.userId; // Getting user id from URL parameter
     const user = await Users.findByIdAndDelete(userId); // Deleting the user
     const passengers = await Passengers.deleteMany({
