@@ -119,7 +119,9 @@ exports.accept = async (req, res) => {
     const driver_id = driver._id;
     const price = trip.driver_price / trip.required_drivers;
     //creating ride when driver accepts invitation
-    if (trip.date > new Date()) {
+    let tripDate = moment(trip.date).format("YYYY-MM-DD");
+    let today = moment(new Date()).format("YYYY-MM-DD");
+    if (new Date(tripDate) > new Date(today)) {
       return res
         .status(404)
         .json({ success: false, message: "cannot accept future trips" });
