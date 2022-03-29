@@ -187,7 +187,7 @@ cron.schedule("0 7 */15 * *", async () => {
   });
 });
 //cron-job that will run after every  hours  to notify drivers regarding upcomming rides(24 hours)
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 11 * * *", async () => {
   try {
     const timeNow = new Date();
     const count = new Date().getTime() + 86400000; //add 24 hours
