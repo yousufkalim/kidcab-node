@@ -514,7 +514,10 @@ exports.delete = async (req, res) => {
   try {
     const tripId = req.params.tripId;
     const deletedTrip = await Trips.findByIdAndDelete(tripId);
-    if (!deletedTrip) res.status(404).send("No Trip is deleted");
+    if (!deletedTrip) return res.status(404).send("No Trip Found");
+    const rides = await Rides.deleteMany({
+      _id: { $in: deletedTrip?.rides },
+    });
     res.json({ success: true, deletedTrip });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -530,9 +533,14 @@ exports.delete = async (req, res) => {
 exports.deleteMany = async (req, res) => {
   try {
     const { tripIds } = req.body;
-    const deletedTrip = await Trips.deleteMany({ _id: { $in: tripIds } });
-
-    res.json({ success: true, deletedTrip });
+    let deletedTrip;
+    for (i = 0; i < tripIds.length; i++) {
+      deletedTrip = await Trips.findByIdAndDelete(tripIds[i]);
+      await Rides.deleteMany({
+        _id: { $in: deletedTrip?.rides },
+      });
+    }
+    return res.json({ success: true, deletedTrip });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
