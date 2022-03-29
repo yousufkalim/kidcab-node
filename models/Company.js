@@ -9,6 +9,7 @@ const companySchema = new mongoose.Schema(
   {
     logo: {
       type: String,
+      default: "",
     },
 
     phone_number: {

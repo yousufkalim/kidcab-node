@@ -271,8 +271,13 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const rideId = req.params.rideId;
-    const ride = await Users.findByIdAndDelete(rideId);
+    const ride = await Rides.findByIdAndDelete(rideId);
     if (!ride) return res.status(404).send("No Ride deleted");
+    await Trips.findByIdAndUpdate(ride?.trip, {
+      $pull: {
+        rides: ride._id,
+      },
+    });
     res.json({ success: true, ride });
   } catch (err) {
     console.log("Error ----> ", err);
