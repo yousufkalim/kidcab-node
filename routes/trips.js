@@ -60,6 +60,7 @@ router.post("/getRevenue/", trips.getRevenue);
 // router.post("/getDayReport/", trips.getDayReport);
 //addStop
 router.post("/addstop/:tripId", trips.addStop);
+router.post("/clientTrip/", trips.clientTrip);
 //remainingDistance
 router.post("/remainingDistance/:tripId", trips.remainingDistance);
 // Export

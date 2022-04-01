@@ -189,17 +189,13 @@ exports.ExportPdf = async (req, res) => {
     if (quotes.length === 0) res.status(404).send("No Quote Found");
 
     let filteredQuotes = {};
-    let total_price_without_tax = 0;
-    let total_price_with_tax = 0;
 
     quotes.map((quote) => {
       if (!filteredQuotes[quote.client._id]) {
         filteredQuotes[quote.client._id] = [];
 
         // Getting unit price
-        quote["unit_price"] = (
-          quote.total_price / quote.trip_info.total_trips
-        ).toFixed(2);
+        quote["unit_price"] = parseInt(quote.trip_info.unit_price).toFixed(1);
 
         // Adding description for a quote if not exists
         if (!quote.description || quote.description === "") {
@@ -208,21 +204,16 @@ exports.ExportPdf = async (req, res) => {
           }`;
         }
 
-        // Calculating Total Price with and without tax (VAT)
-        total_price_without_tax = total_price_without_tax + quote.total_price;
-        total_price_with_tax =
-          total_price_with_tax +
-          (quote.total_price + (quote.total_price * quote.vat) / 100);
 
         // Changing format for issue data as desired
         quote["issue_date"] = moment(quote.issue_date).format("DD/MM/YYYY");
+        quote["total_price2"] = quote.total_price - parseInt(quote.vat);
+
         // Pushing data in the array
         filteredQuotes[quote.client._id].push(quote);
       } else {
         // Getting unit price
-        quote["unit_price"] = (
-          quote.total_price / quote.trip_info.total_trips
-        ).toFixed(2);
+        quote["unit_price"] = quote?.unit_price;
 
         // Adding description for a quote if not exists
         if (quote.description || quote.description === "") {
@@ -230,12 +221,12 @@ exports.ExportPdf = async (req, res) => {
             quote.client.first_name + " " + quote.client.last_name
           }`;
         }
+        quote["total_price2"] = quote.total_price - parseInt(quote.vat);
 
         // Calculating Total Price with and without tax (VAT)
-        total_price_without_tax = total_price_without_tax + quote.total_price;
-        total_price_with_tax =
-          total_price_with_tax +
-          (quote.total_price + (quote.total_price * quote.vat) / 100);
+        // total_price_without_tax =
+        //   total_price_without_tax + (quote.total_price - parseInt(quote.vat));
+        // total_price_with_tax = total_price_with_tax + quote.total_price;
 
         // Changing format for issue data as desired
         quote["issue_date"] = moment(quote.issue_date).format("DD/MM/YYYY");
@@ -252,6 +243,14 @@ exports.ExportPdf = async (req, res) => {
     let obj = {};
     let files = [];
     const saveFiles = Object.entries(filteredQuotes).map(([key, value]) => {
+      let total_price_without_tax = 0;
+      let total_price_with_tax = 0;
+      value.map((e) => {
+        total_price_without_tax =
+          total_price_without_tax + (e.total_price - parseInt(e.vat));
+        total_price_with_tax = total_price_with_tax + e.total_price;
+      });
+      console.log("testests", value);
       obj = {
         quotes: value,
         admin_name: "Maxime Chevallier",
