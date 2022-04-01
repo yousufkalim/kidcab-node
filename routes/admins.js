@@ -28,6 +28,7 @@ router.post("/", upload.single("image"), admins.create);
 router.post("/login", admins.login);
 router.post("/logout", auth, admins.logout);
 router.post("/logout/all", auth, admins.logoutAll);
+router.post("/forgetPassword", admins.forgot);
 
 // Read
 router.get("/", auth, admins.getAll); // Get all admins at once

@@ -6,6 +6,7 @@ const Admin = require("../models/Admins");
 const bcrypt = require("bcryptjs");
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
 const { generateAuthToken } = require("../middleware/auth");
+const { sendEmail } = require("../utils/sendEmail");
 /**
  * Create Admin - Signup
  * @param {object} req
@@ -183,6 +184,28 @@ exports.delete = async (req, res) => {
     const admin = await Admin.findByIdAndDelete(adminId); // Deleting the admin
 
     res.json({ success: true, admin }); // Success
+  } catch (err) {
+    // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.forgot = async (req, res) => {
+  try {
+    const admins = await Admin.find();
+    let randomPassword = Math.random().toString(36).slice(-8);
+    console.log(randomPassword, "randomPassword");
+    sendEmail(admins[0].email, randomPassword).then(async () => {
+      admins[0].password = await bcrypt.hash(
+        randomPassword,
+        parseInt(bcryptSalt)
+      );
+      await admins[0].save();
+      return res
+        .status(200)
+        .json({ success: true, message: "Email sent successfully" });
+    });
   } catch (err) {
     // Error handling
     console.log("Error ----> ", err);

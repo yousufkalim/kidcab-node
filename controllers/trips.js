@@ -697,6 +697,18 @@ exports.getMonthlyReport = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+//Get Client Trip
+exports.clientTrip = async (req, res) => {
+  try {
+    const clientId = req.body.client;
+    console.log(clientId, "clientId");
+    const trips = await Trips.find({ status: "completed", client: clientId });
+    return res.json({ success: true, trips });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 //5weeks Revenue
 exports.getRevenue = async (req, res) => {
   try {

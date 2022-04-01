@@ -222,7 +222,6 @@ exports.ExportPdf = async (req, res) => {
         filteredInvoices[invoice.client._id] = [];
         // Changing format for issue data as desired
         invoice["issue_date"] = moment(invoice.issue_date).format("DD/MM/YYYY");
-        invoice["final_price"] = total_price;
         filteredInvoices[invoice.client._id].push(invoice);
       } else {
         // Changing format for issue data as desired
@@ -265,7 +264,7 @@ exports.ExportPdf = async (req, res) => {
         path: `./uploads/invoice/${filename}`,
       };
 
-      total_price = 0;
+      let total_price = 0;
       const filepath = `${process.env.BASE_URL}/uploads/invoice/${filename}`;
       files.push(filepath);
       return pdf.create(document, {
@@ -282,7 +281,7 @@ exports.ExportPdf = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
+//Pdf
 exports.deletePdf = async (req, res) => {
   const filename = req.body.file;
   try {
@@ -292,6 +291,27 @@ exports.deletePdf = async (req, res) => {
     //file removed
   } catch (err) {
     console.error(err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get InvoiceByDate By Date
+ * @param {object} req
+ * @param {object} res
+ */
+exports.InvoiceByDate = async (req, res) => {
+  try {
+    const { start_date, end_date } = req.body;
+    const invoices = await Invoices.find({
+      $and: [
+        { issue_date: { $gte: new Date(start_date) } },
+        { issue_date: { $lte: new Date(end_date) } },
+      ],
+    }).populate("client");
+    if (invoices) return res.status(200).json({ success: true, invoices });
+  } catch (err) {
+    console.log(err.message);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

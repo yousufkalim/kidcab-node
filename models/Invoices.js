@@ -34,6 +34,11 @@ const invoiceSchema = new Schema(
       required: true,
       ref: "users",
     },
+    trip: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "trips",
+    },
   },
   {
     timestamps: true,
