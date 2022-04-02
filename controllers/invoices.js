@@ -20,6 +20,8 @@ const url = process.env.BASE_URL;
  */
 exports.create = async (req, res) => {
   try {
+    const { trip_info } = req.body;
+    req.body.trip_info = JSON.parse(trip_info);
     const invoice = await Invoices.create(req.body);
     await invoice.save();
     const user = await Users.findById(invoice.client);

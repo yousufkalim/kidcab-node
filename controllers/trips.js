@@ -8,11 +8,17 @@ const Rides = require("../models/Rides");
 const Users = require("../models/Users");
 const Notifications = require("../models/Notifications");
 const moment = require("moment");
+const Admin = require("../models/Admins");
+const Company = require("../models/Company");
 const { findDistance, findDistance2 } = require("../utils/findDistance");
+const fs = require("fs");
+const pdf = require("pdf-creator-node");
+const path = require("path");
 const { sendEmail } = require("../utils/sendInvite");
 const { BASE_URL } = process.env;
 const io = require("../index");
 const fcmservice = require("../utils/fcmService");
+const url = process.env.BASE_URL;
 /**
  * Create Trip
  * @param {object} req
@@ -370,9 +376,12 @@ exports.getById = async (req, res) => {
  */
 exports.getTripsByStatus = async (req, res) => {
   try {
+    const { pageNumber, pageSize } = req.body;
     const trips = await Trips.find({
       status: req.params.status === "all" ? undefined : req.params.status,
     })
+      .skip(pageNumber * pageSize)
+      .limit(parseInt(pageSize))
       .populate("client")
       .populate("passengers")
       .populate({
@@ -384,7 +393,8 @@ exports.getTripsByStatus = async (req, res) => {
       .populate("assigned_drivers")
       .sort({ date: 1 });
     if (!trips) res.status(404).send("No Trips Found");
-    res.json({ success: true, trips });
+    const totalResults = await Trips.find().countDocuments();
+    res.json({ success: true, trips, totalResults });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -544,6 +554,33 @@ exports.deleteMany = async (req, res) => {
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// Get All Results
+exports.paginationTrip = async (req, res) => {
+  try {
+    const { pageNumber, pageSize } = req.body;
+    //Fetching results from database in descending order according to date
+    const results = await Trips.find()
+      .skip(pageNumber * pageSize)
+      .limit(parseInt(pageSize))
+      .populate("client")
+      .populate("rides")
+      .populate("passengers")
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers")
+      .sort({ date: 1 });
+    const totalResults = await Trips.find().countDocuments();
+    res.status(200).send({ msg: "All Results", results, totalResults });
+  } catch (error) {
+    console.log("Error ----> ", error);
+    res.status(500).send("Something Failed");
   }
 };
 /**
@@ -778,4 +815,65 @@ let findWeeks = async ([dates]) => {
     return result;
   });
   return weeks;
+};
+
+/**
+ *
+ * @param {object} req
+ * @param {object} res
+ * @returns Exported pdf
+ */
+
+exports.ExportPdf = async (req, res) => {
+  try {
+    const tripsIds = req.body.trips;
+    const company = await Company.findOne();
+    const admin = await Admin.findOne();
+    let trips = await Trips.find({ _id: { $in: tripsIds } })
+      .populate("client")
+      .populate("rides")
+      .populate("passengers")
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers")
+      .lean();
+
+    if (trips.length === 0) res.status(404).send("No Trip Found");
+
+    const tripTemplate = fs.readFileSync(
+      path.join(__dirname, "../template/trips.html"),
+      "utf-8"
+    );
+    let obj = {};
+    obj = {
+      trip: trips,
+      admin_name: "Maxime Chevallier",
+      admin_email: admin.email,
+      admin_address: company.address,
+      admin_company_name: company.company_name,
+      logo: `${url}/${company.logo}`,
+    };
+
+    const filename = Math.random() + "Test" + ".pdf";
+    const document = {
+      html: tripTemplate,
+      data: obj,
+      path: `./uploads/trips/${filename}`,
+    };
+    const filepath = `${process.env.BASE_URL}/uploads/trips/${filename}`;
+    pdf.create(document, {
+      formate: "A4",
+      orientation: "portrait",
+      border: "10mm",
+    });
+    console.log("filepath", filepath);
+    return res.status(200).json({ success: true, filepath });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 };

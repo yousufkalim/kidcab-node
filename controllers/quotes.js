@@ -153,7 +153,6 @@ exports.getQouteByStatus = async (req, res) => {
 exports.QuotesByDate = async (req, res) => {
   try {
     const { start_date, end_date } = req.body;
-    console.log(req.body);
     const qoutes = await Quotes.find({
       $and: [
         { "trip_info.start_date": { $gte: new Date(start_date) } },
@@ -204,7 +203,6 @@ exports.ExportPdf = async (req, res) => {
           }`;
         }
 
-
         // Changing format for issue data as desired
         quote["issue_date"] = moment(quote.issue_date).format("DD/MM/YYYY");
         quote["total_price2"] = quote.total_price - parseInt(quote.vat);
@@ -213,7 +211,7 @@ exports.ExportPdf = async (req, res) => {
         filteredQuotes[quote.client._id].push(quote);
       } else {
         // Getting unit price
-        quote["unit_price"] = quote?.unit_price;
+        quote["unit_price"] = parseInt(quote.trip_info.unit_price).toFixed(1);
 
         // Adding description for a quote if not exists
         if (quote.description || quote.description === "") {
@@ -222,11 +220,6 @@ exports.ExportPdf = async (req, res) => {
           }`;
         }
         quote["total_price2"] = quote.total_price - parseInt(quote.vat);
-
-        // Calculating Total Price with and without tax (VAT)
-        // total_price_without_tax =
-        //   total_price_without_tax + (quote.total_price - parseInt(quote.vat));
-        // total_price_with_tax = total_price_with_tax + quote.total_price;
 
         // Changing format for issue data as desired
         quote["issue_date"] = moment(quote.issue_date).format("DD/MM/YYYY");
@@ -239,18 +232,18 @@ exports.ExportPdf = async (req, res) => {
       path.join(__dirname, "../template/quote.html"),
       "utf-8"
     );
-
     let obj = {};
     let files = [];
     const saveFiles = Object.entries(filteredQuotes).map(([key, value]) => {
       let total_price_without_tax = 0;
       let total_price_with_tax = 0;
+      let total_vat = 0;
       value.map((e) => {
         total_price_without_tax =
-          total_price_without_tax + (e.total_price - parseInt(e.vat));
-        total_price_with_tax = total_price_with_tax + e.total_price;
+          total_price_without_tax + (parseInt(e.total_price) - parseInt(e.vat));
+        total_price_with_tax = total_price_with_tax + parseInt(e.total_price);
+        total_vat = total_vat + parseInt(e.vat);
       });
-      console.log("testests", value);
       obj = {
         quotes: value,
         admin_name: "Maxime Chevallier",
@@ -261,6 +254,7 @@ exports.ExportPdf = async (req, res) => {
         logo: `${url}/${company.logo}`,
         total_price_without_tax: total_price_without_tax,
         total_price_with_tax: total_price_with_tax,
+        VAT: total_vat,
       };
       let clientName = [];
       if (value.length > 0) {

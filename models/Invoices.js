@@ -34,10 +34,29 @@ const invoiceSchema = new Schema(
       required: true,
       ref: "users",
     },
-    trip: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "trips",
+    trip_info: {
+      start_date: {
+        type: Date,
+      },
+      end_date: {
+        type: Date,
+      },
+      start_address: {
+        lat: String,
+        lng: String,
+        label: String,
+        label2: String,
+        city: String,
+        postal_code: String,
+      },
+      end_address: {
+        lat: String,
+        lng: String,
+        label: String,
+        label2: String,
+        city: String,
+        postal_code: String,
+      },
     },
   },
   {
