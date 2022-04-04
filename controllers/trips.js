@@ -848,9 +848,25 @@ exports.ExportPdf = async (req, res) => {
       path.join(__dirname, "../template/trips.html"),
       "utf-8"
     );
-    let obj = {};
-    obj = {
-      trip: trips,
+    let filteredTrips={};
+    trips.map((trip) => {
+      if (!filteredTrips[trip.client._id]) {
+        filteredTrips[trip.client._id] = [];
+
+        // Changing format for issue data as desired
+        trip["date"] = moment(trip.date).format("DD/MM/YYYY");
+        filteredTrips[trip.client._id].push(trip);
+      } else {
+        // Changing format for issue data as desired
+        trip["date"] = moment(trip.date).format("DD/MM/YYYY");
+        filteredTrips[trip.client._id].push(trip);
+      }
+    });
+    let files = [];
+    let obj={}
+    const saveFiles = Object.entries(filteredTrips).map(([key, value]) => {
+      obj = {
+      trip: value,
       admin_name: "Maxime Chevallier",
       admin_email: admin.email,
       admin_address: company.address,
@@ -858,20 +874,28 @@ exports.ExportPdf = async (req, res) => {
       logo: `${url}/${company.logo}`,
     };
 
-    const filename = Math.random() + "Test" + ".pdf";
-    const document = {
+      let clientName = [];
+      if (value.length > 0) {
+        clientName = value[0].client.first_name + value[0].client.last_name;
+      }
+      const filename = Math.random() + clientName + ".pdf";
+ const document = {
       html: tripTemplate,
       data: obj,
       path: `./uploads/trips/${filename}`,
     };
-    const filepath = `${process.env.BASE_URL}/uploads/trips/${filename}`;
-    pdf.create(document, {
-      formate: "A4",
-      orientation: "portrait",
-      border: "10mm",
+      const filepath = `${process.env.BASE_URL}/uploads/trips/${filename}`;
+      files.push(filepath);
+      return pdf.create(document, {
+        formate: "A4",
+        orientation: "portrait",
+        border: "10mm",
+      });
     });
-    console.log("filepath", filepath);
-    return res.status(200).json({ success: true, filepath });
+
+    await Promise.all(saveFiles);
+    return res.status(200).json({ success: true, files });
+
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ success: false, message: "Internal server error" });

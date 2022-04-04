@@ -76,7 +76,69 @@
 
 
           </table>
+          <div style="margin-top: 20px;padding: 5px 10px 5px 0px;width: 265px; ">
+            <strong style="color:#46b9b5; font-family: Open Sans, sans-serif;">DESTINATAIRE</strong>
+        </div>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr bgcolor='#ffe77b'>
+                <td align="left" bgcolor="#ffe77b"
+                    style="background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                    Nom :
+                </td>
+                <td align="left" bgcolor="#ffe77b"
+                    style="background-color: #fff; width: 160px;font-family: Open Sans, sans-serif;">
+                    <strong>
+                        {{#with trip.[0]}}
+                        {{client.first_name}}
+                        {{client.last_name}}
+                        {{/with }}
 
+
+                    </strong>
+                </td>
+            </tr>
+            <tr bgcolor='#ffe77b'>
+                <td align="left" bgcolor="#ffe77b"
+                    style="background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                    Adresse :
+                </td>
+                <td align="left" bgcolor="#ffe77b"
+                    style="background-color: #fff; width: 160px;font-family: Open Sans, sans-serif;">
+                    <strong>
+                        {{#with trip.[0]}}
+                        {{client.address.label}}
+                        {{/with }}
+                    </strong>
+                </td>
+            </tr>
+            <tr bgcolor='#ffe77b'>
+                <td align="left" bgcolor="#ffe77b"
+                    style="background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                    Adresse email:
+                </td>
+                <td align="left" bgcolor="#ffe77b"
+                    style="background-color: #fff; width: 160px;font-family: Open Sans, sans-serif;">
+                    <strong>
+                        {{#with trip.[0]}}
+                        {{client.email}}
+                        {{/with }}</strong>
+                </td>
+            </tr>
+            <tr bgcolor='#ffe77b'>
+                <td align="left" bgcolor="#ffe77b"
+                    style="background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                    Numero de telephone :
+                </td>
+                <td align="left" bgcolor="#ffe77b"
+                    style="background-color: #fff; width: 160px;font-family: Open Sans, sans-serif;">
+                    <strong>
+                        {{#with invoices.[0]}}
+                        {{client.phone_number}}
+                        {{/with }}
+                    </strong>
+                </td>
+            </tr>
+        </table>
           
           <!-- <div>
             <p style=" text-align: left; font-weight: 500; font-size: 10px; margin-top: 20px; font-family: Open Sans, sans-serif;">
@@ -112,10 +174,7 @@
                 style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 60px; font-family: Open Sans, sans-serif;text-align: center;">
                 Status
               </td>
-              <td align="right" valign="top" bgcolor="#ffe77b"
-                style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 65px; font-family: Open Sans, sans-serif;text-align: center;">
-               Client
-              </td>
+             
 
               <td align="right" valign="top" bgcolor="#ffe77b"
               style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 65px; font-family: Open Sans, sans-serif;text-align: center;">
@@ -123,27 +182,27 @@
             </td>
 
             </tr>
-            {{#trips }}
+            {{#trip }}
             <div>
 
               <tr>
                 <td align="left" valign="top" bgcolor="#ffe77b"
                   style="background-color: #fff; width: 250px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;">
-                  {{description}} - Devis n°({{quote_number}})
+                  {{start_address.label}}
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
                   style="background-color: #fff; width: 85px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
-                  {{unit_price}}€
+                  {{end_address.label}}
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
                   style="background-color: #fff; width: 35px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
-                  {{trip_info.total_trips}}
-                </td>
+                  {{status}}
+              </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
-                  style="background-color: #fff; width: 65px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
-                  {{total_price2}}€
-                </td>
-                {{/trips}}
+                style="background-color: #fff; width: 65px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
+                {{date}}
+              </td>
+                {{/trip}}
 
               </tr>
           </table>

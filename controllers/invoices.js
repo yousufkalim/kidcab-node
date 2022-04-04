@@ -222,6 +222,7 @@ exports.ExportPdf = async (req, res) => {
     invoices.map((invoice) => {
       if (!filteredInvoices[invoice.client._id]) {
         filteredInvoices[invoice.client._id] = [];
+
         // Changing format for issue data as desired
         invoice["issue_date"] = moment(invoice.issue_date).format("DD/MM/YYYY");
         filteredInvoices[invoice.client._id].push(invoice);
@@ -231,7 +232,7 @@ exports.ExportPdf = async (req, res) => {
         filteredInvoices[invoice.client._id].push(invoice);
       }
     });
-
+    
     const invoiceTemplate = fs.readFileSync(
       path.join(__dirname, "../template/invoice.html"),
       "utf-8"
