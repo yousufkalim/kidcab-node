@@ -15,7 +15,15 @@
       <td align="left" valign="top" bgcolor="#ffe77b" style="background-color:#fff; ">
         <div
           style="display: flex; flex-direction: row; display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center; justify-content: flex-start;align-items: flex-end; width:100%;">
-         
+          <div
+                        style="padding-left: 10px; display: flex; flex-direction: column; justify-content:'center';align-items: left; width:80%;">
+                        <h3 style="color: #46b9b5;margin:0 ;font-family: Open Sans, sans-serif;">
+                            {{#with trip.[0]}}
+                            {{client.first_name}}
+                            {{client.last_name}}
+                            {{/with }}</h3>
+                        
+                    </div>
           <div
             style="display: flex; flex-direction: row; display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center; justify-content: flex-start;align-items: flex-end; width: 20%; margin: 10px;">
             <img height="30" width="100" src={{logo}} alt="">
@@ -170,6 +178,11 @@
                 style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;   width: 85px; font-family: Open Sans, sans-serif;text-align: center;">
                 End Address
               </td>
+            <td align="right" valign="top" bgcolor="#ffe77b"
+            style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 65px; font-family: Open Sans, sans-serif;text-align: center;">
+           Client Price
+          </td>
+          
               <td align="center" valign="top" bgcolor="#ffe77b"
                 style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 60px; font-family: Open Sans, sans-serif;text-align: center;">
                 Status
@@ -180,7 +193,7 @@
               style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 65px; font-family: Open Sans, sans-serif;text-align: center;">
              Date
             </td>
-
+     
             </tr>
             {{#trip }}
             <div>
@@ -193,6 +206,10 @@
                 <td align="right" valign="top" bgcolor="#ffe77b"
                   style="background-color: #fff; width: 85px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
                   {{end_address.label}}
+                </td>
+                <td align="right" valign="top" bgcolor="#ffe77b"
+                  style="background-color: #fff; width: 65px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
+                  {{client_price}}
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
                   style="background-color: #fff; width: 35px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
