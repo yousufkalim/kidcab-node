@@ -20,6 +20,8 @@ const url = process.env.BASE_URL;
  */
 exports.create = async (req, res) => {
   try {
+    const { trip_info } = req.body;
+    req.body.trip_info = JSON.parse(trip_info);
     const invoice = await Invoices.create(req.body);
     await invoice.save();
     const user = await Users.findById(invoice.client);
@@ -220,6 +222,7 @@ exports.ExportPdf = async (req, res) => {
     invoices.map((invoice) => {
       if (!filteredInvoices[invoice.client._id]) {
         filteredInvoices[invoice.client._id] = [];
+
         // Changing format for issue data as desired
         invoice["issue_date"] = moment(invoice.issue_date).format("DD/MM/YYYY");
         filteredInvoices[invoice.client._id].push(invoice);
@@ -229,7 +232,7 @@ exports.ExportPdf = async (req, res) => {
         filteredInvoices[invoice.client._id].push(invoice);
       }
     });
-
+    
     const invoiceTemplate = fs.readFileSync(
       path.join(__dirname, "../template/invoice.html"),
       "utf-8"
