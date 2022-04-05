@@ -55,7 +55,7 @@ router.post("/tripsByDate/", trips.TripsByDate);
 //day report
 router.post("/getDayReport/", trips.getDailyReport);
 //getMonthlyReport
-router.post("/getMonthlyReport/", trips.getMonthlyReport);
+router.post("/getMonthlyReport/", trips.getWeeklyReport);
 //getRevenue
 router.post("/getRevenue/", trips.getRevenue);
 //day report
