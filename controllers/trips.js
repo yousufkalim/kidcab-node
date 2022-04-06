@@ -15,6 +15,7 @@ const fs = require("fs");
 const pdf = require("pdf-creator-node");
 const path = require("path");
 const { sendEmail } = require("../utils/sendInvite");
+const {sendTripEmail}=require("../utils/sendTripEmail")
 const { BASE_URL } = process.env;
 const io = require("../index");
 const fcmservice = require("../utils/fcmService");
@@ -26,10 +27,11 @@ const url = process.env.BASE_URL;
  */
 exports.create = async (req, res) => {
   try {
-    const { invited_drivers, start_address, addresses, end_address, dates } =
+    const { invited_drivers, start_address, addresses, end_address, dates,client } =
       req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
+    const user=await Users.findById(client); 
     var pubMsg = {
       verb: "published",
       actions: "Vous avez un nouveau trajet ",
@@ -44,6 +46,7 @@ exports.create = async (req, res) => {
       const result = await findDistance2(start_address, addresses, end_address);
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
     }
+    let tripsIds=[];
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
@@ -60,6 +63,8 @@ exports.create = async (req, res) => {
               rides: [],
               date: date,
             });
+            //pushing trips
+            tripsIds.push(trip?._id)
             //creating trip
             //This map will send notification to all driver then create notification for each driver
             drivers.map(async (driver) => {
@@ -97,8 +102,11 @@ exports.create = async (req, res) => {
     };
     //resolving all promises
     createTrips()
-      .then((response) => {
-        res.json({ success: true, response });
+      .then(async (response) => {
+        const files=await createPdf (tripsIds)
+        sendTripEmail(user.email,files)    
+       res.json({ success: true, response });
+       
       })
       .catch((err) => {
         console.trace("Error ----> ", err.message);
@@ -738,7 +746,6 @@ exports.getWeeklyReport = async (req, res) => {
 exports.clientTrip = async (req, res) => {
   try {
     const clientId = req.body.client;
-    console.log(clientId, "clientId");
     const trips = await Trips.find({ status: "completed", client: clientId });
     return res.json({ success: true, trips });
   } catch (err) {
@@ -782,7 +789,6 @@ exports.getRevenue = async (req, res) => {
       },
       { $sort: { _id: 1 } },
     ]);
-    console.log(reports,"r")
     if (reports.length < 5) {
       let dates = [Fi_week, Fo_week, T_week, S_week, Fir_week];
       let Weeks = await findWeeks([dates]);
@@ -866,15 +872,19 @@ exports.ExportPdf = async (req, res) => {
     let files = [];
     let obj={}
     const saveFiles = Object.entries(filteredTrips).map(([key, value]) => {
+      let totalPrice = 0;
+      value.map((e) => {
+        totalPrice = totalPrice + e.client_price;
+      });
       obj = {
       trip: value,
+      clientPrice:totalPrice,
       admin_name: "Maxime Chevallier",
       admin_email: admin.email,
       admin_address: company.address,
       admin_company_name: company.company_name,
       logo: `${url}/${company.logo}`,
     };
-
       let clientName = [];
       if (value.length > 0) {
         clientName = value[0].client.first_name + value[0].client.last_name;
@@ -902,3 +912,83 @@ exports.ExportPdf = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+
+
+//Create Pdf
+
+const createPdf=async (tripsIds)=>{
+  const company = await Company.findOne();
+    const admin = await Admin.findOne();
+    let trips = await Trips.find({ _id: { $in: tripsIds } })
+      .populate("client")
+      .populate("rides")
+      .populate("passengers")
+      .populate({
+        path: "invited_drivers",
+        populate: {
+          path: "driver",
+        },
+      })
+      .populate("assigned_drivers")
+      .lean();
+
+    if (trips.length === 0) res.status(404).send("No Trip Found");
+
+    const tripTemplate = fs.readFileSync(
+      path.join(__dirname, "../template/trips.html"),
+      "utf-8"
+    );
+    let filteredTrips={};
+    trips.map((trip) => {
+      if (!filteredTrips[trip.client._id]) {
+        filteredTrips[trip.client._id] = [];
+
+        // Changing format for issue data as desired
+        trip["date"] = moment(trip.date).format("DD/MM/YYYY");
+        filteredTrips[trip.client._id].push(trip);
+      } else {
+        // Changing format for issue data as desired
+        trip["date"] = moment(trip.date).format("DD/MM/YYYY");
+        filteredTrips[trip.client._id].push(trip);
+      }
+    });
+    let files = [];
+    let obj={}
+    const saveFiles = Object.entries(filteredTrips).map(([key, value]) => {
+      let totalPrice = 0;
+      value.map((e) => {
+        totalPrice = totalPrice + e.client_price;
+      });
+      obj = {
+      trip: value,
+      clientPrice:totalPrice,
+      admin_name: "Maxime Chevallier",
+      admin_email: admin.email,
+      admin_address: company.address,
+      admin_company_name: company.company_name,
+      logo: `${url}/${company.logo}`,
+    };
+  
+      let clientName = [];
+      if (value.length > 0) {
+        clientName = value[0].client.first_name + value[0].client.last_name;
+      }
+      const filename = Math.random() + clientName + ".pdf";
+ const document = {
+      html: tripTemplate,
+      data: obj,
+      path: `./uploads/trips/${filename}`,
+    };
+      const filepath = `${process.env.BASE_URL}/uploads/trips/${filename}`;
+      files.push(filepath);
+      return pdf.create(document, {
+        formate: "A4",
+        orientation: "portrait",
+        border: "10mm",
+      });
+    });
+
+    await Promise.all(saveFiles);
+    return files
+}

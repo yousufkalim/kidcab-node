@@ -10,7 +10,7 @@ const fs = require("fs");
 const pdf = require("pdf-creator-node");
 const path = require("path");
 const moment = require("moment");
-const { sendEmail } = require("../utils/sendEmailQuote");
+const { sendQuoteEmail } = require("../utils/sendEmailQuote");
 const url = process.env.BASE_URL;
 /**
  * Create Quote
@@ -24,7 +24,8 @@ exports.create = async (req, res) => {
     const quote = await Quotes.create(req.body);
     if (!quote) res.status(501).send("No Quote is created");
     const user = await Users.findById(quote.client);
-    sendEmail(user, quote);
+    const files=await CreatePdf(quote._id)
+    sendQuoteEmail(user.email, files);
     // Done
     res.json({ success: true, quote });
   } catch (err) {
@@ -300,3 +301,86 @@ exports.deletePdf = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+//Create Pdf Function
+
+const CreatePdf=async(quoteId)=>{
+  const company = await Company.findOne();
+    const admin = await Admin.findOne();
+    let quotes = await Quotes.findById(quoteId)
+      .populate("client")
+      .populate("passengers")
+      .lean();
+
+    if (quotes.length === 0) res.status(404).send("No Quote Found");
+
+    let filteredQuotes = {};
+    filteredQuotes[quotes.client._id] = [];
+        // Getting unit price
+        quotes["unit_price"] = parseInt(quotes?.trip_info?.unit_price).toFixed(1);
+        // Adding description for a quote if not exists
+        if (quotes.description || quotes.description === "") {
+          quotes["description"] = `Trip for ${
+            quotes.client.first_name + " " + quotes.client.last_name
+          }`;
+        }
+        quotes["total_price2"] = quotes.total_price - parseInt(quotes.vat);
+        // Changing format for issue data as desired
+        quotes["issue_date"] = moment(quotes.issue_date).format("DD/MM/YYYY");
+        // Pushing data in the array
+        filteredQuotes[quotes.client._id].push(quotes);
+
+    const quoteTemplate = fs.readFileSync(
+      path.join(__dirname, "../template/quote.html"),
+      "utf-8"
+    );
+    let obj = {};
+    let files = [];
+    const saveFiles = Object.entries(filteredQuotes).map(([key, value]) => {
+      let total_price_without_tax = 0;
+      let total_price_with_tax = 0;
+      let total_vat = 0;
+      value.map((e) => {
+        total_price_without_tax =
+          total_price_without_tax + (parseInt(e.total_price) - parseInt(e.vat));
+        total_price_with_tax = total_price_with_tax + parseInt(e.total_price);
+        total_vat = total_vat + parseInt(e.vat);
+      });
+      obj = {
+        quotes: value,
+        admin_name: "Maxime Chevallier",
+        admin_email: admin.email,
+        admin_address: company.address,
+        admin_company_name: company.company_name,
+        quote_number: value.quote_number,
+        logo: `${url}/${company.logo}`,
+        total_price_without_tax: total_price_without_tax,
+        total_price_with_tax: total_price_with_tax,
+        VAT: total_vat,
+      };
+      let clientName = [];
+      if (value.length > 0) {
+        clientName = value[0].client.first_name + value[0].client.last_name;
+      }
+      const filename = Math.random() + clientName + ".pdf";
+      const document = {
+        html: quoteTemplate,
+        data: obj,
+        path: `./uploads/quotes/${filename}`,
+      };
+
+      total_price_without_tax = 0;
+      total_price_with_tax = 0;
+      const filepath = `${process.env.BASE_URL}/uploads/quotes/${filename}`;
+      files.push(filepath);
+      return pdf.create(document, {
+        formate: "A4",
+        orientation: "portrait",
+        border: "10mm",
+      });
+    });
+
+    await Promise.all(saveFiles);
+
+   return files;
+}
