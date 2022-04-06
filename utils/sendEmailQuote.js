@@ -18,25 +18,57 @@ const sender_password = process.env.MAILER_PASSWORD;
  * @param {object} data
  * @return {void}
  */
-exports.sendEmail = (user, quote) => {
+// exports.sendEmail = (user, quote) => {
+//   return new Promise((resolve, reject) => {
+//     const filePath = path.join(
+//       __dirname,
+//       "../template/quoteEmailTemplate.html"
+//     );
+//     const source = fs.readFileSync(filePath, "utf-8").toString();
+//     const template = handlebars.compile(source);
+
+//     const data = {
+//       name: user.first_name + " " + user.last_name,
+//       total_trips: quote.trip_info.total_trips,
+//       quote_title: quote.quote_title,
+//       total_price: quote.total_price,
+//       issue_date: moment(quote.issue_date).format("DD MMMM YYYY"),
+//     };
+//     const htmlToSend = template(data);
+
+//     // Sender mail server config
+//     var transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         user: sender_email,
+//         pass: sender_password,
+//       },
+//     });
+
+//     // Send email options
+//     var mailOptions = {
+//       from: `${sender_name} <${sender_email}>`,
+//       to: user.email,
+//       subject: "Quote Created",
+//       html: htmlToSend,
+//     };
+
+//     // Sending email
+//     transporter.sendMail(mailOptions, function (error, info) {
+//       if (error) {
+//         // Error
+//         reject(error);
+//       } else {
+//         // Success
+//         resolve({ success: true, message: "Email sent successfully" });
+//       }
+//     });
+//   });
+// };
+exports.sendQuoteEmail = (email, attachment) => {
   return new Promise((resolve, reject) => {
-    const filePath = path.join(
-      __dirname,
-      "../template/quoteEmailTemplate.html"
-    );
-    const source = fs.readFileSync(filePath, "utf-8").toString();
-    const template = handlebars.compile(source);
-
-    const data = {
-      name: user.first_name + " " + user.last_name,
-      total_trips: quote.trip_info.total_trips,
-      quote_title: quote.quote_title,
-      total_price: quote.total_price,
-      issue_date: moment(quote.issue_date).format("DD MMMM YYYY"),
-    };
-    const htmlToSend = template(data);
-
     // Sender mail server config
+    console.log(email,attachment)
     var transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -48,9 +80,13 @@ exports.sendEmail = (user, quote) => {
     // Send email options
     var mailOptions = {
       from: `${sender_name} <${sender_email}>`,
-      to: user.email,
+      to: email,
       subject: "Quote Created",
-      html: htmlToSend,
+      text: "Quote has been created.Please check the file below!", // plain text body
+      attachments: [{
+       filename: 'QuotesReport.pdf',
+       path: `${attachment}` // stream this file
+      }]
     };
 
     // Sending email
