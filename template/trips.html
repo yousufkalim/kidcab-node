@@ -12,34 +12,39 @@
 <body style="font-size: 12px">
   <table style="width: 530px">
     <tr>
-      <td align="left" valign="top" bgcolor="#ffe77b" style="background-color:#fff; ">
+      <td align="left" valign="top" bgcolor="#ffe77b" 
+      style="background-color:#fff; ">
         <div
-          style="display: flex; flex-direction: row; display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center; justify-content: flex-start;align-items: flex-end; width:100%;">
-          <div
-                        style="padding-left: 10px; display: flex; flex-direction: column; justify-content:'center';align-items: left; width:80%;">
-                        <h3 style="color: #46b9b5;margin:0 ;font-family: Open Sans, sans-serif;">
-                            {{#with trip.[0]}}
-                            {{client.first_name}}
-                            {{client.last_name}}
-                            {{/with }}</h3>
-                        
-                    </div>
-          <div
-            style="display: flex; flex-direction: row; display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center; justify-content: flex-start;align-items: flex-end; width: 20%; margin: 10px;">
-            <img height="30" width="100" src={{logo}} alt="">
-          </div>
+          style="display: flex; flex-direction: row; 
+          display: -webkit-flex; display: -webkit-box; 
+          -webkit-box-pack: center; justify-content: flex-start;
+          align-items: flex-end; width:100%;">
+         <div
+         style="padding-left: 10px; display: flex; flex-direction: column;
+          justify-content:'center';align-items: left; width:80%;">
+         <h3 style="font-size: 25px; color: rgb(64, 150, 211);margin:0 ;font-family: Open Sans, sans-serif;">
+             {{#with trip.[0]}}
+             {{client.first_name}}
+             {{client.last_name}}
+             {{/with }}</h3>
+     </div>
+     <div
+     style="display: flex; flex-direction: row; display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center; justify-content: flex-start;align-items: flex-end; width: 20%; margin: 10px;">
+     <img height="30" width="100" src={{logo}} alt="">
+ </div>
 
 
         </div>
 
-        <div style="margin-top: 20px;padding: 5px 10px 5px 10px;width: 265px; ">
-          <strong style="color:#46b9b5; font-family: Open Sans, sans-serif;">ÉMETTEUR</strong>
-        </div>
+        
+        
+        <div style="font-size: 10px; position: relative; margin-top: 25px; padding-left: 10px;display: flex; flex-direction: row; display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center; justify-content: flex-start;align-items: flex-end; width:100%;">
+        <div>
+          <div style="font-size: 12px; margin-top: 20px;padding: 5px 10px 10px 0px;width: 265px; ">
+                    <strong style="color:rgb(64, 150, 211); font-family: Open Sans, sans-serif;">ÉMETTEUR</strong>
+                </div>
 
-
-        <div style="position: relative; margin-top: 7px; padding-left: 10px; display: flex; flex-direction: column; justify-content:'space-between';align-items: left;width: 100%;
-        ">
-          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <table width="80%" border="0" cellspacing="0" cellpadding="0">
             <tr bgcolor='#ffe77b'>
               <td align="left" bgcolor="#ffe77b"
                 style="background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
@@ -84,10 +89,14 @@
 
 
           </table>
-          <div style="margin-top: 20px;padding: 5px 10px 5px 0px;width: 265px; ">
-            <strong style="color:#46b9b5; font-family: Open Sans, sans-serif;">DESTINATAIRE</strong>
         </div>
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+        <div>
+
+          <div style="font-size: 12px; margin-top: 20px;padding: 5px 10px 5px 0px;width: 265px; ">
+            <strong style="color:rgb(64, 150, 211); font-family: Open Sans, sans-serif;">DESTINATAIRE</strong>
+        </div>
+        <table width="80%" border="0" cellspacing="0" cellpadding="0">
             <tr bgcolor='#ffe77b'>
                 <td align="left" bgcolor="#ffe77b"
                     style="background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
@@ -147,50 +156,56 @@
                 </td>
             </tr>
         </table>
+      </div>
           
+    </div>
           <!-- <div>
             <p style=" text-align: left; font-weight: 500; font-size: 10px; margin-top: 20px; font-family: Open Sans, sans-serif;">
               Lorem lorem ipsum Lorem, lnasjnjusndusnduorem lorem ipsum dolor. dolor, sit amet consectetur</p>
           </div> -->
 
 
-        </div>
       </td>
 
     </tr>
   </table>
+
   <table>
     <tr>
       <td align="left" valign="top" bgcolor="#ffe77b" style="background-color:#fff;">
-        <div
-          style="margin-top: 7px;padding: 5px 10px;width: 530px; background-color: #fff; color: #46b9b5; font-family: Open Sans, sans-serif;">
-          <strong>Details</strong>
-        </div>
-        <div style="position: relative; margin-top: 7px;padding: 5px;width: 530px;">
+                <div
+                    style="margin-top: 7px;padding: 5px 10px 0px 10px;width: 530px; background-color: #fff; color: rgb(64, 150, 211); font-family: Open Sans, sans-serif;">
+                    <strong>Details</strong>
+                </div>
+        <div style="position: relative;padding: 3px 10px;width: 530px;">
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
 
               <td align="left" valign="top" bgcolor="#ffe77b"
-                style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;   width: 180px; font-family: Open Sans, sans-serif;">
+                 style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;   width: 60px; font-family: Open Sans, sans-serif;">
+                 Type
+             </td>
+              <td align="left" valign="top" bgcolor="#ffe77b"
+                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;   width: 180px; font-family: Open Sans, sans-serif;">
                 Start Address
               </td>
               <td align="right" valign="top" bgcolor="#ffe77b"
-                style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;   width: 85px; font-family: Open Sans, sans-serif;text-align: center;">
+                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;   width: 85px; font-family: Open Sans, sans-serif;text-align: center;">
                 End Address
               </td>
             <td align="right" valign="top" bgcolor="#ffe77b"
-            style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 65px; font-family: Open Sans, sans-serif;text-align: center;">
+            style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;   width: 85px; font-family: Open Sans, sans-serif;text-align: center;">
            Client Price
           </td>
           
               <td align="center" valign="top" bgcolor="#ffe77b"
-                style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 60px; font-family: Open Sans, sans-serif;text-align: center;">
+                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 60px; font-family: Open Sans, sans-serif;text-align: center;">
                 Status
               </td>
              
 
               <td align="right" valign="top" bgcolor="#ffe77b"
-              style="background-color: #46b9b5; font-size: 9px; color:#fff; padding: 5px 2px;  width: 65px; font-family: Open Sans, sans-serif;text-align: center;">
+              style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 65px; font-family: Open Sans, sans-serif;text-align: center;">
              Date
             </td>
      
@@ -200,37 +215,65 @@
 
               <tr>
                 <td align="left" valign="top" bgcolor="#ffe77b"
-                  style="background-color: #fff; width: 250px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;">
+               style= "padding: 2px 2px;background-color: #fff; font-size: 9px; width: 50px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;">
+               Trip
+               </td>
+                <td align="left" valign="top" bgcolor="#ffe77b"
+                  style="padding: 2px 0px; background-color: #fff; font-size: 9px; width: 250px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;">
                   {{start_address.label}}
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
-                  style="background-color: #fff; width: 85px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
+                  style="padding: 2px 0px; background-color: #fff; font-size: 9px; width: 130px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
                   {{end_address.label}}
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
-                  style="background-color: #fff; width: 65px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
+                  style="padding: 2px 0px; background-color: #fff; font-size: 9px; width: 130px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
                   {{client_price}}
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
-                  style="background-color: #fff; width: 35px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
+                  style="padding: 2px 0px; background-color: #fff; font-size: 9px; width: 45px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
                   {{status}}
               </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
-                style="background-color: #fff; width: 65px;border-bottom: 1px solid black;font-family: Open Sans, sans-serif;text-align: center;">
+                style="padding: 2px 0px; background-color: #fff; font-size: 9px; width: 65px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
                 {{date}}
               </td>
                 {{/trip}}
 
               </tr>
           </table>
-      
+          <div
+          style="display: flex; flex-direction: row;
+          display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center;
+          justify-content:'space-between';align-items: center; width:500px;">
+          <table width="76%" border="0" cellspacing="0" cellpadding="0" " style=" margin-top: 10px;">
+          </table>
+          <table width="21%" border="0" cellspacing="0" cellpadding="0" " style=" margin-top: 10px; font-size: 10px;">
+              <tr>
+                  <td align="left" valign="top" bgcolor="#ffe77b"
+                      style="color: rgb(64, 150, 211); background-color:#fff; margin: 10px;font-family: Open Sans, sans-serif; ">
+                      <div style="background-color: #fff;">
+                          <strong>Total HT</strong>
+                      </div>
+
+                  </td>
+                  <td align="right" valign="top" bgcolor="#ffe77b"
+                      style="background-color:#fff;padding-right: 10px; margin: 10px; font-family: Open Sans, sans-serif;">
+                      <div
+                          style="background-color: #fff;font-family: Open Sans, sans-serif;">
+                          <strong>250€</strong>
+                      </div>
+                  </td>
+              </tr>
+          </table>
+              </div>
 
         </div>
       </td>
     </tr>
     <tr>
       <td>
-        <div style='margin-top:40px;'>
+        <div style='margin-top:40px;color: rgb(64, 150, 211); padding: 0px 10px'>
           Conditions générales :
           <a href="https://kidcab.fr/cgu-cgv/">https://kidcab.fr/cgu-cgv/</a>
         </div>

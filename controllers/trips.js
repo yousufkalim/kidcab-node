@@ -797,7 +797,6 @@ exports.getRevenue = async (req, res) => {
       });
     }
     reports = reports.sort((a, b) => Number(a._id) - Number(b._id));
-    console.log(reports,"r")
     return res.status(200).json({ success: true, reports });
   } catch (err) {
     console.log("Error ----> ", err);
