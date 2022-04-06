@@ -701,7 +701,7 @@ exports.remainingDistance = async (req, res) => {
 };
 
 // //Monthly Revenue
-exports.getMonthlyReport = async (req, res) => {
+exports.getWeeklyReport = async (req, res) => {
   try {
     let setMonday = new Date();
     setMonday.setDate(setMonday.getDate() - ((setMonday.getDay() + 6) % 7)); //set last monday
@@ -752,11 +752,11 @@ exports.getRevenue = async (req, res) => {
     let setMonday = new Date();
     setMonday.setDate(setMonday.getDate() - ((setMonday.getDay() + 6) % 7)); //set last monday
     let findMonday = setMonday.getTime() - 3024000000; //start monday to the set monday
-    let Fir_week = setMonday.getTime() - 604800000; //Fir week
-    let S_week = setMonday.getTime() - 1209600000; //second week
-    let T_week = setMonday.getTime() - 1814400000; //Third week
-    let Fo_week = setMonday.getTime() - 2419200000; //Fourth week
-    let Fi_week = findMonday; //Fifth week
+    let Fir_week = setMonday.getTime() - 2419200000; //Fir week
+  let S_week = setMonday.getTime() - 1814400000; //second week
+  let T_week = setMonday.getTime() - 1209600000; //Third week
+  let Fo_week = setMonday.getTime() - 604800000; //Fourth week
+  let Fi_week = setMonday; //Fifth week
     setMonday = moment(setMonday).format("YYYY-MM-DD"); //format
     findMonday = moment(findMonday).format("YYYY-MM-DD"); //format
     let reports = await Trips.aggregate([
@@ -782,8 +782,9 @@ exports.getRevenue = async (req, res) => {
       },
       { $sort: { _id: 1 } },
     ]);
+    console.log(reports,"r")
     if (reports.length < 5) {
-      let dates = [findMonday, Fo_week, T_week, S_week, Fir_week];
+      let dates = [Fi_week, Fo_week, T_week, S_week, Fir_week];
       let Weeks = await findWeeks([dates]);
       let missingWeek = Weeks.filter(
         (o1) => !reports.some((o2) => o1 === o2._id)
