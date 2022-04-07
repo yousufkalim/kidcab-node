@@ -14,10 +14,6 @@ exports.validateInvoice = [
   check("invoice_title", "Invoice Title is required.").notEmpty().trim(),
   check("issue_date", "Issue Date is required.").notEmpty().trim().isDate(),
   check("client", "Client ID is required.").notEmpty().trim().isMongoId(),
-  check("total_price", "Total Price is required.")
-    .notEmpty()
-    .trim()
-    .isNumeric(),
 ];
 
 /*

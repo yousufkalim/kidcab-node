@@ -19,10 +19,6 @@ const quoteSchema = new Schema(
       type: String,
       required: true,
     },
-    total_price: {
-      type: Number,
-      required: true,
-    },
     vat: {
       type: String,
       required: true,
