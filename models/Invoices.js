@@ -34,7 +34,14 @@ const invoiceSchema = new Schema(
       required: true,
       ref: "users",
     },
+    vat: {
+      type: String,
+      required: true,
+    },
     trip_info: {
+      total_trips: {
+        type: String,
+      },
       start_date: {
         type: Date,
       },
@@ -56,6 +63,10 @@ const invoiceSchema = new Schema(
         label2: String,
         city: String,
         postal_code: String,
+      },
+      unit_price: {
+        type: Number,
+        required: true,
       },
     },
   },
