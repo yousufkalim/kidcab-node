@@ -38,7 +38,7 @@ exports.create = async (req, res) => {
     const user = await Users.findById(client);
     var pubMsg = {
       verb: "published",
-      actions: "Demande proposition de course kidcabde trajet ",
+      actions: "proposition de course kidcab",
     }; //Message for fcm
     var pushMessage = "proposition de course kidcab"; //Notification title fcm
     //if stetp not added by admin
@@ -51,11 +51,12 @@ exports.create = async (req, res) => {
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
     }
     let tripsIds = [];
+    let drivers = [];
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
           try {
-            const drivers = await Drivers.find({
+            drivers = await Drivers.find({
               _id: { $in: invited_drivers },
             });
             req.body.invited_drivers = invited_drivers.map((driver) => ({
@@ -71,28 +72,30 @@ exports.create = async (req, res) => {
             tripsIds.push(trip?._id);
             //creating trip
             //This map will send notification to all driver then create notification for each driver
-            drivers.map(async (driver) => {
-              if (driver?.fcmToken) {
-                fcmservice.sendPushMessage(
-                  driver.fcmToken,
-                  "proposition de course kidcab",
-                  pushMessage,
-                  pubMsg
-                );
-                //store notification in db
-                const notification = await Notifications.create({
-                  title: "proposition de course kidcab",
-                  expiry_date: fifteenDays,
-                  receiver: driver.id,
-                });
-                //update driver with new notification
-                await Drivers.findByIdAndUpdate(driver.id, {
-                  $push: {
-                    notifications: notification.id,
-                  },
-                });
-              }
-            });
+            if (req.body.tripType === "simple") {
+              drivers.map(async (driver) => {
+                if (driver?.fcmToken) {
+                  fcmservice.sendPushMessage(
+                    driver.fcmToken,
+                    "proposition de course kidcab",
+                    pushMessage,
+                    pubMsg
+                  );
+                  //store notification in db
+                  const notification = await Notifications.create({
+                    title: "proposition de course kidcab",
+                    expiry_date: fifteenDays,
+                    receiver: driver.id,
+                  });
+                  //update driver with new notification
+                  await Drivers.findByIdAndUpdate(driver.id, {
+                    $push: {
+                      notifications: notification.id,
+                    },
+                  });
+                }
+              });
+            }
             let datesLength = dates.length - 1;
             if (index === datesLength) {
               resolve(trip);
@@ -104,6 +107,30 @@ exports.create = async (req, res) => {
         });
       });
     };
+    if (req.body.tripType === "recurring") {
+      drivers.map(async (driver) => {
+        if (driver?.fcmToken) {
+          fcmservice.sendPushMessage(
+            driver.fcmToken,
+            `kidcab race proposal from ${req.body.startdate} to  ${req.body.enddate}`,
+            pushMessage,
+            pubMsg
+          );
+          //store notification in db
+          const notification = await Notifications.create({
+            title: `kidcab race proposal from ${req.body.startdate} to  ${req.body.enddate}`,
+            expiry_date: fifteenDays,
+            receiver: driver.id,
+          });
+          //update driver with new notification
+          await Drivers.findByIdAndUpdate(driver.id, {
+            $push: {
+              notifications: notification.id,
+            },
+          });
+        }
+      });
+    }
     //resolving all promises
     createTrips()
       .then(async (response) => {
