@@ -252,7 +252,14 @@
                                 style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;   width: 180px; font-family: Open Sans, sans-serif;">
                                 Description
                             </td>
-
+                            <td align="center" valign="top" 
+                                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 35px; font-family: Open Sans, sans-serif;text-align: center;">
+                                Unit Price
+                            </td>
+                            <td align="center" valign="top" 
+                                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 35px; font-family: Open Sans, sans-serif;text-align: center;">
+                                No of Trips
+                            </td>
                             <td align="center" valign="top" 
                                 style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 35px; font-family: Open Sans, sans-serif;text-align: center;">
                                 Status
@@ -275,7 +282,14 @@
                                     style="padding: 2px 0px; background-color: #fff;font-size: 10px; width: 250px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;">
                                     {{invoice_title}}
                                 </td>
-
+                                <td align="right" valign="top" 
+                                style="padding: 2px 0px; background-color: #fff;font-size: 10px; width: 35px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
+                                {{unit_price}}
+                            </td>
+                                <td align="right" valign="top" 
+                                style="padding: 2px 0px; background-color: #fff;font-size: 10px; width: 35px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
+                                {{trip_info.total_trips}}
+                            </td>
                                 <td align="right" valign="top" 
                                     style="padding: 2px 0px; background-color: #fff;font-size: 10px; width: 35px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
                                     {{status}}
@@ -288,59 +302,51 @@
 
                             </tr>
                     </table>
+                    <div style="display: flex; flex-direction: row; 
+                    display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center;
+                   justify-content:'space-between';align-items: center; width:500px;">
+                    <table width="79%" border="0" cellspacing="0" cellpadding="0" " style=" margin-top: 10px;">
+                    </table>
+                    <table width="21.5%" border="0" cellspacing="0" cellpadding="0" " style=" margin-top: 10px; font-size: 10px;">
+                      <tr>
+                        <td align="left" valign="top" bgcolor="#ffe77b"
+                          style=" color: rgb(64, 150, 211);background-color:#fff; margin: 10px;font-family: Open Sans, sans-serif;">
+                         <strong>Total HT</strong> 
+                        </td>
+                        <td align="right" valign="top" bgcolor="#ffe77b"
+                          style="background-color:#fff; margin: 10px;padding-right: 10px;font-family: Open Sans, sans-serif;">
+                          {{total_price_without_tax}}€
+                        </td>
+                      </tr>
+        
+                      <tr>
+                        <td align="left" valign="top" bgcolor="#ffe77b"
+                          style="color: rgb(64, 150, 211);background-color:#fff; margin: 10px;font-family: Open Sans, sans-serif; ">
+                         <strong>TVA (20%)</strong> 
+                        </td>
+                        <td align="right" valign="top" bgcolor="#ffe77b"
+                          style="background-color:#fff; margin: 10px;padding-right: 10px;font-family: Open Sans, sans-serif; ">
+                          {{VAT}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="left" valign="top" bgcolor="#ffe77b"
+                          style="color: rgb(64, 150, 211);background-color:#fff; margin: 10px;font-family: Open Sans, sans-serif; ">
+                          <div style="background-color: #fff;">
+                            <strong>Total TTC</strong>
+                          </div>
+        
+                        </td>
+                        <td align="right" valign="top" bgcolor="#ffe77b"
+                          style="background-color:#fff; margin: 10px;padding-right: 10px; font-family: Open Sans, sans-serif;">
+                          <div style="background-color: #fff;font-family: Open Sans, sans-serif;">
+                            {{total_price_with_tax}}€
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
                     
-
-                    
-                    <div
-                        style="display: flex; flex-direction: row;
-                        display: -webkit-flex; display: -webkit-box; -webkit-box-pack: center;
-                        justify-content:'space-between';align-items: center; width:500px;">
-                        <table width="76%" border="0" cellspacing="0" cellpadding="0" " style=" margin-top: 10px;">
-                        </table>
-                        <table width="21%" border="0" cellspacing="0" cellpadding="0" " style=" margin-top: 10px; font-size: 10px;">
-                            <tr>
-                                <td align="left" valign="top" 
-                                    style="color: rgb(64, 150, 211); background-color:#fff; margin: 10px;font-family: Open Sans, sans-serif; ">
-                                    <div style="background-color: #fff;">
-                                        <strong>Total HT</strong>
-                                    </div>
-
-                                </td>
-                                <td align="right" valign="top" 
-                                    style="background-color:#fff;padding-right: 10px; margin: 10px; font-family: Open Sans, sans-serif;">
-                                    <div
-                                        style="background-color: #fff;font-family: Open Sans, sans-serif;">
-                                        <strong>{{total_price}}€</strong>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="left" valign="top" bgcolor="#ffe77b"
-                                  style="color: rgb(64, 150, 211);background-color:#fff; margin: 10px;font-family: Open Sans, sans-serif; ">
-                                 <strong>TVA (20%)</strong> 
-                                </td>
-                                <td align="right" valign="top" bgcolor="#ffe77b"
-                                  style="background-color:#fff; margin: 10px;padding-right: 10px;font-family: Open Sans, sans-serif; ">
-                                  <strong>22€</strong>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td align="left" valign="top" bgcolor="#ffe77b"
-                                  style="color: rgb(64, 150, 211);background-color:#fff; margin: 10px;font-family: Open Sans, sans-serif; ">
-                                  <div style="background-color: #fff;">
-                                    <strong>Total TTC</strong>
-                                  </div>
-                
-                                </td>
-                                <td align="right" valign="top" bgcolor="#ffe77b"
-                                  style="background-color:#fff; margin: 10px;padding-right: 10px; font-family: Open Sans, sans-serif;">
-                                  <div style="background-color: #fff;font-family: Open Sans, sans-serif;">
-                                    <strong>272€</strong>
-                                  </div>
-                                </td>
-                              </tr>
-                        </table>
-                            </div>
+                  </div>
         </tr>
 
     </table>
