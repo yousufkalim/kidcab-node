@@ -29,7 +29,7 @@ exports.sendTripEmail = (email, attachment) => {
     var mailOptions = {
       from: `${sender_name} <${sender_email}>`,
       to: email,
-      subject: "Trip Create",
+      subject: "Trip Created",
       text: "Your trips have been created.Please check the file below!", // plain text body
       attachments: [
         {
