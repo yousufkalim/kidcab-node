@@ -31,6 +31,7 @@ const quoteSchema = new Schema(
     docu_sign_link: {
       type: String,
     },
+    total_price: String,
     trip_info: {
       total_trips: {
         type: String,

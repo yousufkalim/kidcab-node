@@ -344,6 +344,7 @@ const InvoicePdf = async (invoiceId) => {
   let filteredInvoices = {};
   filteredInvoices[invoice.client._id] = [];
   // Changing format for issue data as desired
+  invoice["unit_price"] = parseInt(invoice.trip_info.unit_price).toFixed(1);
   invoice["issue_date"] = moment(invoice.issue_date).format("DD/MM/YYYY");
   invoice["total_price2"] =
     parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(1);
