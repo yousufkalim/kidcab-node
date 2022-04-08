@@ -51,12 +51,11 @@ exports.create = async (req, res) => {
       req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
     }
     let tripsIds = [];
-    let drivers = [];
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
           try {
-            drivers = await Drivers.find({
+            const drivers = await Drivers.find({
               _id: { $in: invited_drivers },
             });
             req.body.invited_drivers = invited_drivers.map((driver) => ({
@@ -107,7 +106,10 @@ exports.create = async (req, res) => {
         });
       });
     };
-    if (req.body.tripType === "recurring") {
+    if (req.body.trip_type == "recurring") {
+      const drivers = await Drivers.find({
+        _id: { $in: invited_drivers },
+      });
       drivers.map(async (driver) => {
         if (driver?.fcmToken) {
           fcmservice.sendPushMessage(
