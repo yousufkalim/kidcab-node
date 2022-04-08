@@ -112,13 +112,13 @@ exports.create = async (req, res) => {
         if (driver?.fcmToken) {
           fcmservice.sendPushMessage(
             driver.fcmToken,
-            `kidcab race proposal from ${req.body.startdate} to  ${req.body.enddate}`,
+            `proposition de course kidcab de ${req.body.startdate} à ${req.body.enddate}`,
             pushMessage,
             pubMsg
           );
           //store notification in db
           const notification = await Notifications.create({
-            title: `kidcab race proposal from ${req.body.startdate} to  ${req.body.enddate}`,
+            title: `proposition de course kidcab de ${req.body.startdate} à ${req.body.enddate}`,
             expiry_date: fifteenDays,
             receiver: driver.id,
           });
