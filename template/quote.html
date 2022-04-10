@@ -164,11 +164,25 @@
           <table width="75%" border="0" cellspacing="0" cellpadding="0">
             <tr >
               <td align="left" 
-                style="display: -webkit-flex;background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                style="display: -webkit-flex;background-color:#fff; ; width: 90px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                Société :
+              </td>
+              <td align="left" 
+                style="background-color: #fff; width: 110px;font-family: Open Sans, sans-serif;">
+                <strong>
+                  KIDCAB
+
+
+                </strong>
+              </td>
+            </tr>
+            <tr >
+              <td align="left" 
+                style="display: -webkit-flex;background-color:#fff; ; width: 90px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
                 Nom :
               </td>
               <td align="left" 
-                style="background-color: #fff; width: 160px;font-family: Open Sans, sans-serif;">
+                style="background-color: #fff; width: 110px;font-family: Open Sans, sans-serif;">
                 <strong>
                   {{#with quotes.[0]}}
                   {{client.first_name}}
@@ -181,11 +195,11 @@
             </tr>
             <tr>
               <td align="top"
-                style="display: -webkit-flex; background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                style="display: -webkit-flex; background-color:#fff; ; width: 90px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
                 Adresse :
               </td>
               <td align="left" 
-                style="background-color: #fff; width: 130px;font-family: Open Sans, sans-serif;">
+                style="background-color: #fff; width: 110px;font-family: Open Sans, sans-serif;">
                 <strong>
                   {{#with quotes.[0]}}
                   {{client.address.label}}
@@ -195,31 +209,18 @@
             </tr>
             <tr >
               <td align="left" 
-                style="display: -webkit-flex;background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                style="display: -webkit-flex;background-color:#fff; ; width: 90px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
                 Adresse email:
               </td>
               <td align="left" 
-                style="background-color: #fff; width: 130px;font-family: Open Sans, sans-serif;">
+                style="background-color: #fff; width: 110px;font-family: Open Sans, sans-serif;">
                 <strong>
                   {{#with quotes.[0]}}
                   {{client.email}}
                   {{/with }}</strong>
               </td>
             </tr>
-            <tr >
-              <td align="left" 
-                style="display: -webkit-flex;background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
-                Numero de telephone :
-              </td>
-              <td align="left" 
-                style="background-color: #fff; width: 160px;font-family: Open Sans, sans-serif;">
-                <strong>
-                  {{#with quotes.[0]}}
-                  {{client.phone_number}}
-                  {{/with }}
-                </strong>
-              </td>
-            </tr>
+            
           </table>
         </div>
         
@@ -266,19 +267,19 @@
 
               <tr>
                 <td align="left" valign="top" bgcolor="#ffe77b"
-                  style="padding: 2px 0px; background-color: #fff;font-size: 9px; width: 250px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;">
+                  style="padding: 2px 2px; background-color: #fff;font-size: 9px; width: 250px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;">
                   {{description}} - Devis n°({{quote_number}})
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
-                  style="padding: 2px 0px; background-color: #fff;font-size: 9px; width: 85px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
+                  style="padding: 2px 2px; background-color: #fff;font-size: 9px; width: 85px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
                   {{unit_price}}€
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
-                  style="padding: 2px 0px; background-color: #fff;font-size: 9px; width: 35px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
+                  style="padding: 2px 2px; background-color: #fff;font-size: 9px; width: 35px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
                   {{trip_info.total_trips}}
                 </td>
                 <td align="right" valign="top" bgcolor="#ffe77b"
-                  style="padding: 2px 0px; background-color: #fff;font-size: 9px; width: 65px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
+                  style="padding: 2px 2px; background-color: #fff;font-size: 9px; width: 65px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;text-align: center;">
                   {{total_price}}€
                 </td>
                 {{/quotes}}

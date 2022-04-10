@@ -25,7 +25,7 @@ exports.create = async (req, res) => {
     if (!quote) res.status(501).send("No Quote is created");
     const user = await Users.findById(quote.client);
     const files = await CreatePdf(quote._id);
-    sendQuoteEmail(user.email, files);
+    sendQuoteEmail(user, quote, files);
     // Done
     res.json({ success: true, quote });
   } catch (err) {

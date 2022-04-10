@@ -7,6 +7,10 @@ const { Schema, model } = require("mongoose");
 // Schema
 const invoiceSchema = new Schema(
   {
+    type: {
+      type: String,
+      enum: ["driver", "client"],
+    },
     invoice_title: {
       type: String,
       required: true,
@@ -31,8 +35,11 @@ const invoiceSchema = new Schema(
     },
     client: {
       type: Schema.Types.ObjectId,
-      required: true,
       ref: "users",
+    },
+    driver: {
+      type: Schema.Types.ObjectId,
+      ref: "drivers",
     },
     vat: {
       type: String,

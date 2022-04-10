@@ -64,7 +64,6 @@ const driverSchema = new Schema(
     rib: { type: String, default: "" },
     professional_liability: { type: String, default: "" },
     insurance_civil_liability: { type: String, default: "" },
-
     bank_info: {
       account_number: {
         type: String,
