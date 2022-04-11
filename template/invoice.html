@@ -23,9 +23,11 @@
                         style="padding-left: 10px; display: flex; flex-direction: column;
                          justify-content:'center';align-items: left; width:80%;">
                         <h3 style="font-size: 25px; color: rgb(64, 150, 211);margin:0 ;font-family: Open Sans, sans-serif;">
-                            {{#with invoices.[0]}}
+                          {{#with invoices.[0]}}
                             {{client.first_name}}
                             {{client.last_name}}
+                            {{driver.first_name}}
+                            {{driver.last_name}}
                             {{/with }}</h3>
                         <div
                             style="padding: 5px 10px 5px 2px;width: 250px;color:#a1a1a1;font-weight: 600;font-family: Open Sans, sans-serif;">
@@ -164,62 +166,61 @@
                     <table width="75%" border="0" cellspacing="0" cellpadding="0">
                         <tr >
                             <td align="left" 
-                                style="display: -webkit-flex;background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                                style="display: -webkit-flex;background-color:#fff; ; width: 90px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                                Société :
+                            </td>
+                            <td align="left" 
+                                style="background-color: #fff; width: 110px;font-family: Open Sans, sans-serif;">
+                                <strong>
+                                    KIDCAB
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td align="left" 
+                                style="display: -webkit-flex;background-color:#fff; ; width: 90px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
                                 Nom :
                             </td>
                             <td align="left" 
-                                style="background-color: #fff; width: 160px;font-family: Open Sans, sans-serif;">
+                                style="background-color: #fff; width: 110px;font-family: Open Sans, sans-serif;">
                                 <strong>
-                                    {{#with invoices.[0]}}
-                                    {{client.first_name}}
-                                    {{client.last_name}}
-                                    {{/with }}
-
-
+                                  {{#with invoices.[0]}}
+                                  {{client.first_name}}
+                                  {{client.last_name}}
+                                  {{driver.first_name}}
+                                  {{driver.last_name}}
+                                  {{/with }}
                                 </strong>
                             </td>
                         </tr>
                         <tr >
                             <td align="left" 
-                                style="display: -webkit-flex;background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                                style="display: -webkit-flex;background-color:#fff; ; width: 90px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
                                 Adresse :
                             </td>
                             <td align="left" 
-                                style="background-color: #fff; width: 160px;font-family: Open Sans, sans-serif;">
+                                style="background-color: #fff; width: 110px;font-family: Open Sans, sans-serif;">
                                 <strong>
                                     {{#with invoices.[0]}}
-                                    {{client.address.label}}
+                                    {{client.address.label}}  {{driver.address.label}} 
                                     {{/with }}
                                 </strong>
                             </td>
                         </tr>
                         <tr >
                             <td align="left" 
-                                style="display: -webkit-flex;background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
+                                style="display: -webkit-flex;background-color:#fff; ; width: 90px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
                                 Adresse email:
                             </td>
                             <td align="left" 
-                                style="background-color: #fff; width: 160px;font-family: Open Sans, sans-serif;">
+                                style="background-color: #fff; width: 110px;font-family: Open Sans, sans-serif;">
                                 <strong>
                                     {{#with invoices.[0]}}
-                                    {{client.email}}
+                                    {{client.email}}    {{driver.email}}
                                     {{/with }}</strong>
                             </td>
                         </tr>
-                        <tr >
-                            <td align="left" 
-                                style="display: -webkit-flex;background-color:#fff; ; width: 130px;color: rgb(141, 141, 141);font-family: Open Sans, sans-serif;">
-                                Numero de telephone :
-                            </td>
-                            <td align="left" 
-                                style="background-color: #fff; width: 160px;font-family: Open Sans, sans-serif;">
-                                <strong>
-                                    {{#with invoices.[0]}}
-                                    {{client.phone_number}}
-                                    {{/with }}
-                                </strong>
-                            </td>
-                        </tr>
+                        
                     </table>
                 </div>
                    
@@ -249,15 +250,15 @@
                                 Description
                             </td>
                             <td align="center" valign="top" 
-                                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 35px; font-family: Open Sans, sans-serif;text-align: center;">
+                                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 50px; font-family: Open Sans, sans-serif;text-align: center;">
                                 Unit Price
                             </td>
                             <td align="center" valign="top" 
-                                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 35px; font-family: Open Sans, sans-serif;text-align: center;">
+                                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 60px; font-family: Open Sans, sans-serif;text-align: center;">
                                 No of Trips
                             </td>
                             <td align="center" valign="top" 
-                                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 35px; font-family: Open Sans, sans-serif;text-align: center;">
+                                style="background-color: rgb(64, 150, 211); font-size: 10px; color:#fff; padding: 5px 2px;  width: 45px; font-family: Open Sans, sans-serif;text-align: center;">
                                 Status
                             </td>
                             <td align="right" valign="top" 
@@ -271,7 +272,7 @@
 
                             <tr>
                                 <td align="left" valign="top" 
-                                    style="padding: 2px 0px; background-color: #fff;font-size: 10px; width: 250px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;">
+                                    style="padding: 2px 2px; background-color: #fff;font-size: 10px; width: 250px;border-bottom: 1px solid #e2d9d9;font-family: Open Sans, sans-serif;">
                                     {{invoice_title}}
                                 </td>
                                 <td align="right" valign="top" 
@@ -299,7 +300,7 @@
                    justify-content:'space-between';align-items: center; width:500px;">
                     <table width="79%" border="0" cellspacing="0" cellpadding="0" " style=" margin-top: 10px;">
                     </table>
-                    <table width="21.5%" border="0" cellspacing="0" cellpadding="0" " style=" margin-top: 10px; font-size: 10px;">
+                    <table width="21%" border="0" cellspacing="0" cellpadding="0" " style=" margin-top: 10px; font-size: 10px;">
                       <tr>
                         <td align="left" valign="top" bgcolor="#ffe77b"
                           style=" color: rgb(64, 150, 211);background-color:#fff; margin: 10px;font-family: Open Sans, sans-serif;">

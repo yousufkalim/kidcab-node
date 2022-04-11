@@ -54,13 +54,13 @@ exports.create = async (req, res) => {
     const drivers = await Drivers.find({
       _id: { $in: invited_drivers },
     });
+    req.body.invited_drivers = invited_drivers.map((driver) => ({
+      driver: driver,
+    }));
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
           try {
-            req.body.invited_drivers = invited_drivers.map((driver) => ({
-              driver: driver,
-            }));
             //create trip for each driver with specific date
             const trip = await Trips.create({
               ...req.body,
@@ -134,7 +134,7 @@ exports.create = async (req, res) => {
     createTrips()
       .then(async (response) => {
         const files = await createPdf(tripsIds);
-        sendTripEmail(user.email, files);
+        sendTripEmail(user, files);
         res.json({ success: true, response });
       })
       .catch((err) => {

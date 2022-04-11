@@ -3,6 +3,10 @@
  * @author Shuja Naqvi dev...!
  */
 var nodemailer = require("nodemailer");
+const handlebars = require("handlebars");
+const fs = require("fs");
+const path = require("path");
+const moment = require("moment");
 
 const sender_name = process.env.MAILER_DOMAIN;
 const sender_email = process.env.MAILER_EMAIL;
@@ -14,10 +18,19 @@ const sender_password = process.env.MAILER_PASSWORD;
  * @param {object} data
  * @return {void}
  */
-exports.sendQuoteEmail = (email, attachment) => {
+exports.sendQuoteEmail = (user, quote, attachment) => {
   return new Promise((resolve, reject) => {
     // Sender mail server config
-    console.log(email, attachment);
+    const filePath = path.join(
+      __dirname,
+      "../template/quoteEmailTemplate.html"
+    );
+    const source = fs.readFileSync(filePath, "utf-8").toString();
+    const template = handlebars.compile(source);
+    const data = {
+      name: user.first_name + " " + user.last_name,
+    };
+    const htmlToSend = template(data);
     var transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -29,9 +42,9 @@ exports.sendQuoteEmail = (email, attachment) => {
     // Send email options
     var mailOptions = {
       from: `${sender_name} <${sender_email}>`,
-      to: email,
+      to: user.email,
       subject: "Quote Created",
-      text: "Quote has been created.Please check the file below!", // plain text body
+      html: htmlToSend,
       attachments: [
         {
           filename: "QuotesReport.pdf",
