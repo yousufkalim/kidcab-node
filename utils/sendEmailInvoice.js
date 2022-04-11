@@ -30,9 +30,6 @@ exports.sendInvoiceEmail = (user, invoice, attachment) => {
     const template = handlebars.compile(source);
     const data = {
       name: user.first_name + " " + user.last_name,
-      invoice_title: invoice.invoice_title,
-      total_price: invoice.total_price,
-      issue_date: moment(invoice.issue_date).format("DD MMMM YYYY"),
     };
     const htmlToSend = template(data);
 

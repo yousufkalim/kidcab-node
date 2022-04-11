@@ -29,10 +29,6 @@ exports.sendQuoteEmail = (user, quote, attachment) => {
     const template = handlebars.compile(source);
     const data = {
       name: user.first_name + " " + user.last_name,
-      total_trips: quote.trip_info.total_trips,
-      quote_title: quote.quote_title,
-      total_price: quote.total_price,
-      issue_date: moment(quote.issue_date).format("DD MMMM YYYY"),
     };
     const htmlToSend = template(data);
     var transporter = nodemailer.createTransport({
