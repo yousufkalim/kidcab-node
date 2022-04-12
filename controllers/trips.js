@@ -38,9 +38,9 @@ exports.create = async (req, res) => {
     const user = await Users.findById(client);
     var pubMsg = {
       verb: "published",
-      actions: "proposition de course kidcab",
+      actions: "Proposition de course Kidcab",
     }; //Message for fcm
-    var pushMessage = "proposition de course kidcab"; //Notification title fcm
+    var pushMessage = "Proposition de course Kidcab"; //Notification title fcm
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
@@ -76,13 +76,13 @@ exports.create = async (req, res) => {
                 if (driver?.fcmToken) {
                   fcmservice.sendPushMessage(
                     driver.fcmToken,
-                    "proposition de course kidcab",
+                    "Proposition de course Kidcab",
                     pushMessage,
                     pubMsg
                   );
                   //store notification in db
                   const notification = await Notifications.create({
-                    title: "proposition de course kidcab",
+                    title: "Proposition de course Kidcab",
                     expiry_date: fifteenDays,
                     receiver: driver.id,
                   });
@@ -111,13 +111,14 @@ exports.create = async (req, res) => {
         if (driver?.fcmToken) {
           fcmservice.sendPushMessage(
             driver.fcmToken,
-            `proposition de course kidcab de ${req.body.startdate} à ${req.body.enddate}`,
+            `Proposition de course Kidcab de ${req.body.startdate} à ${req.body.enddate}`,
+
             pushMessage,
             pubMsg
           );
           //store notification in db
           const notification = await Notifications.create({
-            title: `proposition de course kidcab de ${req.body.startdate} à ${req.body.enddate}`,
+            title: `Proposition de course Kidcabb de ${req.body.startdate} à ${req.body.enddate}`,
             expiry_date: fifteenDays,
             receiver: driver.id,
           });
@@ -269,7 +270,7 @@ exports.getAll = async (req, res) => {
         },
       })
       .populate("assigned_drivers")
-      .sort({ date: 1 });
+      .sort({ date: -1 });
     if (!trips) res.status(404).send("No Trips Found");
     res.json({ success: true, trips });
   } catch (err) {
@@ -428,7 +429,7 @@ exports.getTripsByStatus = async (req, res) => {
         },
       })
       .populate("assigned_drivers")
-      .sort({ date: 1 });
+      .sort({ date: -1 });
     if (!trips) res.status(404).send("No Trips Found");
     const totalResults = await Trips.find().countDocuments();
     res.json({ success: true, trips, totalResults });
@@ -612,7 +613,7 @@ exports.paginationTrip = async (req, res) => {
         },
       })
       .populate("assigned_drivers")
-      .sort({ date: 1 });
+      .sort({ date: -1 });
     const totalResults = await Trips.find().countDocuments();
     res.status(200).send({ msg: "All Results", results, totalResults });
   } catch (error) {
