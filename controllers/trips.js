@@ -269,7 +269,7 @@ exports.getAll = async (req, res) => {
         },
       })
       .populate("assigned_drivers")
-      .sort({ date: 1 });
+      .sort({ date: -1 });
     if (!trips) res.status(404).send("No Trips Found");
     res.json({ success: true, trips });
   } catch (err) {
@@ -428,7 +428,7 @@ exports.getTripsByStatus = async (req, res) => {
         },
       })
       .populate("assigned_drivers")
-      .sort({ date: 1 });
+      .sort({ date: -1 });
     if (!trips) res.status(404).send("No Trips Found");
     const totalResults = await Trips.find().countDocuments();
     res.json({ success: true, trips, totalResults });
@@ -612,7 +612,7 @@ exports.paginationTrip = async (req, res) => {
         },
       })
       .populate("assigned_drivers")
-      .sort({ date: 1 });
+      .sort({ date: -1 });
     const totalResults = await Trips.find().countDocuments();
     res.status(200).send({ msg: "All Results", results, totalResults });
   } catch (error) {
