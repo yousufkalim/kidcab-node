@@ -30,6 +30,7 @@ const invoiceSchema = new Schema(
       type: String,
       enum: ["pending", "paid", "late", "cancelled"],
     },
+    file_path: String,
     comments: {
       type: String,
     },

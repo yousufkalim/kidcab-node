@@ -23,9 +23,7 @@ exports.create = async (req, res) => {
     req.body.trip_info = JSON.parse(trip_info);
     const quote = await Quotes.create(req.body);
     if (!quote) res.status(501).send("No Quote is created");
-    const user = await Users.findById(quote.client);
-    const files = await CreatePdf(quote._id);
-    sendQuoteEmail(user, quote, files);
+    await Users.findById(quote.client);
     // Done
     res.json({ success: true, quote });
   } catch (err) {
@@ -335,7 +333,7 @@ const CreatePdf = async (quoteId) => {
     "utf-8"
   );
   let obj = {};
-  let files = [];
+  let file;
   const saveFiles = Object.entries(filteredQuotes).map(([key, value]) => {
     let total_price_without_tax = 0;
     let total_price_with_tax = 0;
@@ -372,7 +370,7 @@ const CreatePdf = async (quoteId) => {
     total_price_without_tax = 0;
     total_price_with_tax = 0;
     const filepath = `${process.env.BASE_URL}/uploads/quotes/${filename}`;
-    files.push(filepath);
+    file = filepath;
     return pdf.create(document, {
       formate: "A4",
       orientation: "portrait",
@@ -382,5 +380,5 @@ const CreatePdf = async (quoteId) => {
 
   await Promise.all(saveFiles);
 
-  return files;
+  return file;
 };

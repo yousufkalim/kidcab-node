@@ -133,8 +133,6 @@ exports.create = async (req, res) => {
     //resolving all promises
     createTrips()
       .then(async (response) => {
-        const files = await createPdf(tripsIds);
-        sendTripEmail(user, files);
         res.json({ success: true, response });
       })
       .catch((err) => {
