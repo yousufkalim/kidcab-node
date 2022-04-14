@@ -3,6 +3,7 @@
  * @author Arooj Ishfaq
  */
 const Drivers = require("../models/Drivers");
+const Vehicles = require("../models/Vehicles");
 const bcrypt = require("bcryptjs");
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
 const { generateAuthToken } = require("../middleware/auth");
@@ -120,6 +121,7 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const driverId = req.params.driverId;
+    const findDriver = await Drivers.findByIdAndUpdate(driverId);
     const { email, bank_info, address, vehicles } = req.body;
     if (req.body.bank_info) {
       req.body.bank_info = JSON.parse(bank_info);
@@ -133,8 +135,31 @@ exports.update = async (req, res) => {
     }
     if (req.body.vehicles) {
       req.body.vehicles = JSON.parse(vehicles);
+      let testxx = req.body.vehicles;
+      //It will filter Vechicles
+      let oldVechicles = findDriver.vehicles.filter(
+        (o1) => !testxx.some((o2) => o1 == o2)
+      );
+      let newVechicles = testxx.filter(
+        (o1) => !findDriver.vehicles.some((o2) => o1 == o2)
+      );
+      await Vehicles.bulkWrite([
+        {
+          updateMany: {
+            filter: { _id: oldVechicles },
+            update: { $unset: { driver: "" } },
+          },
+        },
+      ]);
+      await Vehicles.bulkWrite([
+        {
+          updateMany: {
+            filter: { _id: newVechicles },
+            update: { driver: driverId },
+          },
+        },
+      ]);
     }
-
     if (req.files) {
       const imageKeys = Object.keys(req.files);
 
@@ -203,7 +228,7 @@ exports.delete = async (req, res) => {
   try {
     const companyId = req.params.companyId;
     const company = await Drivers.findByIdAndDelete(companyId);
-    const vehicles = await Drivers.deleteMany({
+    await Drivers.deleteMany({
       _id: { $in: company.vehicles },
     });
     res.json({ success: true, company });

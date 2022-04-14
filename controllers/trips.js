@@ -112,7 +112,6 @@ exports.create = async (req, res) => {
           fcmservice.sendPushMessage(
             driver.fcmToken,
             `Proposition de course Kidcab de ${req.body.startdate} à ${req.body.enddate}`,
-
             pushMessage,
             pubMsg
           );
@@ -134,8 +133,6 @@ exports.create = async (req, res) => {
     //resolving all promises
     createTrips()
       .then(async (response) => {
-        const files = await createPdf(tripsIds);
-        sendTripEmail(user, files);
         res.json({ success: true, response });
       })
       .catch((err) => {
@@ -165,12 +162,6 @@ exports.accept = async (req, res) => {
     //creating ride when driver accepts invitation
     let tripDate = moment(trip.date).format("YYYY-MM-DD");
     let today = moment(new Date()).format("YYYY-MM-DD");
-    if (new Date(tripDate) > new Date(today)) {
-      return res
-        .status(404)
-        .json({ success: false, message: "cannot accept future trips" });
-    }
-
     if (!trip || !driver) {
       return res
         .status(404)

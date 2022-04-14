@@ -26,15 +26,17 @@ exports.create = async (req, res) => {
     const invoice = await Invoices.create(req.body);
     await invoice.save();
     if (req.body.type === "client") {
-      const user = await Users.findById(invoice.client);
-      const files = await InvoicePdf(invoice._id);
-      sendInvoiceEmail(user, invoice, files);
-      res.json({ success: true, invoice, files });
+      await Users.findById(invoice.client);
+      const file = await InvoicePdf(invoice._id);
+      invoice.file_path = file;
+      await invoice.save();
+      res.json({ success: true, invoice });
     } else {
-      const driver = await Drivers.findById(invoice.driver);
-      const files = await InvoicePdf(invoice._id);
-      sendInvoiceEmail(driver, invoice, files);
-      res.json({ success: true, invoice, files });
+      await Drivers.findById(invoice.driver);
+      const file = await InvoicePdf(invoice._id);
+      invoice.file_path = file;
+      await invoice.save();
+      res.json({ success: true, invoice });
     }
   } catch (err) {
     console.log("Error ----> ", err);
@@ -415,7 +417,7 @@ const InvoicePdf = async (invoiceId) => {
     "utf-8"
   );
   let obj = {};
-  let files = [];
+  let files;
   const saveFiles = Object.entries(filteredInvoices).map(([key, value]) => {
     let total_price_without_tax = 0;
     let total_price_with_tax = 0;
@@ -454,7 +456,7 @@ const InvoicePdf = async (invoiceId) => {
       path: `./uploads/invoice/${filename}`,
     };
     const filepath = `${process.env.BASE_URL}/uploads/invoice/${filename}`;
-    files.push(filepath);
+    files = filepath;
     return pdf.create(document, {
       formate: "A4",
       orientation: "portrait",

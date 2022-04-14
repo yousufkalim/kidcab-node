@@ -12,7 +12,9 @@ var mongoose = require("mongoose");
  */
 exports.create = async (req, res) => {
   try {
-    req.body.driver = JSON.parse(req.body.driver);
+    if (req.body.driver) {
+      req.body.driver = JSON.parse(req.body.driver);
+    }
     const imageKeys = Object.keys(req.files);
     const data = Object.assign(
       {},
@@ -75,7 +77,20 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const vehicleId = req.params.vehicleId;
-    req.body.driver = JSON.parse(req.body.driver);
+    const findVehicle = await Vehicles.findById(vehicleId);
+    if (req.body.driver) {
+      req.body.driver = JSON.parse(req.body.driver);
+      if (findVehicle.driver !== req.body.driver) {
+        await Drivers.findByIdAndUpdate(findVehicle.driver, {
+          $pull: { vehicles: vehicleId },
+        });
+        await Drivers.findById(req.body.driver);
+        await Drivers.findByIdAndUpdate(req.body.driver, {
+          $push: { vehicles: vehicleId },
+        });
+      }
+    }
+
     if (req.files) {
       const imageKeys = Object.keys(req.files);
       const data = Object.assign(
