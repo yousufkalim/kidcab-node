@@ -27,7 +27,7 @@ const vehicleSchema = new Schema(
       type: String,
       required: true,
     },
-    number_plate: String,
+    number_plate:String,
     graycard: String,
     inspection_info: String,
     inspection_expiry_date: Date,

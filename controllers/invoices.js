@@ -102,6 +102,25 @@ exports.getByClient = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+/**
+ * Get invoice by Driverid
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getByDriver = async (req, res) => {
+  try {
+    const driverId = req.params.driverId;
+    const invoices = await Invoices.find({ driver: driverId }).populate(
+      "driver"
+    );
+    if (!invoices) res.status(404).send("Invoices does not found");
+    res.json({ success: true, invoices });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 /**
  * Get Invoice by status
  * @param {object} req

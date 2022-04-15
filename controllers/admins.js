@@ -27,7 +27,6 @@ exports.create = async (req, res) => {
     if (req.file) {
       req.body.profile_pic = req.file.path; // Creating a new property called photo in body object
     }
-
     // Creating Admin
     password = bcrypt.hashSync(password, parseInt(bcryptSalt)); // Hashing the password with salt 8
     const admin = await Admin.create({
@@ -193,18 +192,17 @@ exports.delete = async (req, res) => {
 
 exports.forgot = async (req, res) => {
   try {
-  const {email}=req.body;
-    const admins = await Admin.findOne({email:email});
-    if(!admins){
-      return res.status(404).json({ success: false, message: "Invalid email address" });
+    const { email } = req.body;
+    const admins = await Admin.findOne({ email: email });
+    if (!admins) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Invalid email address" });
     }
     let randomPassword = Math.random().toString(36).slice(-8);
-    console.log(randomPassword,"r")
+    console.log(randomPassword, "r");
     sendEmail(admins.email, randomPassword).then(async () => {
-      admins.password = await bcrypt.hash(
-        randomPassword,
-        parseInt(bcryptSalt)
-      );
+      admins.password = await bcrypt.hash(randomPassword, parseInt(bcryptSalt));
       await admins.save();
       return res
         .status(200)
