@@ -17,7 +17,6 @@ exports.create = async (req, res) => {
   try {
     let { email, password, bank_info } = req.body;
     const existingUser = await Users.findOne({ email });
-
     if (existingUser) {
       return res
         .status(409)
@@ -106,18 +105,17 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const userId = req.params.userId;
-    let { bank_info, address } = req.body;
-
+    let { address, bank_info } = req.body;
     if (req.file) {
       req.body.profile_pic = req.file.path;
     }
+
     if (req.body.bank_info) {
       req.body.bank_info = JSON.parse(bank_info);
     }
-    if (req.body.address) {
+    if (req.body.address != undefined) {
       req.body.address = JSON.parse(address);
     }
-
     const user = await Users.findOneAndUpdate({ _id: userId }, req.body, {
       new: true,
     }); // Updating the user
