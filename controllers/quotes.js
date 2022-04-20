@@ -151,10 +151,11 @@ exports.getQouteByStatus = async (req, res) => {
 exports.QuotesByDate = async (req, res) => {
   try {
     const { start_date, end_date } = req.body;
+    let End_date = new Date(end_date).getTime() + 86400000;
     const qoutes = await Quotes.find({
       $and: [
-        { "trip_info.start_date": { $gte: new Date(start_date) } },
-        { "trip_info.end_date": { $lte: new Date(end_date) } },
+        { issue_date: { $gte: new Date(start_date) } },
+        { issue_date: { $lt: new Date(End_date) } },
       ],
     })
       .populate("client")
@@ -192,8 +193,10 @@ exports.ExportPdf = async (req, res) => {
         filteredQuotes[quote.client._id] = [];
 
         // Getting unit price
-        quote["unit_price"] = parseInt(quote.trip_info.unit_price).toFixed(1);
 
+        quote["unit_price"] =
+          parseInt(quote?.total_price) /
+          parseInt(quote?.trip_info?.total_trips).toFixed(1);
         // Adding description for a quote if not exists
         if (!quote.description || quote.description === "") {
           quote["description"] = `Trip for ${
@@ -209,7 +212,9 @@ exports.ExportPdf = async (req, res) => {
         filteredQuotes[quote.client._id].push(quote);
       } else {
         // Getting unit price
-        quote["unit_price"] = parseInt(quote.trip_info.unit_price).toFixed(1);
+        quote["unit_price"] =
+          parseInt(quote?.total_price) /
+          parseInt(quote?.trip_info?.total_trips).toFixed(1);
 
         // Adding description for a quote if not exists
         if (quote.description || quote.description === "") {
@@ -314,7 +319,9 @@ const CreatePdf = async (quoteId) => {
   let filteredQuotes = {};
   filteredQuotes[quotes.client._id] = [];
   // Getting unit price
-  quotes["unit_price"] = parseInt(quotes?.trip_info?.unit_price).toFixed(1);
+  quote["unit_price"] =
+    parseInt(quote?.total_price) /
+    parseInt(quote?.trip_info?.total_trips).toFixed(1);
   // Adding description for a quote if not exists
   if (quotes.description || quotes.description === "") {
     quotes["description"] = `Trip for ${

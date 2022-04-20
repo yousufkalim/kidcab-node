@@ -260,9 +260,9 @@ exports.ExportPdf = async (req, res) => {
       if (invoice.type === "client") {
         if (!filteredInvoices[invoice.client._id]) {
           filteredInvoices[invoice.client._id] = [];
-          invoice["unit_price"] = parseInt(
-            invoice?.trip_info?.unit_price
-          ).toFixed(1);
+          invoice["unit_price"] =
+            parseInt(invoice?.total_price) /
+            parseInt(invoice?.trip_info?.total_trips).toFixed(1);
           invoice["total_price2"] =
             parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(1);
           // Changing format for issue data as desired
@@ -272,9 +272,9 @@ exports.ExportPdf = async (req, res) => {
           filteredInvoices[invoice.client._id].push(invoice);
         } else {
           // Changing format for issue data as desired
-          invoice["unit_price"] = parseInt(
-            invoice.trip_info.unit_price
-          ).toFixed(1);
+          invoice["unit_price"] =
+            parseInt(invoice?.total_price) /
+            parseInt(invoice?.trip_info?.total_trips).toFixed(1);
           invoice["total_price2"] =
             parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(1);
           invoice["issue_date"] = moment(invoice.issue_date).format(
@@ -285,9 +285,9 @@ exports.ExportPdf = async (req, res) => {
       } else {
         if (!filteredInvoices[invoice.driver._id]) {
           filteredInvoices[invoice.driver._id] = [];
-          invoice["unit_price"] = parseInt(
-            invoice?.trip_info?.unit_price
-          ).toFixed(1);
+          invoice["unit_price"] =
+            parseInt(invoice?.total_price) /
+            parseInt(invoice?.trip_info?.total_trips).toFixed(1);
           invoice["total_price2"] =
             parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(1);
           // Changing format for issue data as desired
@@ -297,9 +297,9 @@ exports.ExportPdf = async (req, res) => {
           filteredInvoices[invoice.driver._id].push(invoice);
         } else {
           // Changing format for issue data as desired
-          invoice["unit_price"] = parseInt(
-            invoice.trip_info.unit_price
-          ).toFixed(1);
+          invoice["unit_price"] =
+            parseInt(invoice?.total_price) /
+            parseInt(invoice?.trip_info?.total_trips).toFixed(1);
           invoice["total_price2"] =
             parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(1);
           invoice["issue_date"] = moment(invoice.issue_date).format(
@@ -326,7 +326,6 @@ exports.ExportPdf = async (req, res) => {
         total_price_with_tax = total_price_with_tax + parseInt(e.total_price);
         total_vat = total_vat + parseInt(e.vat);
       });
-
       obj = {
         invoices: value,
         admin_name: "Maxime Chevallier",
@@ -394,10 +393,11 @@ exports.deletePdf = async (req, res) => {
 exports.InvoiceByDate = async (req, res) => {
   try {
     const { start_date, end_date } = req.body;
+    let End_date = new Date(end_date).getTime() + 86400000;
     const invoices = await Invoices.find({
       $and: [
         { issue_date: { $gte: new Date(start_date) } },
-        { issue_date: { $lte: new Date(end_date) } },
+        { issue_date: { $lt: new Date(End_date) } },
       ],
     }).populate("client");
     if (invoices) return res.status(200).json({ success: true, invoices });
@@ -420,7 +420,9 @@ const InvoicePdf = async (invoiceId) => {
   if (invoice.type === "client") {
     filteredInvoices[invoice.client._id] = [];
     // Changing format for issue data as desired
-    invoice["unit_price"] = parseInt(invoice.trip_info.unit_price).toFixed(1);
+    invoice["unit_price"] =
+      parseInt(invoice?.total_price) /
+      parseInt(invoice?.trip_info?.total_trips).toFixed(1);
     invoice["issue_date"] = moment(invoice.issue_date).format("DD/MM/YYYY");
     invoice["total_price2"] =
       parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(1);
@@ -428,7 +430,9 @@ const InvoicePdf = async (invoiceId) => {
   } else {
     filteredInvoices[invoice.driver._id] = [];
     // Changing format for issue data as desired
-    invoice["unit_price"] = parseInt(invoice.trip_info.unit_price).toFixed(1);
+    invoice["unit_price"] =
+      parseInt(invoice?.total_price) /
+      parseInt(invoice?.trip_info?.total_trips).toFixed(1);
     invoice["issue_date"] = moment(invoice.issue_date).format("DD/MM/YYYY");
     invoice["total_price2"] =
       parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(1);

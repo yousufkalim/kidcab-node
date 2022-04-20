@@ -620,10 +620,11 @@ exports.paginationTrip = async (req, res) => {
 exports.TripsByDate = async (req, res) => {
   try {
     const { start_date, end_date, pageNumber, pageSize } = req.body;
+    let End_date = new Date(end_date).getTime() + 86400000;
     const trips = await Trips.find({
       $and: [
         { date: { $gte: new Date(start_date) } },
-        { date: { $lte: new Date(end_date) } },
+        { date: { $lt: new Date(End_date) } },
       ],
     })
       .skip(pageNumber * pageSize)
@@ -993,6 +994,8 @@ exports.ExportPdf = async (req, res) => {
 
         // Changing format for issue data as desired
         trip["date"] = moment(trip.date).format("DD/MM/YYYY");
+        trip["client_price"] =
+          parseInt(trip.client_price) + parseInt(trip.client_price * 0.2);
         filteredTrips[trip.client._id].push(trip);
       } else {
         // Changing format for issue data as desired
