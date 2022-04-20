@@ -643,7 +643,7 @@ exports.TripsByDate = async (req, res) => {
     const count = await Trips.find({
       $and: [
         { date: { $gte: new Date(start_date) } },
-        { date: { $lte: new Date(end_date) } },
+        { date: { $lt: new Date(End_date) } },
       ],
     }).countDocuments();
     if (trips) return res.status(200).json({ success: true, trips, count });
