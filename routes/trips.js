@@ -27,6 +27,8 @@ router.post("/", validateTrips, isValidated, trips.create);
 // Read
 router.get("/", trips.getAll); // Get all trips at once
 router.post("/paginationTrips", trips.paginationTrip);
+router.post("/tripsbydriver", trips.TripsByDriver);
+router.post("/tripsbyClient", trips.TripsByClient);
 router.get("/getPendingByDriver/:driverId", trips.getPendingByDriver); // Get all trips at once
 router.get("/:tripId", trips.getById); // Get one trip by it's id
 

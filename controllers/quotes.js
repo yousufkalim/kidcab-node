@@ -66,7 +66,6 @@ exports.getById = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
 /**
  * Update quote
  * @param {object} req

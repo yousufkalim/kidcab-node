@@ -150,6 +150,9 @@ exports.getInvoicesByStatus = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const invoiceId = req.params.invoiceId;
+    const { trip_info } = req.body;
+    req.body.trip_info = JSON.parse(trip_info);
+    req.body.file_path = await InvoicePdf(invoiceId);
     const updatedInvoice = await Invoices.findByIdAndUpdate(
       invoiceId,
       req.body,
