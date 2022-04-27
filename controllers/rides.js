@@ -19,7 +19,6 @@ const fcmservice = require("../utils/fcmService");
  */
 exports.create = async (req, res) => {
   try {
-    console.log(req.body);
     const ride = await Rides.create(req.body);
     if (!ride) return res.status(404).send("No Ride is created");
     res.json({ success: true, ride });
