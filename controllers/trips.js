@@ -26,12 +26,13 @@ const url = process.env.BASE_URL;
 exports.create = async (req, res) => {
   try {
     const {
-      invited_drivers,
+      inviteddrivers,
       start_address,
       addresses,
       end_address,
       dates,
       client,
+      status,
     } = req.body;
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
@@ -52,11 +53,15 @@ exports.create = async (req, res) => {
     }
     let tripsIds = [];
     const drivers = await Drivers.find({
-      _id: { $in: invited_drivers },
+      _id: { $in: inviteddrivers },
     });
-    req.body.invited_drivers = invited_drivers.map((driver) => ({
-      driver: driver,
-    }));
+    if (status === "pending") {
+      req.body.invited_drivers = inviteddrivers.map((driver) => ({
+        driver: driver,
+      }));
+    } else if (status == "confirmed") {
+      req.body.assigned_drivers = drivers[0]._id;
+    }
     const createTrips = () => {
       return new Promise((resolve, reject) => {
         dates.map(async (date, index) => {
@@ -67,6 +72,24 @@ exports.create = async (req, res) => {
               rides: [],
               date: date,
             });
+            if (status == "confirmed") {
+              const price = trip.driver_price / trip.required_drivers;
+              const ride = await Rides.create({
+                price: price,
+                client: trip.client,
+                driver: drivers[0]._id,
+                vehicle: drivers[0].vehicles[0],
+                trip: trip._id,
+                date: trip.date,
+              });
+              await Trips.findByIdAndUpdate(
+                trip._id,
+                {
+                  $push: { rides: ride._id },
+                },
+                { new: true }
+              );
+            }
             //pushing trips
             tripsIds.push(trip?._id);
             //creating trip
@@ -703,7 +726,6 @@ exports.TripsByDriver = async (req, res) => {
 exports.TripsByClient = async (req, res) => {
   try {
     const { pageNumber, pageSize, status } = req.body;
-    console.log(status);
     let client = req.body.client.split(" ");
     let clients = await Users.find({
       first_name: client[0],
@@ -733,10 +755,8 @@ exports.TripsByClient = async (req, res) => {
       const count = await Trips.find({
         client: { $in: clients },
       }).countDocuments();
-      console.log(count, "c");
       if (trips) return res.status(200).json({ success: true, trips, count });
     } else {
-      console.log("not all");
       const trips = await Trips.find({
         client: { $in: clients },
         status: status,
