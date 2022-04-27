@@ -27,7 +27,7 @@ exports.create = async (req, res) => {
       req.body.profile_pic = req.file.path;
     }
     req.body.bank_info = JSON.parse(bank_info);
-    if (Object.values(req.body.address).length > 0) {
+    if (req.body.address) {
       req.body.address = JSON.parse(req.body.address);
     }
 
