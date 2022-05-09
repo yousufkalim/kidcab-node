@@ -24,7 +24,7 @@ exports.create = async (req, res) => {
     const vehicle = await Vehicles.create(data);
     const { driver } = req.body;
     if (!vehicle) res.status(501).send("No vehicle is created");
-    if (vehicle) {
+    if (vehicle && driver) {
       await Drivers.findByIdAndUpdate(driver, {
         $push: { vehicles: vehicle._id },
       });
@@ -84,7 +84,6 @@ exports.update = async (req, res) => {
         await Drivers.findByIdAndUpdate(findVehicle.driver, {
           $pull: { vehicles: vehicleId },
         });
-        await Drivers.findById(req.body.driver);
         await Drivers.findByIdAndUpdate(req.body.driver, {
           $push: { vehicles: vehicleId },
         });

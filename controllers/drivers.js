@@ -226,9 +226,9 @@ exports.updateDriver = async (req, res) => {
  */
 exports.delete = async (req, res) => {
   try {
-    const companyId = req.params.companyId;
+    const companyId = req.params.driverId;
     const company = await Drivers.findByIdAndDelete(companyId);
-    await Drivers.deleteMany({
+    await Vehicles.deleteMany({
       _id: { $in: company.vehicles },
     });
     res.json({ success: true, company });
