@@ -37,11 +37,6 @@ exports.create = async (req, res) => {
     const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
     const fifteenDays = new Date(daysCount); //Set date after 15days
     const user = await Users.findById(client);
-    var pubMsg = {
-      verb: "published",
-      actions: "Proposition de course Kidcab",
-    }; //Message for fcm
-    var pushMessage = "Proposition de course Kidcab"; //Notification title fcm
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
@@ -56,10 +51,20 @@ exports.create = async (req, res) => {
       _id: { $in: inviteddrivers },
     });
     if (status === "pending") {
+      var pubMsg = {
+        verb: "published",
+        actions: "Proposition de course Kidcab",
+      }; //Message for fcm
+      var pushMessage = "Proposition de course Kidcab"; //Notification title fcm
       req.body.invited_drivers = inviteddrivers.map((driver) => ({
         driver: driver,
       }));
     } else if (status == "confirmed") {
+      var pubMsg = {
+        verb: "published",
+        actions: "vous avez un voyage confirmé",
+      }; //Message for fcm
+      var pushMessage = "vous avez un voyage confirmé"; //Notification title fcm
       req.body.assigned_drivers = drivers[0]._id;
     }
     const createTrips = () => {
