@@ -14,10 +14,7 @@ const { findDistance, findDistance2 } = require("../utils/findDistance");
 const fs = require("fs");
 const pdf = require("pdf-creator-node");
 const path = require("path");
-const { sendTripEmail } = require("../utils/sendTripEmail");
-const io = require("../index");
 const fcmservice = require("../utils/fcmService");
-const url = process.env.BASE_URL;
 /**
  * Create Trip
  * @param {object} req
@@ -62,9 +59,9 @@ exports.create = async (req, res) => {
     } else if (status == "confirmed") {
       var pubMsg = {
         verb: "published",
-        actions: "vous avez un voyage confirmé",
+        actions: "Nouveau trajet confirmé",
       }; //Message for fcm
-      var pushMessage = "vous avez un voyage confirmé"; //Notification title fcm
+      var pushMessage = "Nouveau trajet confirmé"; //Notification title fcm
       req.body.assigned_drivers = drivers[0]._id;
     }
     const createTrips = () => {
@@ -756,7 +753,6 @@ exports.TripsByClient = async (req, res) => {
         })
         .populate("assigned_drivers")
         .sort({ date: -1 });
-      console.log(trips, "t");
       const count = await Trips.find({
         client: { $in: clients },
       }).countDocuments();
