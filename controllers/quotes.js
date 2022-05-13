@@ -40,6 +40,7 @@ exports.create = async (req, res) => {
 exports.getAll = async (req, res) => {
   try {
     const quotes = await Quotes.find()
+      .sort({ createdAt: -1 })
       .populate("client")
       .populate("passengers");
     if (!quotes) res.status(404).send("No Quote Found");
@@ -58,8 +59,8 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const quoteId = req.params.quoteId;
-    const quote = await Quotes.findById(quoteId);
-    if (!quotes) res.status(404).send("No Quote Found");
+    const quote = await Quotes.findById(quoteId).sort({ issue_date: -1 });
+    if (!quote) res.status(404).send("No Quote Found");
     res.json({ success: true, quote });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -80,7 +81,6 @@ exports.update = async (req, res) => {
       new: true,
     });
     if (!quote) res.status(404).send("No Quote Updated");
-
     res.json({ success: true, quote });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -98,7 +98,6 @@ exports.delete = async (req, res) => {
     const quoteId = req.params.quoteId;
     const quote = await Quotes.findByIdAndDelete(quoteId);
     if (!quote) res.status(404).send("No Quote deleted");
-
     res.json({ success: true, quote });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -133,8 +132,10 @@ exports.getQouteByStatus = async (req, res) => {
     const quotes = await Quotes.find({
       status: req.params.status === "all" ? undefined : req.params.status,
     })
+      .sort({ issue_date: -1 })
       .populate("client")
       .populate("passengers");
+
     if (!quotes) res.status(404).send("Qoutes Not Found");
     res.json({ success: true, quotes });
   } catch (err) {
@@ -158,8 +159,10 @@ exports.QuotesByDate = async (req, res) => {
         { issue_date: { $lt: new Date(End_date) } },
       ],
     })
+      .sort({ issue_date: -1 })
       .populate("client")
       .populate("passengers");
+
     if (qoutes) return res.status(200).json({ success: true, qoutes });
   } catch (err) {
     console.log(err.message);
