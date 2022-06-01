@@ -510,14 +510,21 @@ exports.startRide = async (req, res) => {
       actions: "Le trajet a commencé",
     }; //Message for fcm
     var pushMessage = "Le trajet a commencé"; //Notification title fcm
-    const updateRide = await Rides.findByIdAndUpdate(
-      rideId,
-      { status: "start" },
-      { new: true }
-    );
-    if (updateRide) {
-      const driver = await Drivers.findById(updateRide.driver);
-      const client = await Users.findById(updateRide.client);
+    const findRide = await Rides.findById(rideId);
+    if (findRide) {
+      const FindstartRides = await Rides.find({
+        driver: findRide.driver,
+        status: "start",
+      });
+      if (FindstartRides.length > 0) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Please End the last Ride First" });
+      }
+      findRide.status = "start";
+      await findRide.save();
+      const driver = await Drivers.findById(findRide.driver);
+      const client = await Users.findById(findRide.client);
       fcmservice.sendPushMessage(
         client.fcmToken,
         "Le trajet a commencé",
@@ -525,24 +532,24 @@ exports.startRide = async (req, res) => {
         pubMsg
       );
       if (io.socket) {
-        io.socket.emit(`start${updateRide.client}`, {
+        io.socket.emit(`start${findRide.client}`, {
           message: "Le trajet a commencé",
-          rideData: updateRide,
+          rideData: findRide,
         });
       }
 
       const notification = await Notifications.create({
         title: "Le trajet a commencé",
         expiry_date: fifteenDays,
-        receiver: updateRide.client,
+        receiver: findRide.client,
         driver_picture: driver.profile_pic,
       });
-      await Users.findByIdAndUpdate(updateRide.client, {
+      await Users.findByIdAndUpdate(findRide.client, {
         $push: {
           notifications: notification.id,
         },
       });
-      return res.status(202).json({ success: true, updateRide });
+      return res.status(202).json({ success: true, findRide });
     } else
       return res
         .status(404)
