@@ -513,7 +513,7 @@ exports.update = async (req, res) => {
       //   }
       // });
     }
-    const trip = await Trips.findById(tripId);
+    await Trips.findById(tripId);
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
