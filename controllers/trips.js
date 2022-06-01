@@ -463,7 +463,7 @@ exports.getTripsByStatus = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const tripId = req.params.tripId;
-    const findTrip = await Trips.findById(tripId);
+    // const findTrip = await Trips.findById(tripId);
     const {
       start_address,
       end_address,
