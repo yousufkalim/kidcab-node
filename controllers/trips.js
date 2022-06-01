@@ -476,44 +476,43 @@ exports.update = async (req, res) => {
         driver: driver,
       }));
     }
-    if (req.body.status === "pending") {
-      const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
-      const fifteenDays = new Date(daysCount); //Set date after 15days
-      // var pubMsg = {
-      //   verb: "published",
-      //   actions: "Vous avez un nouveau trajet ",
-      // }; //Message for fcm
-      // var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
-      let newDriver = req.body.invited_drivers.filter(
-        (o1) => !findTrip.invited_drivers.some((o2) => o1.driver == o2.driver)
-      );
-      const drivers = await Drivers.find({
-        _id: { $in: newDriver.driver },
-      });
-      // drivers.map(async (driver) => {
-      //   if (driver?.fcmToken) {
-      //     fcmservice.sendPushMessage(
-      //       driver.fcmToken,
-      //       "Demande de course",
-      //       pushMessage,
-      //       pubMsg
-      //     );
-      //     //store notification in db
-      //     const notification = await Notifications.create({
-      //       title: "Vous avez un nouveau trajet",
-      //       expiry_date: fifteenDays,
-      //       receiver: driver.id,
-      //     });
-      //     //update driver with new notification
-      //     await Drivers.findByIdAndUpdate(driver.id, {
-      //       $push: {
-      //         notifications: notification.id,
-      //       },
-      //     });
-      //   }
-      // });
-    }
-    await Trips.findById(tripId);
+    //if (req.body.status === "pending") {
+    // const daysCount = new Date().getTime() + 1296000000; //To set Expiry date for notification
+    // const fifteenDays = new Date(daysCount); //Set date after 15days
+    // var pubMsg = {
+    //   verb: "published",
+    //   actions: "Vous avez un nouveau trajet ",
+    // }; //Message for fcm
+    // var pushMessage = "ous avez un nouveau trajet "; //Notification title fcm
+    // let newDriver = req.body.invited_drivers.filter(
+    //   (o1) => !findTrip.invited_drivers.some((o2) => o1.driver == o2.driver)
+    // );
+    // const drivers = await Drivers.find({
+    //   _id: { $in: newDriver.driver },
+    // });
+    // drivers.map(async (driver) => {
+    //   if (driver?.fcmToken) {
+    //     fcmservice.sendPushMessage(
+    //       driver.fcmToken,
+    //       "Demande de course",
+    //       pushMessage,
+    //       pubMsg
+    //     );
+    //     //store notification in db
+    //     const notification = await Notifications.create({
+    //       title: "Vous avez un nouveau trajet",
+    //       expiry_date: fifteenDays,
+    //       receiver: driver.id,
+    //     });
+    //     //update driver with new notification
+    //     await Drivers.findByIdAndUpdate(driver.id, {
+    //       $push: {
+    //         notifications: notification.id,
+    //       },
+    //     });
+    //   }
+    // });
+    // }
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
