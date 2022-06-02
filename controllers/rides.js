@@ -519,7 +519,7 @@ exports.startRide = async (req, res) => {
       if (FindstartRides.length > 0) {
         return res
           .status(404)
-          .json({ success: false, message: "Please End the last Ride First" });
+          .json({ success: false, message: "End your existing ride first" });
       }
       findRide.status = "start";
       await findRide.save();
