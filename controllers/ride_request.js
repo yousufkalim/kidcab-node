@@ -16,7 +16,6 @@ exports.create = async (req, res) => {
       req.body.destination_address
     );
     req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
-
     const request = await Request.create(req.body);
     // Done
     res.json({ success: true, request }); //Success
@@ -33,7 +32,9 @@ exports.create = async (req, res) => {
  */
 exports.getByClient = async (req, res) => {
   try {
-    const request = await Request.find({ client: req.params.client });
+    const request = await Request.find({ client: req.params.client }).populate(
+      "client"
+    );
     res.json({ success: true, request });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -47,7 +48,7 @@ exports.getByClient = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const request = await Request.find();
+    const request = await Request.find().populate("client");
     res.json({ success: true, request });
   } catch (err) {
     console.log("Error ----> ", err);
@@ -63,7 +64,7 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const requestId = req.params.requestId; // Getting Request id from URL parameter
-    const request = await Request.findById(requestId); // Finding Request by id
+    const request = await Request.findById(requestId).populate("client"); // Finding Request by id
     res.json({ success: true, request }); // Success
   } catch (err) {
     // Error handling

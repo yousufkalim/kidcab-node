@@ -10,13 +10,29 @@ const riderequestSchema = new Schema(
     you_are: {
       tpye: String,
     },
-    journey_type: {
-      type: String,
-      enum: ["One Way", "Round Trip", "Journey with stages"],
-    },
+    journey_type: [
+      {
+        type: String,
+        enum: ["One Way ticket", "Round trip", "Journey with stage(s)"],
+      },
+    ],
+    days: [
+      {
+        type: String,
+        enum: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ],
+      },
+    ],
     journey_frequency: {
       type: String,
-      enum: ["occasional", "regularl"],
+      enum: ["Occasional", "Regular"],
     },
     status: {
       type: String,
@@ -28,13 +44,23 @@ const riderequestSchema = new Schema(
     message: String,
     company_name: String,
     first_name: String,
-    last_name: String,
+    name: String,
     door_support: Boolean,
     total_children: Number,
     total_adults: Number,
     baby: Number,
     pickUp_date: Date,
-    pickUp_address: String,
+    pickUp_time: String,
+    return_time: String,
+    return_date: Date,
+    return_address: {
+      lat: String,
+      lng: String,
+      label: String,
+      label2: String,
+      city: String,
+      postal_code: String,
+    },
     distance: Number,
     pickUp_address: {
       lat: String,
@@ -52,12 +78,11 @@ const riderequestSchema = new Schema(
       city: String,
       postal_code: String,
     },
-    client: {
-      type: Schema.Types.ObjectId,
-      ref: "users",
-      required: true,
-    },
-    return_date: Date,
+    // client: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: "users",
+    //   required: true,
+    // },
   },
   {
     timestamps: true,

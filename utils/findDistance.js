@@ -39,8 +39,8 @@ exports.findDistance = async (start_address, end_address) => {
     distance.units("metric");
     var origins = [`${start_address.lat},${start_address.lng}`];
     var destinations = [`${end_address.lat},${end_address.lng}`];
-    console.log(start_address);
-    console.log(end_address);
+    console.log(start_address, "s");
+    console.log(end_address, "e");
     var result = {};
     let Distance = 0;
     return new Promise((resolve, reject) =>

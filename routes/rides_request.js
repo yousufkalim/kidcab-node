@@ -19,7 +19,7 @@ const {
  */
 
 // Create - request
-router.post("/", validateRideRequest, isValidated, request.create);
+router.post("/", request.create);
 
 // Read
 router.get("/", request.getAll); // Get all request at once
