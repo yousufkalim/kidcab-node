@@ -15,8 +15,8 @@ router.use("/invoices", require("./invoices")); // All the invoices routes
 router.use("/drivers", require("./drivers")); // All the drivers routes
 router.use("/vehicles", require("./vehicles")); // All the vehicles routes
 router.use("/company", require("./company")); // company routes
-
-router.use("/notifications", require("./notifications"));
+router.use("/company", require("./company")); // company routes
+router.use("/requests", require("./rides_request"));
 
 // Export
 module.exports = router;

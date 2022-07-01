@@ -42,6 +42,35 @@ exports.validateUserUpdate = [
   check("number", "Number is required.").notEmpty().isNumeric().trim(),
 ];
 
+exports.validateRideRequest = [
+  check("you_are", "you_are is required.").notEmpty().trim(),
+  check("first_name", "first_name is required.").notEmpty().trim(),
+  check("email", "email is required.").notEmpty().isEmail().trim(),
+  check("phone", "phone is required.").notEmpty().trim(),
+  check("journey_type", "journey_type is required.").isIn([
+    "One Way ticket",
+    "Round trip",
+    "Journey with stage(s)",
+  ]),
+  check("days", "Days Required")
+    .optional()
+    .isIn([
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ]),
+  check("journey_frequency", "journey_frequency is required.")
+    .notEmpty()
+    .trim(),
+  check("total_children", "total_children is required.").notEmpty(),
+  check("pickUp_date", "pickUp_date is required.").notEmpty().trim(),
+  check("total_children", "total_children required").notEmpty().trim(),
+];
+
 /*
 ======================
 Result
