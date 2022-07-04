@@ -8,7 +8,9 @@ const {
   validateRideRequest,
   isValidated,
 } = require("../middleware/validators");
+//validateCaptcha,
 
+const { validateCaptcha } = require("../middleware/validators/captcha");
 /**
  * ////////////////////////// Routes /////////////////////////
  * @method post create request
@@ -19,7 +21,7 @@ const {
  */
 
 // Create - request
-router.post("/", request.create);
+router.post("/", validateCaptcha, request.create);
 
 // Read
 router.get("/", request.getAll); // Get all request at once
