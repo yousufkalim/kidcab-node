@@ -105,7 +105,7 @@ exports.delete = async (req, res) => {
     const requestId = req.params.requestId; // Getting request id from URL parameter
     const request = await Request.findByIdAndDelete(requestId); // Deleting the request
 
-    res.json({ success: true, requestId }); // Success
+    res.json({ success: true, request }); // Success
   } catch (err) {
     // Error handling
     console.log('Error ----> ', err);
