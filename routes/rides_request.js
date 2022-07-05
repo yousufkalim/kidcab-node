@@ -2,15 +2,12 @@
  * Ride rEQUEST  routes
  * @author Shuja Naqvi
  */
-const router = require("express").Router();
-const request = require("../controllers/ride_request.js");
-const {
-  validateRideRequest,
-  isValidated,
-} = require("../middleware/validators");
+const router = require('express').Router();
+const request = require('../controllers/ride_request.js');
+const { validateRideRequest, isValidated } = require('../middleware/validators');
 //validateCaptcha,
 
-const { validateCaptcha } = require("../middleware/validators/captcha");
+const { validateCaptcha } = require('../middleware/validators/captcha');
 /**
  * ////////////////////////// Routes /////////////////////////
  * @method post create request
@@ -21,17 +18,17 @@ const { validateCaptcha } = require("../middleware/validators/captcha");
  */
 
 // Create - request
-router.post("/", validateCaptcha, request.create);
+router.post('/', request.create);
 
 // Read
-router.get("/", request.getAll); // Get all request at once
-router.get("/getByClient/:clientId", request.getByClient); // Get all request at once
-router.get("/:requestId", request.getById); // Get one request by it's id
+router.get('/', request.getAll); // Get all request at once
+router.get('/getByClient/:clientId', request.getByClient); // Get all request at once
+router.get('/:requestId', request.getById); // Get one request by it's id
 
 // Update
-router.put("/:requestId", request.update); // Update a specific request by it's id
+router.put('/:requestId', request.update); // Update a specific request by it's id
 //Delete
-router.delete("/:requestId", request.delete); // Update a specific request by it's id
+router.delete('/:requestId', request.delete); // Update a specific request by it's id
 //get
 // Export
 module.exports = router;
