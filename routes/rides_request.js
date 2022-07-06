@@ -4,10 +4,10 @@
  */
 const router = require('express').Router();
 const request = require('../controllers/ride_request.js');
-const { validateRideRequest, isValidated } = require('../middleware/validators');
+
 //validateCaptcha,
 
-const { validateCaptcha } = require('../middleware/validators/captcha');
+// const { validateCaptcha } = require('../middleware/validators/captcha');
 /**
  * ////////////////////////// Routes /////////////////////////
  * @method post create request

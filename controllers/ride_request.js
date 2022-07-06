@@ -13,7 +13,7 @@ exports.create = async (req, res) => {
   try {
     console.log(typeof req.body.door_support);
     console.log(req.body.door_support);
-    if (req.body.door_support == 'Non') {
+    if (req.body.door_support === 'Non') {
       req.body.door_support = false;
     } else {
       req.body.door_support = true;
