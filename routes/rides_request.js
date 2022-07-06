@@ -3,7 +3,7 @@
  * @author Shuja Naqvi
  */
 const router = require('express').Router();
-const request = require('../controllers/ride_request.js');
+const request = require('../controllers/ride_request');
 
 //validateCaptcha,
 
