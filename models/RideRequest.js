@@ -2,7 +2,7 @@
  * Ride Request schema
  * @author Shuja Naqvi
  */
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose');
 
 // Schema
 const riderequestSchema = new Schema(
@@ -13,38 +13,30 @@ const riderequestSchema = new Schema(
     journey_type: [
       {
         type: String,
-        enum: ["One Way ticket", "Round trip", "Journey with stage(s)"],
+        enum: ['One Way ticket', 'Round trip', 'Journey with stage(s)'],
       },
     ],
     days: [
       {
         type: String,
-        enum: [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-          "Sunday",
-        ],
+        enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       },
     ],
     journey_frequency: {
       type: String,
-      enum: ["Occasional", "Regular"],
+      enum: ['Occasional', 'Regular'],
     },
     status: {
       type: String,
-      enum: ["pending", "accepted", "rejected"],
-      default: "pending",
+      enum: ['pending', 'accepted', 'rejected'],
+      default: 'pending',
     },
     email: String,
     phone: String,
     message: String,
     company_name: String,
     first_name: String,
-    name: String,
+    last_name: String,
     door_support: Boolean,
     total_children: Number,
     total_adults: Number,
@@ -90,4 +82,4 @@ const riderequestSchema = new Schema(
 );
 
 // Model
-module.exports = model("ridesrequest", riderequestSchema);
+module.exports = model('ridesrequest', riderequestSchema);
