@@ -28,9 +28,10 @@ const riderequestSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'accepted', 'rejected'],
+      enum: ['pending', 'accepted', 'decline'],
       default: 'pending',
     },
+    price: Number,
     email: String,
     phone: String,
     message: String,
