@@ -11,17 +11,51 @@ const { findDistance } = require('../utils/findDistance');
  */
 exports.create = async (req, res) => {
   try {
+    const { total_children, total_adults, baby } = req.body;
     if (req.body.door_support === 'Non') {
       req.body.door_support = false;
     } else {
       req.body.door_support = true;
     }
-
     const result = await findDistance(req.body.pickUp_address, req.body.destination_address);
     req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
+
+    const passengers = total_children + total_adults + baby;
+    if (req.body.distance === 0) {
+      req.body.passengers = passengers;
+      const request = await Request.create(req.body);
+      // Done
+      return res.json({ success: true, request, contact: true }); //Success
+    }
+    if (req.body.distance > 18 || passengers > 6) {
+      req.body.passengers = passengers;
+      const request = await Request.create(req.body);
+      // Done
+      return res.json({ success: true, request, contact: true }); //Success
+    }
+    if (passengers <= 3) {
+      if (req.body.distance <= 6) {
+        req.body.price = 45;
+      }
+      if (req.body.distance > 6 && req.body.distance <= 12) {
+        req.body.price = 55;
+      }
+      if (req.body.distance > 12 && req.body.distance <= 18) {
+        req.body.price = 75;
+      }
+    }
+    if (passengers > 3 && passengers <= 6) {
+      if (req.body.distance <= 10) {
+        req.body.price = 75;
+      }
+      if (req.body.distance > 10 && req.body.distance <= 18) {
+        req.body.price = 90;
+      }
+    }
+    req.body.passengers = passengers;
     const request = await Request.create(req.body);
     // Done
-    res.json({ success: true, request }); //Success
+    res.json({ success: true, request, contact: false }); //Success
   } catch (err) {
     console.log('Error ----> ', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
