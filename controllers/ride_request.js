@@ -19,8 +19,16 @@ exports.create = async (req, res) => {
     }
     const result = await findDistance(req.body.pickUp_address, req.body.destination_address);
     req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
+
     const passengers = total_children + total_adults + baby;
+    if (req.body.distance === 0) {
+      req.body.passengers = passengers;
+      const request = await Request.create(req.body);
+      // Done
+      return res.json({ success: true, request, contact: true }); //Success
+    }
     if (req.body.distance > 18 || passengers > 6) {
+      req.body.passengers = passengers;
       const request = await Request.create(req.body);
       // Done
       return res.json({ success: true, request, contact: true }); //Success
@@ -44,6 +52,7 @@ exports.create = async (req, res) => {
         req.body.price = 90;
       }
     }
+    req.body.passengers = passengers;
     const request = await Request.create(req.body);
     // Done
     res.json({ success: true, request, contact: false }); //Success
