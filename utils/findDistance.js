@@ -36,11 +36,13 @@ exports.findDistance = async (start_address, end_address) => {
   try {
     distance.key(API_KEY);
     distance.mode('driving');
-    distance.units('metric');
+    distance.units('imperial');
+
     var origins = [`${start_address.lat},${start_address.lng}`];
     var destinations = [`${end_address.lat},${end_address.lng}`];
     var result = {};
-    let Distance = 0;
+    let Distance;
+    let Duration;
     return new Promise((resolve, reject) =>
       distance.matrix(origins, destinations, function (err, distances) {
         if (err) {
@@ -56,7 +58,10 @@ exports.findDistance = async (start_address, end_address) => {
               var origin = distances.origin_addresses[i];
               var destination = distances.destination_addresses[j];
               if (distances.rows[0].elements[j].status == 'OK') {
-                Distance = parseInt(distances.rows[i].elements[j].distance.text);
+                console.log(distances.rows[i].elements[j], 'distances.rows[i].elements[j]');
+                Distance = distances.rows[i].elements[j].distance.text;
+                console.log(distances.rows[i].elements[j], 'distances.rows[i].elements[j]');
+                Duration = distances.rows[i].elements[j].duration.value;
               } else {
                 console.log(destination + ' is not reachable by land from ' + origin);
               }
@@ -64,6 +69,7 @@ exports.findDistance = async (start_address, end_address) => {
           }
           result = {
             distance: Distance,
+            duration: Duration,
           };
         }
         resolve(result);

@@ -28,11 +28,11 @@ const riderequestSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'accepted', 'decline'],
+      enum: ['pending', 'accepted', 'decline', 'not answer'],
       default: 'pending',
     },
     passengers: Number,
-    price: Number,
+    rideTime: String,
     email: String,
     phone: String,
     message: String,
@@ -55,7 +55,7 @@ const riderequestSchema = new Schema(
       city: String,
       postal_code: String,
     },
-    distance: Number,
+    distance: String,
     pickUp_address: {
       lat: String,
       lng: String,
