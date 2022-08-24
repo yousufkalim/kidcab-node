@@ -2,7 +2,7 @@
  ** company Controller
  * @author Arooj
  */
-const Company = require("../models/Company");
+const Company = require('../models/Company');
 
 /**
  ** Get company page data
@@ -16,8 +16,8 @@ exports.getData = async (req, res) => {
     res.json({ success: true, company: company || {} });
   } catch (err) {
     //? Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -34,24 +34,27 @@ exports.createUpdate = async (req, res) => {
     }
     if (company) {
       //? if company have data update it.
-      await Company.findOneAndUpdate(req.body).then(() => {
+      await Company.findOneAndUpdate({ _id: company._id }, req.body, { new: true }).then((resp) => {
+        console.log('res', res);
         return res.json({
           success: true,
-          message: "Company Data Updated Sucessfully",
+          message: 'Company Data Updated Sucessfully',
+          company: resp,
         });
       });
     } else {
       //? if company donot have data create it.
-      await Company.create(req.body).then(() => {
+      await Company.create(req.body).then((resp) => {
         return res.json({
           success: true,
-          message: "Company Data Uploaded Sucessfully",
+          message: 'Company Data Uploaded Sucessfully',
+          company: resp,
         });
       });
     }
   } catch (err) {
     //? Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
