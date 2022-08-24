@@ -59,7 +59,7 @@ exports.findDistance = async (start_address, end_address) => {
               var destination = distances.destination_addresses[j];
               if (distances.rows[0].elements[j].status == 'OK') {
                 console.log(distances.rows[i].elements[j], 'distances.rows[i].elements[j]');
-                Distance = distances.rows[i].elements[j].distance.text;
+                Distance = distances.rows[i].elements[j].distance.value;
                 console.log(distances.rows[i].elements[j], 'distances.rows[i].elements[j]');
                 Duration = distances.rows[i].elements[j].duration.value;
               } else {
