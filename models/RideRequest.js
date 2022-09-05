@@ -34,6 +34,7 @@ const riderequestSchema = new Schema(
     passengers: Number,
     rideTime: String,
     email: String,
+    price: String,
     phone: String,
     message: String,
     company_name: String,
