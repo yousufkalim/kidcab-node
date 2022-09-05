@@ -19,7 +19,7 @@ exports.create = async (req, res) => {
       req.body.door_support = true;
     }
     const result = await findDistance(req.body.pickUp_address, req.body.destination_address);
-    req.body.distance = (result.distance ? parseInt(result.distance).toFixed(2) : 0)/1000;
+    req.body.distance = (result.distance ? parseInt(result.distance).toFixed(2) : 0) / 1000;
     req.body.rideTime = result.duration ? result.duration : 0;
     //rideTime
     const timeFormat = toHHMMSS(req.body.rideTime);
