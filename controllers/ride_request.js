@@ -22,8 +22,10 @@ exports.create = async (req, res) => {
     req.body.distance = (result.distance ? parseInt(result.distance).toFixed(2) : 0) / 1000;
     req.body.rideTime = result.duration ? result.duration : 0;
     //rideTime
+
     const timeFormat = toHHMMSS(req.body.rideTime);
     const passengers = total_children + total_adults + baby;
+
     if (req.body.distance === 0) {
       req.body.passengers = passengers;
       req.body.status = 'not answer';
@@ -31,6 +33,7 @@ exports.create = async (req, res) => {
       // Done
       return res.json({ success: true, request, contact: true }); //Success
     }
+
     if (req.body.distance > 18 || passengers > 6 || req.body.rideTime > 3600) {
       req.body.passengers = passengers;
       req.body.rideTime = timeFormat;
@@ -41,19 +44,17 @@ exports.create = async (req, res) => {
     if (passengers <= 3) {
       if (req.body.distance <= 6 || req.body.rideTime <= 1800) {
         req.body.price = 45;
-      }
-      if ((req.body.distance > 6 && req.body.distance <= 12) || req.body.rideTime <= 2700) {
+      } else if ((req.body.distance > 6 && req.body.distance <= 12) || req.body.rideTime <= 2700) {
         req.body.price = 55;
-      }
-      if ((req.body.distance > 12 && req.body.distance <= 18) || req.body.rideTime <= 3600) {
+      } else if ((req.body.distance > 12 && req.body.distance <= 18) || req.body.rideTime <= 3600) {
         req.body.price = 75;
       }
     }
+
     if (passengers > 3 && passengers <= 6) {
       if (req.body.distance <= 10 && req.body.rideTime <= 2400) {
         req.body.price = 75;
-      }
-      if (req.body.distance > 10 && req.body.distance <= 18 && req.body.rideTime <= 3600) {
+      } else if (req.body.distance > 10 && req.body.distance <= 18 && req.body.rideTime <= 3600) {
         req.body.price = 90;
       } else {
         req.body.passengers = passengers;
