@@ -2,7 +2,7 @@
  * Trips schema
  * @author Arooj Ishfaq
  */
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose');
 
 // Schema
 const tripSchema = new Schema(
@@ -14,11 +14,11 @@ const tripSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: ["pending", "confirmed", "cancelled", "completed"],
+      enum: ['pending', 'confirmed', 'cancelled', 'completed'],
     },
     required_drivers: {
       type: Number,
-      default: "1",
+      default: '1',
     },
     start_address: {
       lat: String,
@@ -55,34 +55,34 @@ const tripSchema = new Schema(
       type: Number,
       required: true,
     },
-    assigned_drivers: [{ type: Schema.Types.ObjectId, ref: "drivers" }],
+    assigned_drivers: [{ type: Schema.Types.ObjectId, ref: 'drivers' }],
     invited_drivers: [
       {
-        driver: { type: Schema.Types.ObjectId, ref: "drivers" },
+        driver: { type: Schema.Types.ObjectId, ref: 'drivers' },
         price: { type: Number },
         status: {
           type: String,
-          enum: ["accepted", "rejected", "pending", "assigned"],
-          default: "pending",
+          enum: ['accepted', 'rejected', 'pending', 'assigned'],
+          default: 'pending',
         },
       },
     ],
     rides: [
       {
         type: Schema.Types.ObjectId,
-        ref: "rides",
+        ref: 'rides',
       },
     ],
     client: {
       type: Schema.Types.ObjectId,
-      ref: "users",
+      ref: 'users',
       required: true,
     },
     comment: String,
     passengers: [
       {
         type: Schema.Types.ObjectId,
-        ref: "passengers",
+        ref: 'passengers',
       },
     ],
   },
@@ -92,4 +92,4 @@ const tripSchema = new Schema(
 );
 
 // Model
-module.exports = model("trips", tripSchema);
+module.exports = model('trips', tripSchema);

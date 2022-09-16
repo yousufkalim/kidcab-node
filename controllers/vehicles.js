@@ -2,9 +2,9 @@
  * trips CRUD controllers
  * @author Arooj Ishfaq
  */
-const Vehicles = require("../models/Vehicles");
-const Drivers = require("../models/Drivers");
-var mongoose = require("mongoose");
+const Vehicles = require('../models/Vehicles');
+const Drivers = require('../models/Drivers');
+var mongoose = require('mongoose');
 /**
  * Create Vehicle
  * @param {object} req
@@ -16,14 +16,10 @@ exports.create = async (req, res) => {
       req.body.driver = JSON.parse(req.body.driver);
     }
     const imageKeys = Object.keys(req.files);
-    const data = Object.assign(
-      {},
-      req.body,
-      ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
-    );
+    const data = Object.assign({}, req.body, ...imageKeys.map((key) => ({ [key]: req.files[key][0].path })));
     const vehicle = await Vehicles.create(data);
     const { driver } = req.body;
-    if (!vehicle) res.status(501).send("No vehicle is created");
+    if (!vehicle) res.status(501).send('No vehicle is created');
     if (vehicle && driver) {
       await Drivers.findByIdAndUpdate(driver, {
         $push: { vehicles: vehicle._id },
@@ -31,8 +27,8 @@ exports.create = async (req, res) => {
     }
     res.json({ success: true, vehicle });
   } catch (err) {
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -43,12 +39,12 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const vehicles = await Vehicles.find().populate("driver");
-    if (!vehicles) res.status(404).send("No Vehicle Founds");
+    const vehicles = await Vehicles.find().populate('driver');
+    if (!vehicles) res.status(404).send('No Vehicle Founds');
     res.json({ success: true, vehicles });
   } catch (err) {
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -60,12 +56,12 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const vehicleId = req.params.vehicleId;
-    const vehicle = await Vehicles.findById(vehicleId).populate("driver");
-    if (!vehicle) res.status(501).send("No Vehicle Founds");
+    const vehicle = await Vehicles.findById(vehicleId).populate('driver');
+    if (!vehicle) res.status(501).send('No Vehicle Founds');
     res.json({ success: true, vehicle });
   } catch (err) {
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -81,43 +77,43 @@ exports.update = async (req, res) => {
     if (req.body.driver) {
       req.body.driver = JSON.parse(req.body.driver);
       if (findVehicle.driver !== req.body.driver) {
-        await Drivers.findByIdAndUpdate(findVehicle.driver, {
-          $pull: { vehicles: vehicleId },
-        });
-        await Drivers.findByIdAndUpdate(req.body.driver, {
-          $push: { vehicles: vehicleId },
-        });
+        await Drivers.findByIdAndUpdate(
+          findVehicle.driver,
+          {
+            $pull: { vehicles: vehicleId },
+          },
+          { new: true }
+        );
+        await Drivers.findByIdAndUpdate(
+          req.body.driver,
+          {
+            $push: { vehicles: vehicleId },
+          },
+          { new: true }
+        );
       }
     }
 
     if (req.files) {
       const imageKeys = Object.keys(req.files);
-      const data = Object.assign(
-        {},
-        req.body,
-        ...imageKeys.map((key) => ({ [key]: req.files[key][0].path }))
-      );
+      const data = Object.assign({}, req.body, ...imageKeys.map((key) => ({ [key]: req.files[key][0].path })));
 
       const updatedVehicle = await Vehicles.findByIdAndUpdate(vehicleId, data, {
         new: true,
-      }).populate("driver");
+      }).populate('driver');
 
-      if (!updatedVehicle) return res.status(501).send("No Vehicle is Updated");
+      if (!updatedVehicle) return res.status(501).send('No Vehicle is Updated');
       return res.json({ success: true, updatedVehicle });
     }
-    const updatedVehicle = await Vehicles.findByIdAndUpdate(
-      vehicleId,
-      req.body,
-      {
-        new: true,
-      }
-    );
+    const updatedVehicle = await Vehicles.findByIdAndUpdate(vehicleId, req.body, {
+      new: true,
+    });
 
-    if (!updatedVehicle) return res.status(501).send("No Vehicle is Updated");
+    if (!updatedVehicle) return res.status(501).send('No Vehicle is Updated');
     return res.json({ success: true, updatedVehicle });
   } catch (err) {
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -135,10 +131,10 @@ exports.delete = async (req, res) => {
         vehicles: deletedVehicle._id,
       },
     });
-    if (!deletedVehicle) res.status(501).send("No Vehicle is deleted");
+    if (!deletedVehicle) res.status(501).send('No Vehicle is deleted');
     res.json({ success: true, deletedVehicle });
   } catch (err) {
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };

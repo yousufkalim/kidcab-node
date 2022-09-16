@@ -2,14 +2,14 @@
  * Admin schema
  * @author Arooj Ishfaq
  */
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // Schema
 const companySchema = new mongoose.Schema(
   {
     logo: {
       type: String,
-      default: "",
+      default: '',
     },
 
     phone_number: {
@@ -21,7 +21,7 @@ const companySchema = new mongoose.Schema(
     siret_number: String,
     vat_number: String,
     legal_form: String,
-    share_captial: String,
+    share_capital: String,
     rcs_city: String,
     bank_name: String,
     iban: String,
@@ -32,4 +32,4 @@ const companySchema = new mongoose.Schema(
 );
 
 // Model
-module.exports = mongoose.model("company", companySchema);
+module.exports = mongoose.model('company', companySchema);
