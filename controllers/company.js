@@ -32,10 +32,10 @@ exports.createUpdate = async (req, res) => {
     if (req.file) {
       req.body.logo = req.file.path;
     }
+
     if (company) {
       //? if company have data update it.
       await Company.findOneAndUpdate({ _id: company._id }, req.body, { new: true }).then((resp) => {
-        console.log('res', res);
         return res.json({
           success: true,
           message: 'Company Data Updated Sucessfully',
