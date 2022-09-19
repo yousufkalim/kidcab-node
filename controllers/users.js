@@ -2,12 +2,12 @@
  * User CRUD controllers
  * @author Arooj Ishfaq
  */
-const { sendEmail } = require("../utils/sendEmail");
-const bcrypt = require("bcryptjs");
+const { sendEmail } = require('../utils/sendEmail');
+const bcrypt = require('bcryptjs');
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
-const Users = require("../models/Users");
-const { generateAuthToken } = require("../middleware/auth");
-const Passengers = require("../models/Passengers");
+const Users = require('../models/Users');
+const { generateAuthToken } = require('../middleware/auth');
+const Passengers = require('../models/Passengers');
 /**
  * Create User - Signup
  * @param {object} req
@@ -18,9 +18,7 @@ exports.create = async (req, res) => {
     let { email, password, bank_info } = req.body;
     const existingUser = await Users.findOne({ email });
     if (existingUser) {
-      return res
-        .status(409)
-        .json({ success: false, message: "User already exists." });
+      return res.status(409).json({ success: false, message: 'User already exists.' });
     }
 
     if (req.file) {
@@ -38,8 +36,8 @@ exports.create = async (req, res) => {
     res.json({ success: true, NewUser });
   } catch (err) {
     // Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -50,17 +48,16 @@ exports.create = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email });
-    if (!user) return res.status(404).send("Email or Password is incorrect");
+    if (!user) return res.status(404).send('Email or Password is incorrect');
     const validPassword = bcrypt.compareSync(req.body.password, user.password);
-    if (!validPassword)
-      return res.status(401).send("Email or Password is incorrect");
+    if (!validPassword) return res.status(401).send('Email or Password is incorrect');
     user.fcmToken = req.body.fcmToken;
     await user.save();
     const token = await generateAuthToken(user);
     res.json({ success: true, user, token }); // Success
   } catch (err) {
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -71,12 +68,12 @@ exports.login = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const users = await Users.find().populate("passengers");
+    const users = await Users.find().populate('passengers');
     res.json({ success: true, users });
   } catch (err) {
     // Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -92,8 +89,8 @@ exports.getById = async (req, res) => {
     res.json({ success: true, user }); // Success
   } catch (err) {
     // Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -123,15 +120,15 @@ exports.update = async (req, res) => {
     if (!user) {
       return res.status(404).send({
         success: false,
-        message: "User does not Found, could not update",
+        message: 'User does not Found, could not update',
       });
     }
 
     res.json({ success: true, user }); // Success
   } catch (err) {
     // Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -144,19 +141,21 @@ exports.delete = async (req, res) => {
   try {
     const userId = req.params.userId; // Getting user id from URL parameter
     const user = await Users.findByIdAndDelete(userId); // Deleting the user
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: 'User does not Found, could not delete',
+      });
+    }
+
     const passengers = await Passengers.deleteMany({
       _id: { $in: user.passengers },
     });
-    if (!user)
-      res.status(404).send({
-        success: false,
-        message: "User does not Found, could not delete",
-      });
     res.json({ success: true, user }); // Success
   } catch (err) {
     // Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -169,24 +168,20 @@ exports.changePassword = async (req, res) => {
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "New password and confirm password are not same",
+        message: 'New password and confirm password are not same',
       });
     }
 
     let user = await Users.findById(userId);
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     const isMatched = bcrypt.compareSync(oldPassword, user.password);
 
     if (!isMatched) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid old Password" });
+      return res.status(400).json({ success: false, message: 'Invalid old Password' });
     }
 
     // Generate token
@@ -197,8 +192,8 @@ exports.changePassword = async (req, res) => {
     res.json({ success: true, user });
   } catch (err) {
     // Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -209,9 +204,7 @@ exports.forgot = async (req, res) => {
     let user = await Users.findOne({ email });
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     // Generating random password
@@ -226,18 +219,16 @@ exports.forgot = async (req, res) => {
         await user.save();
 
         // Done
-        res.json({ success: true, message: "Email sent successfully" });
+        res.json({ success: true, message: 'Email sent successfully' });
       })
       .catch((err) => {
         // Error handling
-        console.log("Error ----> ", err);
-        res
-          .status(500)
-          .json({ success: false, message: "Internal server error" });
+        console.log('Error ----> ', err);
+        res.status(500).json({ success: false, message: 'Internal server error' });
       });
   } catch (err) {
     // Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
