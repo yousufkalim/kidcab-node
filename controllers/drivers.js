@@ -217,6 +217,12 @@ exports.delete = async (req, res) => {
   try {
     const companyId = req.params.driverId;
     const company = await Drivers.findByIdAndDelete(companyId);
+    if (!company) {
+      return res.status(404).send({
+        success: false,
+        message: 'User does not Found, could not delete',
+      });
+    }
     await Vehicles.deleteMany({
       _id: { $in: company.vehicles },
     });
