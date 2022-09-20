@@ -8,7 +8,7 @@ const { Schema, model } = require('mongoose');
 const riderequestSchema = new Schema(
   {
     you_are: {
-      tpye: String,
+      type: String,
     },
     journey_type: [
       {

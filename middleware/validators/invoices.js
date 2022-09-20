@@ -2,7 +2,7 @@
  * Invoices validation
  * @author Arooj Ishfaq
  */
-const { check, validationResult } = require("express-validator");
+const { check, validationResult } = require('express-validator');
 
 /*
   ====================
@@ -11,8 +11,8 @@ const { check, validationResult } = require("express-validator");
   */
 
 exports.validateInvoice = [
-  check("invoice_title", "Invoice Title is required.").notEmpty().trim(),
-  check("issue_date", "Issue Date is required.").notEmpty().trim().isDate(),
+  check('invoice_title', 'Invoice Title is required.').notEmpty().trim(),
+  // check("issue_date", "Issue Date is required.").notEmpty().trim().isDate(),
 ];
 
 /*
