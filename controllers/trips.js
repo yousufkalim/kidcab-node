@@ -964,7 +964,7 @@ exports.ExportPdf = async (req, res) => {
 
         // Changing format for issue data as desired
         trip['date'] = moment(trip.date).format('DD/MM/YYYY');
-        trip['client_price'] = parseInt(trip.client_price) + parseInt(trip.client_price * 0.2);
+        trip['client_price'] = (parseInt(trip.client_price) + parseInt(trip.client_price * 0.2)).toFixed(2);
         filteredTrips[trip.client._id].push(trip);
       } else {
         // Changing format for issue data as desired
@@ -980,11 +980,11 @@ exports.ExportPdf = async (req, res) => {
         totalPrice = totalPrice + e.client_price;
       });
       let totalPriceWithoutTax = 0;
-      let Vat = (totalPrice * 20) / 100;
-      totalPriceWithoutTax = totalPrice - Vat;
+      let Vat = ((totalPrice * 20) / 100).toFixed(2);
+      totalPriceWithoutTax = (totalPrice - Vat).toFixed(2);
       obj = {
         trip: value,
-        clientPrice: totalPrice,
+        clientPrice: totalPrice.toFixed(2),
         vat: Vat,
         TotalPriceWithoutTax: totalPriceWithoutTax,
         admin_name: 'Maxime Chevallier',
@@ -1060,13 +1060,13 @@ const createPdf = async (tripsIds) => {
       totalPrice = totalPrice + e.client_price;
     });
     let totalPriceWithoutTax = 0;
-    let Vat = (totalPrice * 20) / 100;
-    totalPriceWithoutTax = totalPrice - Vat;
+    let Vat = ((totalPrice * 20) / 100).toFixed(2);
+    totalPriceWithoutTax = (+totalPrice - +Vat).toFixed(2);
     obj = {
       trip: value,
-      clientPrice: totalPrice,
-      vat: Vat,
-      TotalPriceWithoutTax: totalPriceWithoutTax,
+      clientPrice: totalPrice.toFixed(2),
+      vat: Vat.toFixed(2),
+      TotalPriceWithoutTax: totalPriceWithoutTax.toFixed(2),
       admin_name: 'Maxime Chevallier',
       admin_email: admin.email,
       admin_address: company.address,
