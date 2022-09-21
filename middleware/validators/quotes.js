@@ -1,16 +1,13 @@
-const { check, validationResult } = require("express-validator");
+const { check, validationResult } = require('express-validator');
 
 exports.validateQuote = [
-  check("quote_number", "Quote Number is Required").notEmpty().trim(),
-  check("issue_date", "issue date is required").notEmpty().isDate().trim(),
-  check("quote_title", "Quote Title is required").notEmpty().trim(),
-  check("total_price", "Total Price is required").notEmpty().trim().isNumeric(),
-  check("vat", "VAT is required").notEmpty().trim(),
-  check("status", "Status is required").notEmpty().trim(),
-  check("client", "At least one Client ID is required")
-    .notEmpty()
-    .trim()
-    .isMongoId(),
+  check('quote_number', 'Quote Number is Required').notEmpty().trim(),
+
+  check('quote_title', 'Quote Title is required').notEmpty().trim(),
+  check('total_price', 'Total Price is required').notEmpty().trim().isNumeric(),
+  check('vat', 'VAT is required').notEmpty().trim(),
+  check('status', 'Status is required').notEmpty().trim(),
+  check('client', 'At least one Client ID is required').notEmpty().trim().isMongoId(),
 ];
 
 /**
