@@ -977,14 +977,15 @@ exports.ExportPdf = async (req, res) => {
     const saveFiles = Object.entries(filteredTrips).map(([key, value]) => {
       let totalPrice = 0;
       value.map((e) => {
-        totalPrice = totalPrice + e.client_price;
+        totalPrice = totalPrice + +e.client_price;
       });
+
       let totalPriceWithoutTax = 0;
       let Vat = ((totalPrice * 20) / 100).toFixed(2);
-      totalPriceWithoutTax = (totalPrice - Vat).toFixed(2);
+      totalPriceWithoutTax = (+totalPrice - +Vat).toFixed(2);
       obj = {
         trip: value,
-        clientPrice: totalPrice.toFixed(2),
+        clientPrice: totalPrice,
         vat: Vat,
         TotalPriceWithoutTax: totalPriceWithoutTax,
         admin_name: 'Maxime Chevallier',
@@ -1060,13 +1061,13 @@ const createPdf = async (tripsIds) => {
       totalPrice = totalPrice + e.client_price;
     });
     let totalPriceWithoutTax = 0;
-    let Vat = ((totalPrice * 20) / 100).toFixed(2);
-    totalPriceWithoutTax = (+totalPrice - +Vat).toFixed(2);
+    let Vat = (totalPrice * 20) / 100;
+    totalPriceWithoutTax = +totalPrice - +Vat;
     obj = {
       trip: value,
-      clientPrice: totalPrice.toFixed(2),
-      vat: Vat.toFixed(2),
-      TotalPriceWithoutTax: totalPriceWithoutTax.toFixed(2),
+      clientPrice: totalPrice,
+      vat: Vat,
+      TotalPriceWithoutTax: totalPriceWithoutTax,
       admin_name: 'Maxime Chevallier',
       admin_email: admin.email,
       admin_address: company.address,
