@@ -19,10 +19,6 @@ const quoteSchema = new Schema(
       type: String,
       required: true,
     },
-    total_price: {
-      type: Number,
-      required: true,
-    },
     vat: {
       type: String,
       required: true,
@@ -35,6 +31,7 @@ const quoteSchema = new Schema(
     docu_sign_link: {
       type: String,
     },
+    total_price: String,
     trip_info: {
       total_trips: {
         type: String,
@@ -61,19 +58,18 @@ const quoteSchema = new Schema(
         city: String,
         postal_code: String,
       },
-    },
-    passengers: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "passengers",
+      unit_price: {
+        type: Number,
         required: true,
       },
-    ],
+    },
     client: {
       type: Schema.Types.ObjectId,
       ref: "users",
       required: true,
     },
+    comment: String,
+    description: String,
   },
   {
     timestamps: true,

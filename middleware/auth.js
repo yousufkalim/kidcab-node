@@ -6,7 +6,6 @@ exports.auth = async (req, res, next) => {
     console.log("Auth Body", req.header("Authorization"));
     const token = await req.header("Authorization").replace("Bearer ", "");
     const decoded = await jwt.verify(token, process.env.TOKEN_SECRET);
-    console.log(decoded);
     const user = await Admin.findOne({
       _id: decoded._id,
     });

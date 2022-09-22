@@ -7,6 +7,7 @@ const drivers = require("../controllers/drivers");
 const { upload } = require("../middleware/multer");
 const {
   validateDriver,
+  validatePassword,
   isValidated,
 } = require("../middleware/validators/drivers");
 
@@ -31,6 +32,10 @@ const uploadImages = upload.fields([
   { name: "kbis_image" },
   { name: "proRc_image" },
   { name: "ris_image" },
+  { name: "kbis_extract" },
+  { name: "rib" },
+  { name: "professional_liability" },
+  { name: "insurance_civil_liability" },
 ]);
 
 // Create
@@ -46,6 +51,9 @@ router.get("/:driverId", drivers.getById); // Get one driver by it's id
 // Update
 router.put("/:driverId", uploadImages, drivers.update); // Update a specific driver by it's id
 
+// Update driver for json
+router.put("/updateDriver/:driverId", drivers.updateDriver); // Update a specific driver by it's id
+
 // Delete
 router.delete("/:driverId", drivers.delete); // delete a specific driver by it's id
 
@@ -53,7 +61,12 @@ router.delete("/:driverId", drivers.delete); // delete a specific driver by it's
 router.put("/forgot/:email", drivers.forgot);
 
 //change password
-router.put("/password/:driverId", drivers.changePassword);
+router.put(
+  "/password/:driverId",
+  validatePassword,
+  isValidated,
+  drivers.changePassword
+);
 
 // Export
 module.exports = router;

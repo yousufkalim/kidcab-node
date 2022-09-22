@@ -6,7 +6,6 @@ exports.validateVehicle = [
   check("model", "Model is required").notEmpty().trim(),
   check("color", "Color is required").notEmpty().trim(),
   check("engine_type", "Engine Type is required").notEmpty().trim(),
-  check("gray_card", "Gray Card is required").notEmpty().trim(),
 ];
 
 /**
@@ -19,7 +18,7 @@ exports.isValidated = (req, res, next) => {
   const errors = validationResult(req); // Validating the request by previous middleware's strategy
   if (!errors.isEmpty()) {
     // On error
-    res.status(400).send({ success: false, message: errors.array()[0] }); // Sending first error to the client from array of errors
+    res.status(400).send({ success: false, message: errors.array()[0].msg }); // Sending first error to the client from array of errors
   } else {
     // Validated successfully
     next(); // Pass the request to next middleware or controller

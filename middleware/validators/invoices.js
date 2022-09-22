@@ -2,7 +2,7 @@
  * Invoices validation
  * @author Arooj Ishfaq
  */
-const { check, validationResult } = require("express-validator");
+const { check, validationResult } = require('express-validator');
 
 /*
   ====================
@@ -11,13 +11,8 @@ const { check, validationResult } = require("express-validator");
   */
 
 exports.validateInvoice = [
-  check("invoice_title", "Invoice Title is required.").notEmpty().trim(),
-  check("issue_date", "Issue Date is required.").notEmpty().trim().isDate(),
-  check("trip", "Trip ID is required.").notEmpty().trim().isMongoId(),
-  check("total_price", "Total Price is required.")
-    .notEmpty()
-    .trim()
-    .isNumeric(),
+  check('invoice_title', 'Invoice Title is required.').notEmpty().trim(),
+  // check("issue_date", "Issue Date is required.").notEmpty().trim().isDate(),
 ];
 
 /*
@@ -36,7 +31,7 @@ exports.isValidated = (req, res, next) => {
   const errors = validationResult(req); // Validating the request by previous middleware's strategy
   if (!errors.isEmpty()) {
     // On error
-    res.status(400).send({ success: false, message: errors.array()[0] }); // Sending first error to the client from array of errors
+    res.status(400).send({ success: false, message: errors.array()[0].msg }); // Sending first error to the client from array of errors
   } else {
     // Validated successfully
     next(); // Pass the request to next middleware or controller

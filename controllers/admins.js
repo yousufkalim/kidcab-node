@@ -6,6 +6,7 @@ const Admin = require("../models/Admins");
 const bcrypt = require("bcryptjs");
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
 const { generateAuthToken } = require("../middleware/auth");
+const { sendEmail } = require("../utils/sendEmail");
 /**
  * Create Admin - Signup
  * @param {object} req
@@ -26,7 +27,6 @@ exports.create = async (req, res) => {
     if (req.file) {
       req.body.profile_pic = req.file.path; // Creating a new property called photo in body object
     }
-
     // Creating Admin
     password = bcrypt.hashSync(password, parseInt(bcryptSalt)); // Hashing the password with salt 8
     const admin = await Admin.create({
@@ -56,11 +56,16 @@ exports.create = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const admin = await Admin.findOne({ email: req.body.email });
-    if (!admin) return res.status(404).send("Email or Password is incorrect");
-    console.log(admin.password);
+    if (!admin)
+      return res
+        .status(404)
+        .send({ success: false, message: "User not found" });
+
     const validPassword = bcrypt.compareSync(req.body.password, admin.password);
     if (!validPassword)
-      return res.status(401).send("Email or Password is incorrect");
+      return res
+        .status(400)
+        .send({ success: false, message: "Email or Password is incorrect" });
     const token = await generateAuthToken(admin);
     res.json({ success: true, admin, token }); // Success
   } catch (err) {
@@ -145,6 +150,17 @@ exports.getById = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const adminId = req.params.adminId; // Getting admin id from URL parameter
+    const { name } = req.body;
+    req.body.name = JSON.parse(name);
+
+    if (req.file) {
+      req.body.logo = req.file.path;
+    }
+
+    if (req.body.password) {
+      req.body.password = bcrypt.hashSync(req.body.password, 10);
+    }
+
     const admin = await Admin.findByIdAndUpdate(adminId, req.body, {
       new: true,
     }); // Updating the user
@@ -165,7 +181,33 @@ exports.delete = async (req, res) => {
   try {
     const adminId = req.params.adminId; // Getting admin id from URL parameter
     const admin = await Admin.findByIdAndDelete(adminId); // Deleting the admin
+
     res.json({ success: true, admin }); // Success
+  } catch (err) {
+    // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.forgot = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const admins = await Admin.findOne({ email: email });
+    if (!admins) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Invalid email address" });
+    }
+    let randomPassword = Math.random().toString(36).slice(-8);
+    console.log(randomPassword, "r");
+    sendEmail(admins.email, randomPassword).then(async () => {
+      admins.password = await bcrypt.hash(randomPassword, parseInt(bcryptSalt));
+      await admins.save();
+      return res
+        .status(200)
+        .json({ success: true, message: "Email sent successfully" });
+    });
   } catch (err) {
     // Error handling
     console.log("Error ----> ", err);

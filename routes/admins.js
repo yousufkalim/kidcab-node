@@ -28,13 +28,14 @@ router.post("/", upload.single("image"), admins.create);
 router.post("/login", admins.login);
 router.post("/logout", auth, admins.logout);
 router.post("/logout/all", auth, admins.logoutAll);
+router.post("/forgetPassword", admins.forgot);
 
 // Read
 router.get("/", auth, admins.getAll); // Get all admins at once
 router.get("/:adminId", auth, admins.getById); // Get one admin by it's id
 
 // Update
-router.put("/:adminId", auth, admins.update); // Update a specific admin by it's id
+router.put("/:adminId", upload.single("logo"), auth, admins.update); // Update a specific admin by it's id
 
 // Delete
 router.delete("/:adminId", auth, admins.delete); // delete a specific admin by it's id

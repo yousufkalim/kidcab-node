@@ -31,7 +31,7 @@ router.post(
 // Read
 router.get("/", passengers.getAll); // Get all passengers at once
 router.get("/:passengerId", passengers.getById); // Get one Passenger by it's id
-
+router.get("/getPassengerByClient/:clientId", passengers.getPassengerByClient);
 // Update
 router.put("/:passengerId", upload.single("image"), passengers.update); // Update a specific passenger by it's id
 

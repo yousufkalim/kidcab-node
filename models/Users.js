@@ -2,7 +2,7 @@
  * Client schema
  * @author Arooj Ishfaq
  */
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose');
 
 // Schema
 const clientSchema = new Schema(
@@ -30,7 +30,7 @@ const clientSchema = new Schema(
     passengers: [
       {
         type: Schema.Types.ObjectId,
-        ref: "passengers",
+        ref: 'passengers',
       },
     ],
     bank_info: {
@@ -50,10 +50,6 @@ const clientSchema = new Schema(
         type: String,
       },
     },
-    // cnic: {
-    //   type: Number,
-    //   required: true,
-    // },
     email: {
       type: String,
       required: true,
@@ -66,14 +62,21 @@ const clientSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ["male", "female", "other", ""],
+      enum: ['male', 'female', 'other', ''],
     },
     role: {
       type: String,
       required: true,
-      enum: ["admin", "user"],
-      default: "user",
+      enum: ['admin', 'user'],
+      default: 'user',
     },
+    fcmToken: String,
+    notifications: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'notification',
+      },
+    ],
   },
   {
     timestamps: true,
@@ -81,4 +84,4 @@ const clientSchema = new Schema(
 );
 
 // Model
-module.exports = model("users", clientSchema);
+module.exports = model('users', clientSchema);

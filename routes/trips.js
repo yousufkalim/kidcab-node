@@ -26,16 +26,22 @@ router.post("/", validateTrips, isValidated, trips.create);
 
 // Read
 router.get("/", trips.getAll); // Get all trips at once
+router.post("/paginationTrips", trips.paginationTrip);
+router.post("/tripsbydriver", trips.TripsByDriver);
+router.post("/tripsbyClient", trips.TripsByClient);
 router.get("/getPendingByDriver/:driverId", trips.getPendingByDriver); // Get all trips at once
 router.get("/:tripId", trips.getById); // Get one trip by it's id
 
 // Update ride
+router.put("/event/:tripId", trips.updateEvent); // Update a specific trip by it's id
 router.put("/:tripId", trips.update); // Update a specific trip by it's id
 
 //testing status route
-router.get("/status/:status", trips.getTripsByStatus); // Get all trips by status
+router.post("/status/:status", trips.getTripsByStatus); // Get all trips by status
 
+router.post("");
 // Delete
+router.delete("/deleteMany", trips.deleteMany);
 router.delete("/:tripId", trips.delete); // delete a specific trip by it's id
 
 //Upcoming Rides
@@ -46,6 +52,22 @@ router.get("/past/:clientId", trips.getPastTrips); // Get all past trips
 
 router.get("/:tripId/:driverId", trips.accept);
 router.get("/declineByDriver/:tripId/:driverId", trips.declineByDriver);
-
+//filter
+router.post("/tripsByDate/", trips.TripsByDate);
+//day report
+router.post("/getDayReport/", trips.getDailyReport);
+//getMonthlyReport
+router.post("/getMonthlyReport/", trips.getWeeklyReport);
+//getRevenue
+router.post("/getRevenue/", trips.getRevenue);
+//day report
+// router.post("/getDayReport/", trips.getDayReport);
+//addStop
+router.post("/addstop/:tripId", trips.addStop);
+router.post("/clientTrip/", trips.clientTrip);
+//remainingDistance
+router.post("/remainingDistance/:tripId", trips.remainingDistance);
+//Export to pdf
+router.post("/export_pdf/", trips.ExportPdf);
 // Export
 module.exports = router;

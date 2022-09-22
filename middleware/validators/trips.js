@@ -12,8 +12,6 @@ exports.validateTrips = [
     .trim()
     .isNumeric(),
   check("client", "At least one Client ID is required").notEmpty().trim(),
-  check("quote", "At least one Quote ID is required").notEmpty().trim(),
-  //check("addresses", "Address is Required").notEmpty().trim(),
   check("start_address.lat", "Starting Address is Required").notEmpty().trim(),
   check("end_address.lat", "Ending Address is Required").notEmpty().trim(),
 ];
@@ -28,7 +26,7 @@ exports.isValidated = (req, res, next) => {
   const errors = validationResult(req); // Validating the request by previous middleware's strategy
   if (!errors.isEmpty()) {
     // On error
-    res.status(400).send({ success: false, message: errors.array()[0] }); // Sending first error to the client from array of errors
+    res.status(400).send({ success: false, message: errors.array()[0].msg }); // Sending first error to the client from array of errors
   } else {
     // Validated successfully
     next(); // Pass the request to next middleware or controller

@@ -11,12 +11,10 @@ const Users = require("../models/Users");
  * @param {object} res
  */
 exports.create = async (req, res) => {
-  console.log("passenger Create Controller");
   try {
     if (req.file) {
       req.body.profile_pic = req.file.path;
     }
-    console.log(req.body);
     const passenger = await Passengers.create(req.body);
     await Users.findByIdAndUpdate(req.body.client, {
       $push: {
@@ -71,10 +69,19 @@ exports.getById = async (req, res) => {
  */
 exports.update = async (req, res) => {
   try {
-    const passengerId = req.params.passengerId;
     if (req.file) {
       req.body.profile_pic = req.file.path;
     }
+    const passengerId = req.params.passengerId;
+    const previousClient = await Passengers.findById(passengerId);
+    if (previousClient) {
+      const user = await Users.findByIdAndUpdate(previousClient.client, {
+        $pull: {
+          passengers: passengerId,
+        },
+      });
+    }
+
     const updatedPassenger = await Passengers.findByIdAndUpdate(
       passengerId,
       req.body,
@@ -82,6 +89,9 @@ exports.update = async (req, res) => {
         new: true,
       }
     );
+    await Users.findByIdAndUpdate(req.body.client, {
+      $push: { passengers: passengerId },
+    });
     if (!updatedPassenger) return res.status(404).send("No Passenger Update");
     res.json({ success: true, updatedPassenger });
   } catch (err) {
@@ -107,6 +117,18 @@ exports.delete = async (req, res) => {
 
     if (!deletedPassenger) return res.status(404).send("No Passenger Deleted");
     res.json({ success: true, deletedPassenger });
+  } catch (err) {
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+//get passengers of a specific client
+exports.getPassengerByClient = async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+    const passenger = await Passengers.find({ client: clientId });
+    if (!passenger) return res.status(404).send("No Passengers Found");
+    res.json({ success: true, passenger });
   } catch (err) {
     console.log("Error ----> ", err);
     res.status(500).json({ success: false, message: "Internal server error" });

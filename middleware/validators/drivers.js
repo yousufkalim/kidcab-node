@@ -8,11 +8,23 @@ exports.validateDriver = [
   check("first_name", "First Name is required.").notEmpty().trim(),
   check("last_name", "Last Name is required.").notEmpty().trim(),
   check("email", "Email is required.").notEmpty().isEmail().trim(),
-
   check("role", "Role is required").notEmpty().trim(),
-  // check("criminal_record", "Criminal Record is required").notEmpty().trim(),
-
   check("password", "Password is required.")
+    .notEmpty()
+    .trim()
+    .isLength({ min: 8 }),
+];
+
+exports.validatePassword = [
+  check("oldPassword", "oldPassword minimum 8 digits are required.")
+    .notEmpty()
+    .trim()
+    .isLength({ min: 8 }),
+  check("newPassword", "newPassword minimum 8 digits are required.")
+    .notEmpty()
+    .trim()
+    .isLength({ min: 8 }),
+  check("confirmPassword", "confirmPassword minimum 8 digits are required.")
     .notEmpty()
     .trim()
     .isLength({ min: 8 }),
@@ -34,7 +46,7 @@ exports.isValidated = (req, res, next) => {
   const errors = validationResult(req); // Validating the request by previous middleware's strategy
   if (!errors.isEmpty()) {
     // On error
-    res.status(400).send({ success: false, message: errors.array()[0] }); // Sending first error to the client from array of errors
+    res.status(400).send({ success: false, message: errors.array()[0].msg }); // Sending first error to the client from array of errors
   } else {
     // Validated successfully
     next(); // Pass the request to next middleware or controller

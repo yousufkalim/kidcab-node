@@ -7,13 +7,7 @@ const mongoose = require("mongoose");
 // Schema
 const adminSchema = new mongoose.Schema(
   {
-    name: {
-      first_name: { type: String, required: true },
-      last_name: { type: String, required: true },
-    },
-    profile_pic: {
-      type: String,
-    },
+    name: { first_name: String, last_name: String },
 
     email: {
       type: String,
@@ -21,13 +15,12 @@ const adminSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    phone_number: {
-      type: Number,
-    },
+
     password: {
       type: String,
       minlength: 8,
     },
+
     tokens: [
       {
         token: {

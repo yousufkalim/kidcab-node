@@ -25,14 +25,23 @@ router.post("/", validateInvoice, isValidated, invoices.create);
 // Read
 router.get("/", invoices.getAll); // Get all invoices at once
 router.get("/:invoiceId", invoices.getById); // Get one invoice by it's id
-
+router.get("/getByClient/:clinetId", invoices.getByClient); //Get-Invoice by ClientId
+router.get("/getByDriver/:driverId", invoices.getByDriver); //Get-Invoice by ClientId
 // Update
 router.put("/:invoiceId", invoices.update); // Update a specific invoice by it's id
-
+router.post("/setstatus", invoices.setStatus); // Update a selected invoices
 // Delete
+router.delete("/pdf", invoices.deletePdf);
+router.delete("/deleteMany", invoices.deleteMany);
 router.delete("/:invoiceId", invoices.delete); // delete a specific invoice by it's id
 
 //testing status route
 router.get("/status/:status", invoices.getInvoicesByStatus); // Get all trips by status
+
+//get Late Invoices
+router.post("/getLateInvoices/", invoices.getLateInvoices); // Get all trips by status
+router.post("/export_pdf/", invoices.ExportPdf);
+//invoice by  date
+router.post("/InvoiceByDate", invoices.InvoiceByDate);
 // Export
 module.exports = router;
