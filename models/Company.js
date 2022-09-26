@@ -9,11 +9,11 @@ const companySchema = new mongoose.Schema(
   {
     logo: {
       type: String,
-      default: '',
+      default: ''
     },
 
     phone_number: {
-      type: Number,
+      type: String
     },
 
     company_name: String,
@@ -24,10 +24,10 @@ const companySchema = new mongoose.Schema(
     share_capital: String,
     rcs_city: String,
     bank_name: String,
-    iban: String,
+    iban: String
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 
