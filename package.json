@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "deploy": "sudo chmod 644 .git/index && git pull origin main && npm install && sudo pm2 restart 14 && sudo pm2 logs 14"
+    "deploy": "sudo chmod 644 .git/index && git pull origin main && npm install && sudo pm2 restart 14 && sudo pm2 logs 14",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -40,5 +41,10 @@
     "nodemon": "^2.0.20",
     "pdf-creator-node": "^2.3.4",
     "socket.io": "^4.4.1"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "prettier": "^2.7.1",
+    "pretty-quick": "^3.1.3"
   }
 }
