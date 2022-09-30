@@ -65,6 +65,7 @@ exports.create = async (req, res) => {
       //   // Done
 
       // }
+      const request = await Request.create(req.body);
       return res.json({ success: true, request, contact: true }); //Success
     }
     req.body.passengers = passengers;
