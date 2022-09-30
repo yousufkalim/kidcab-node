@@ -2,8 +2,8 @@
  * Admin CRUD controllers
  * @author Arooj Ishfaq
  */
-const Request = require('../models/RideRequest');
-const { findDistance } = require('../utils/findDistance');
+const Request = require("../models/RideRequest");
+const { findDistance } = require("../utils/findDistance");
 /**
  * Create Admin - Signup
  * @param {object} req
@@ -13,7 +13,7 @@ exports.create = async (req, res) => {
   try {
     const { total_children, total_adults, baby } = req.body;
 
-    if (req.body.door_support === 'Non') {
+    if (req.body.door_support === "Non") {
       req.body.door_support = false;
     } else {
       req.body.door_support = true;
@@ -28,7 +28,7 @@ exports.create = async (req, res) => {
 
     if (req.body.distance === 0) {
       req.body.passengers = passengers;
-      req.body.status = 'not answer';
+      req.body.status = "not answer";
       const request = await Request.create(req.body);
       // Done
       return res.json({ success: true, request, contact: true }); //Success
@@ -74,8 +74,8 @@ exports.create = async (req, res) => {
     // Done
     res.json({ success: true, request, contact: false }); //Success
   } catch (err) {
-    console.log('Error ----> ', err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -86,11 +86,13 @@ exports.create = async (req, res) => {
  */
 exports.getByClient = async (req, res) => {
   try {
-    const request = await Request.find({ client: req.params.client }).populate('client');
+    const request = await Request.find({ client: req.params.client }).populate(
+      "client"
+    );
     res.json({ success: true, request });
   } catch (err) {
-    console.log('Error ----> ', err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 /**
@@ -100,11 +102,11 @@ exports.getByClient = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   try {
-    const request = await Request.find().populate('client');
+    const request = await Request.find().populate("client");
     res.json({ success: true, request });
   } catch (err) {
-    console.log('Error ----> ', err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -116,12 +118,12 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const requestId = req.params.requestId; // Getting Request id from URL parameter
-    const request = await Request.findById(requestId).populate('client'); // Finding Request by id
+    const request = await Request.findById(requestId).populate("client"); // Finding Request by id
     res.json({ success: true, request }); // Success
   } catch (err) {
     // Error handling
-    console.log('Error ----> ', err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -139,8 +141,8 @@ exports.update = async (req, res) => {
     res.json({ success: true, request }); // Success
   } catch (err) {
     // Error handling
-    console.log('Error ----> ', err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -157,8 +159,8 @@ exports.delete = async (req, res) => {
     res.json({ success: true, request }); // Success
   } catch (err) {
     // Error handling
-    console.log('Error ----> ', err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -170,13 +172,13 @@ const toHHMMSS = (val) => {
   var seconds = sec_num - hours * 3600 - minutes * 60;
 
   if (hours < 10) {
-    hours = '0' + hours;
+    hours = "0" + hours;
   }
   if (minutes < 10) {
-    minutes = '0' + minutes;
+    minutes = "0" + minutes;
   }
   if (seconds < 10) {
-    seconds = '0' + seconds;
+    seconds = "0" + seconds;
   }
-  return hours + ':' + minutes + ':' + seconds;
+  return hours + ":" + minutes + ":" + seconds;
 };
