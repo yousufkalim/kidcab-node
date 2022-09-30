@@ -85,6 +85,7 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const userId = req.params.userId; // Getting user id from URL parameter
+    console.log(userId, 'userId');
     const user = await Users.findById(userId); // Finding user by id
     res.json({ success: true, user }); // Success
   } catch (err) {
