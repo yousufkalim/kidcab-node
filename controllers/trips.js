@@ -29,12 +29,13 @@ exports.create = async (req, res) => {
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
-      req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
+      req.body.distance = result.distance ? (result.distance / 1000).toFixed(1) : 0;
     } else {
       //if stetp  added by admin
       const result = await findDistance2(start_address, addresses, end_address);
-      req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
+      req.body.distance = result.distance ? (result.distance / 1000).toFixed(1) : 0;
     }
+
     let tripsIds = [];
     const drivers = await Drivers.find({
       _id: { $in: inviteddrivers },
@@ -491,11 +492,11 @@ exports.update = async (req, res) => {
     //if stetp not added by admin
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
-      req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
+      req.body.distance = result.distance ? result.distance / 1000 : 0;
     } else {
       //if stetp  added by admin
       const result = await findDistance2(start_address, addresses, end_address);
-      req.body.distance = result.distance ? result.distance.toFixed(1) : 0;
+      req.body.distance = result.distance ? (result.distance / 1000).toFixed(1) : 0;
     }
     const updatedTrip = await Trips.findByIdAndUpdate(tripId, {
       ...req.body,
@@ -792,7 +793,7 @@ exports.addStop = async (req, res) => {
     }
     const { addresses } = req.body;
     const result = await findDistance2(trip.start_address, addresses, trip.end_address);
-    trip.distance = result.distance ? result.distance.toFixed(1) : 0;
+    trip.distance = result.distance ? (result.distance / 1000).toFixed(1) : 0;
     trip.addresses = addresses;
     await trip.save();
     return res.json({ success: true, trip });
@@ -814,8 +815,8 @@ exports.remainingDistance = async (req, res) => {
     const result = await findDistance(trip.end_address, address);
     const remainingDistance =
       parseInt(trip.distance) > parseInt(result.distance)
-        ? parseInt(trip.distance) - parseInt(result.distance)
-        : parseInt(result.distance) - parseInt(trip.distance);
+        ? parseInt(trip.distance) - parseInt(result.distance) / 1000
+        : parseInt(result.distance) - parseInt(trip.distance) / 1000;
 
     return res.json({
       success: true,

@@ -7,8 +7,9 @@ const API_KEY = process.env.GOOGLE_API_KEY;
 exports.findDistance2 = async (start_address, step_addresses, end_address) => {
   try {
     distance.key(API_KEY);
-    distance.mode("driving");
-    distance.units("metric");
+
+    distance.mode('driving');
+    distance.units('imperial');
     let TotalDistance = 0;
     let result;
     var addresses = [...step_addresses];
@@ -90,6 +91,9 @@ exports.findDistance = async (start_address, end_address) => {
 //Find Distance
 const ChkDistance = async (origins, destinations) => {
   return new Promise((resolve, reject) => {
+    distance.key(API_KEY);
+    distance.mode('driving');
+    distance.units('imperial');
     let distancez = 0;
     distance.matrix(origins, destinations, function (err, distances) {
       if (err) {
@@ -103,9 +107,8 @@ const ChkDistance = async (origins, destinations) => {
           for (var j = 0; j < destinations.length; j++) {
             var origin = distances.origin_addresses[i];
             var destination = distances.destination_addresses[j];
-
-            if (distances.rows[0].elements[j].status == "OK") {
-              distancez = parseInt(distances.rows[i].elements[j].distance.text);
+            if (distances.rows[0].elements[j].status == 'OK') {
+              distancez = parseInt(distances.rows[i].elements[j].distance.value);
             } else {
               console.log(
                 destination + " is not reachable by land from " + origin

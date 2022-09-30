@@ -18,13 +18,8 @@ exports.create = async (req, res) => {
     } else {
       req.body.door_support = true;
     }
-    const result = await findDistance(
-      req.body.pickUp_address,
-      req.body.destination_address
-    );
-    req.body.distance = result.distance
-      ? parseInt(result.distance).toFixed(2)
-      : 0;
+    const result = await findDistance(req.body.pickUp_address, req.body.destination_address);
+    req.body.distance = result.distance ? (parseInt(result.distance) / 1000).toFixed(2) : 0;
     req.body.rideTime = result.duration ? result.duration : 0;
     //rideTime
 
@@ -42,45 +37,39 @@ exports.create = async (req, res) => {
     if (req.body.distance > 18 || passengers > 6 || req.body.rideTime > 3600) {
       req.body.passengers = passengers;
       req.body.rideTime = timeFormat;
+
       const request = await Request.create(req.body);
       // Done
       return res.json({ success: true, request, contact: true }); //Success
     }
     if (passengers <= 3) {
-      if (req.body.distance <= 6 || req.body.rideTime <= 1800) {
+      if (req.body.distance <= 6 && req.body.rideTime === 1800) {
         req.body.price = 45;
-      } else if (
-        (req.body.distance > 6 && req.body.distance <= 12) ||
-        req.body.rideTime <= 2700
-      ) {
-        req.body.price = 55;
-      } else if (
-        (req.body.distance > 12 && req.body.distance <= 18) ||
-        req.body.rideTime <= 3600
-      ) {
+      } else if ((req.body.distance > 6 && req.body.distance <= 12) || req.body.rideTime <= 2700) {
+        req.body.price = 60;
+      } else if ((req.body.distance > 12 && req.body.distance <= 18) || req.body.rideTime <= 3600) {
         req.body.price = 75;
       }
     }
 
     if (passengers > 3 && passengers <= 6) {
-      if (req.body.distance <= 10 && req.body.rideTime <= 2400) {
-        req.body.price = 75;
-      } else if (
-        req.body.distance > 10 &&
-        req.body.distance <= 18 &&
-        req.body.rideTime <= 3600
-      ) {
-        req.body.price = 90;
-      } else {
-        req.body.passengers = passengers;
-        req.body.rideTime = timeFormat;
-        const request = await Request.create(req.body);
-        // Done
-        return res.json({ success: true, request, contact: true }); //Success
-      }
+      // if (req.body.distance <= 10 && req.body.rideTime <= 2400) {
+      //   req.body.price = 75;
+      // } else if (req.body.distance > 10 && req.body.distance <= 18 && req.body.rideTime <= 3600) {
+      //   req.body.price = 90;
+      // } else {
+      //   req.body.passengers = passengers;
+      //   req.body.rideTime = timeFormat;
+
+      //   const request = await Request.create(req.body);
+      //   // Done
+
+      // }
+      return res.json({ success: true, request, contact: true }); //Success
     }
     req.body.passengers = passengers;
     req.body.rideTime = timeFormat;
+
     const request = await Request.create(req.body);
     // Done
     res.json({ success: true, request, contact: false }); //Success
