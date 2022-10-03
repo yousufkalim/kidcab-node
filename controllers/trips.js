@@ -30,15 +30,14 @@ exports.create = async (req, res) => {
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
       req.body.distance = result.distance ? (result.distance / 1000).toFixed(1) : 0;
-      console.log(result.distance,"result.distance")
+     
     } else {
       //if stetp  added by admin
       const result = await findDistance2(start_address, addresses, end_address);
       req.body.distance = result.distance ? (result.distance / 1000).toFixed(1) : 0;
-      console.log(result.distance,"result.distance")
+      
     }
     
- console.log(req.body.distance,"req.body.distance")
     let tripsIds = [];
     const drivers = await Drivers.find({
       _id: { $in: inviteddrivers },
@@ -94,6 +93,7 @@ exports.create = async (req, res) => {
             //This map will send notification to all driver then create notification for each driver
             if (req.body.tripType === 'simple') {
               drivers.map(async (driver) => {
+                console.log(driver?.fcmToken)
                 if (driver?.fcmToken) {
                   fcmservice.sendPushMessage(driver.fcmToken, 'Proposition de course Kidcab', pushMessage, pubMsg);
                   //store notification in db
