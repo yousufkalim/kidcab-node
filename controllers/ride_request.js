@@ -42,8 +42,9 @@ exports.create = async (req, res) => {
       // Done
       return res.json({ success: true, request, contact: true }); //Success
     }
+
     if (passengers <= 3) {
-      if (req.body.distance <= 6 && req.body.rideTime === 1800) {
+      if (req.body.distance <= 6 && req.body.rideTime <= 1800) {
         req.body.price = 45;
       } else if ((req.body.distance > 6 && req.body.distance <= 12) || req.body.rideTime <= 2700) {
         req.body.price = 60;
@@ -51,6 +52,7 @@ exports.create = async (req, res) => {
         req.body.price = 75;
       }
     }
+    // return console.log(req.body, 'r');
 
     if (passengers > 3 && passengers <= 6) {
       // if (req.body.distance <= 10 && req.body.rideTime <= 2400) {
@@ -65,6 +67,7 @@ exports.create = async (req, res) => {
       //   // Done
 
       // }
+      const request = await Request.create(req.body);
       return res.json({ success: true, request, contact: true }); //Success
     }
     req.body.passengers = passengers;
