@@ -30,12 +30,14 @@ exports.create = async (req, res) => {
     if (Object.values(addresses).length < 1) {
       const result = await findDistance(start_address, end_address);
       req.body.distance = result.distance ? (result.distance / 1000).toFixed(1) : 0;
+      console.log(result.distance,"result.distance")
     } else {
       //if stetp  added by admin
       const result = await findDistance2(start_address, addresses, end_address);
       req.body.distance = result.distance ? (result.distance / 1000).toFixed(1) : 0;
+      console.log(result.distance,"result.distance")
     }
-    console.log(result.distance,"result.distance")
+    
  console.log(req.body.distance,"req.body.distance")
     let tripsIds = [];
     const drivers = await Drivers.find({
