@@ -77,7 +77,7 @@ exports.findDistance = async (start_address, end_address) => {
             }
           }
           result = {
-            distance: parseFloat(Distance) / 1000,
+            distance: parseInt(Distance),
             duration: Duration,
           };
         }
