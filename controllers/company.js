@@ -35,11 +35,13 @@ exports.createUpdate = async (req, res) => {
 
     if (company) {
       //? if company have data update it.
-      await Company.findOneAndUpdate({ _id: company._id }, req.body, { new: true }).then((resp) => {
+      await Company.findOneAndUpdate({ _id: company._id }, req.body, {
+        new: true
+      }).then((resp) => {
         return res.json({
           success: true,
           message: 'Company Data Updated Sucessfully',
-          company: resp,
+          company: resp
         });
       });
     } else {
@@ -48,7 +50,7 @@ exports.createUpdate = async (req, res) => {
         return res.json({
           success: true,
           message: 'Company Data Uploaded Sucessfully',
-          company: resp,
+          company: resp
         });
       });
     }

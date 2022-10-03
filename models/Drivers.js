@@ -2,7 +2,7 @@
  * Drivers schema
  * @author Arooj Ishfaq
  */
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose');
 
 // Schema
 const driverSchema = new Schema(
@@ -12,7 +12,7 @@ const driverSchema = new Schema(
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
     phone_number: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: true, lowercase: true },
     fcmToken: String,
     password: {
       type: String,
@@ -28,7 +28,7 @@ const driverSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["individual", "fleet_manager"],
+      enum: ['individual', 'fleet_manager'],
       required: true,
     },
 
@@ -43,27 +43,27 @@ const driverSchema = new Schema(
     vehicles: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Vehicles",
+        ref: 'Vehicles',
       },
     ],
-    id_card_front: { type: String, default: "" },
-    id_card_back: { type: String, default: "" },
-    vtc_card_front: { type: String, default: "" },
-    vtc_card_back: { type: String, default: "" },
-    criminal_record_image: { type: String, default: "" },
+    id_card_front: { type: String, default: '' },
+    id_card_back: { type: String, default: '' },
+    vtc_card_front: { type: String, default: '' },
+    vtc_card_back: { type: String, default: '' },
+    criminal_record_image: { type: String, default: '' },
     criminal_record_date: Date,
-    ris_image: { type: String, default: "" },
+    ris_image: { type: String, default: '' },
     ris_date: Date,
-    kbis_image: { type: String, default: "" },
+    kbis_image: { type: String, default: '' },
     kbis_date: Date,
-    proRc_image: { type: String, default: "" },
+    proRc_image: { type: String, default: '' },
     proRc_date: Date,
-    license_card_front: { type: String, default: "" },
-    license_card_back: { type: String, default: "" },
-    kbis_extract: { type: String, default: "" },
-    rib: { type: String, default: "" },
-    professional_liability: { type: String, default: "" },
-    insurance_civil_liability: { type: String, default: "" },
+    license_card_front: { type: String, default: '' },
+    license_card_back: { type: String, default: '' },
+    kbis_extract: { type: String, default: '' },
+    rib: { type: String, default: '' },
+    professional_liability: { type: String, default: '' },
+    insurance_civil_liability: { type: String, default: '' },
     bank_info: {
       account_number: {
         type: String,
@@ -84,7 +84,7 @@ const driverSchema = new Schema(
     notifications: [
       {
         type: Schema.Types.ObjectId,
-        ref: "notification",
+        ref: 'notification',
       },
     ],
   },
@@ -94,4 +94,4 @@ const driverSchema = new Schema(
 );
 
 // Model
-module.exports = model("drivers", driverSchema);
+module.exports = model('drivers', driverSchema);
