@@ -16,7 +16,12 @@ exports.sendPushMessage = async (tokens, title, body, data) => {
       data: data,
     };
     fcm.send(message, (error, response) => {
-      if (!error) console.log("Notification sent successfully",response);
+      if (!error) {
+        console.log("Notification sent successfully",response)
+      }
+      else{
+        console.log("Somthing gone worng", error);
+      }
     });
   } catch (err) {
     console.log("Somthing gone worng", err.message);
