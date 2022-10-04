@@ -385,14 +385,14 @@ const InvoicePdf = async (invoiceId) => {
     // Changing format for issue data as desired
     invoice['unit_price'] = (parseInt(invoice?.total_price) / parseInt(invoice?.trip_info?.total_trips)).toFixed(2);
     invoice['issue_date'] = moment(invoice.issue_date).format('DD/MM/YYYY');
-    invoice['total_price2'] = parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(1);
+    invoice['total_price2'] = parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(2);
     filteredInvoices[invoice.client._id].push(invoice);
   } else {
     filteredInvoices[invoice.driver._id] = [];
     // Changing format for issue data as desired
     invoice['unit_price'] = (parseInt(invoice?.total_price) / parseInt(invoice?.trip_info?.total_trips)).toFixed(2);
     invoice['issue_date'] = moment(invoice.issue_date).format('DD/MM/YYYY');
-    invoice['total_price2'] = parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(1);
+    invoice['total_price2'] = parseInt(invoice?.total_price) - parseInt(invoice?.vat).toFixed(2);
     filteredInvoices[invoice.driver._id].push(invoice);
   }
   console.log(invoice['unit_price']);
