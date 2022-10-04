@@ -301,7 +301,7 @@ const CreatePdf = async (quoteId) => {
   let filteredQuotes = {};
   filteredQuotes[quotes.client._id] = [];
   // Getting unit price
-  quote['unit_price'] = parseInt(quote?.total_price) / parseInt(quote?.trip_info?.total_trips).toFixed(1);
+  quote['unit_price'] = parseInt(quote?.total_price) / parseInt(quote?.trip_info?.total_trips).toFixed(2);
   // Adding description for a quote if not exists
   if (quotes.description || quotes.description === '') {
     quotes['description'] = `Trip for ${quotes.client.first_name + ' ' + quotes.client.last_name}`;
