@@ -38,10 +38,16 @@ exports.create = async (req, res) => {
 
       const data = Object.assign({}, req.body, ...imageKeys.map((key) => ({ [key]: req.files[key][0].path })));
       const driver = await Drivers.create(data);
-      if (driver) return res.json({ success: true, files: driver });
+      
+      if (driver) {
+        await Vehicles.updateMany({ _id: { $in: driver.vehicles } }, { $set: { driver: driver._id } });
+        return res.json({ success: true, files: driver });}
     }
     const driver = await Drivers.create(req.body);
-    if (driver) return res.json({ success: true, files: driver });
+    if (driver) {
+      await Vehicles.updateMany({ _id: { $in: driver.vehicles } }, { $set: { driver: driver._id } });
+      return res.json({ success: true, files: driver });
+    }
   } catch (err) {
     console.log('Error ----> ', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
