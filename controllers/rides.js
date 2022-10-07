@@ -450,6 +450,15 @@ exports.completeRide = async (req, res) => {
       var pushMessage = feedback; //Notification title fcm
       const driver = await Drivers.findById(findRide.driver);
       const client = await Users.findById(findRide.client);
+      if(!client.fcmToken){
+        console.log("fcm not found,user")
+      }
+      if(!client.fcmToken){
+        console.log("fcm not found,user")
+      }
+      if(!driver.fcmToken){
+        console.log("fcm not found,driver")
+      }
       fcmservice.sendPushMessage(driver?.fcmToken, "etour d'information", pushMessage, pubMsg);
       fcmservice.sendPushMessage(client?.fcmToken, 'le client a été déposé', 'le client a été déposé', 'le client a été déposé');
 
@@ -508,6 +517,10 @@ exports.startRide = async (req, res) => {
       await findRide.save();
       const driver = await Drivers.findById(findRide.driver);
       const client = await Users.findById(findRide.client);
+      if(!client.fcmToken){
+        console.log("fcm not found,user")
+      }
+      
       fcmservice.sendPushMessage(client.fcmToken, 'Le trajet a commencé', pushMessage, pubMsg);
       if (io?.socket) {
         io?.socket?.emit(`start${findRide.client}`, {
@@ -553,6 +566,10 @@ exports.endRide = async (req, res) => {
     if (updateRide) {
       const driver = await Drivers.findById(updateRide.driver);
       const client = await Users.findById(updateRide.client);
+      if(!client.fcmToken){
+        console.log("fcm not found,user")
+      }
+
       fcmservice.sendPushMessage(client.fcmToken, 'Le trajet a été terminé', pushMessage, pubMsg);
       if (io?.socket) {
         io?.socket?.emit(`endRide${updateRide.client}`, {

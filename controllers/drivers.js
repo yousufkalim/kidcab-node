@@ -69,6 +69,7 @@ exports.getAll = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
+    console.log("driver",req.body)
     const driver = await Drivers.findOne({ email: req.body.email }).populate('vehicles');
     if (!driver) return res.status(404).send('Driver not found');
 
@@ -77,7 +78,7 @@ exports.login = async (req, res) => {
     driver.fcmToken = req.body.fcmToken;
     await driver.save();
     if (!validPassword) return res.status(401).send('Password is incorrect');
-
+    console.log("driver resp",driver)
     const token = await generateAuthToken(driver);
     res.json({ success: true, driver, token }); // Success
   } catch (err) {
