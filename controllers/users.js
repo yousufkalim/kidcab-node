@@ -47,6 +47,7 @@ exports.create = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
+    console.log("body login user",req.body)
     const user = await Users.findOne({ email: req.body.email });
     if (!user) return res.status(404).send('Email or Password is incorrect');
     const validPassword = bcrypt.compareSync(req.body.password, user.password);
@@ -54,6 +55,7 @@ exports.login = async (req, res) => {
     user.fcmToken = req.body.fcmToken;
     await user.save();
     const token = await generateAuthToken(user);
+    console.log(user,"user resp")
     res.json({ success: true, user, token }); // Success
   } catch (err) {
     console.log('Error ----> ', err);
