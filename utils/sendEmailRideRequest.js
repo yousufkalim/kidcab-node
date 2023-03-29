@@ -28,7 +28,7 @@ exports.sendEmailRideRequest = req => {
       last_name
     } = req;
     const passengers = total_children + total_adults + baby;
-    const rate = price ? `${price}€` : 'ON ESTIMATE';
+    const rate = price ? `${price}€` : 'SUR DEVIS';
     // Sender mail server config
     var transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -43,11 +43,11 @@ exports.sendEmailRideRequest = req => {
       from: `${sender_name} <${sender_email}>`,
       to: [req.email, 'maximechevallier@kidcab.fr'],
       subject: 'Résumé de votre course Kidcab',
-      text: `Bonjour, \n \n Votre demande de course Kidcab a été créée avec succès. Vous en trouverez ci-dessous les détails : \n \n Client: ${first_name} ${last_name} \n Nombre de passagers: ${passengers} \n Lieu de départ: ${
+      text: `Bonjour, \n \n Votre demande de course Kidcab a été créée avec succès. Vous en trouverez ci-dessous les détails : \n \n Client : ${first_name} ${last_name} \n Nombre de passagers : ${passengers} \n Lieu de départ : ${
         pickUp_address.label2
-      } \n Lieu d’arrivée: ${destination_address.label2} \n Date: ${moment(pickUp_date).format(
+      } \n Lieu d’arrivée : ${destination_address.label2} \n Date : ${moment(pickUp_date).format(
         'DD/MM/yyyy'
-      )} \n Tarif: ${rate} \n \n Merci, \n \n Cordialement, \n L’équipe Kidcab  `
+      )} \n Tarif : ${rate} \n \n Merci, \n \n Cordialement, \n L’équipe Kidcab  `
     };
 
     // Sending email
