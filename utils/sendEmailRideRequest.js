@@ -4,6 +4,8 @@
  */
 const moment = require('moment');
 var nodemailer = require('nodemailer');
+const mailer_port = process.env.MAILER_PORT;
+const mailer_host = process.env.MAILER_HOST;
 const sender_name = process.env.MAILER_DOMAIN;
 const sender_email = process.env.MAILER_EMAIL;
 const sender_password = process.env.MAILER_PASSWORD;
@@ -31,7 +33,9 @@ exports.sendEmailRideRequest = req => {
     const rate = price ? `${price}€` : 'SUR DEVIS';
     // Sender mail server config
     var transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: mailer_host,
+      port: mailer_port,
+      secure: true,
       auth: {
         user: sender_email,
         pass: sender_password
@@ -41,7 +45,7 @@ exports.sendEmailRideRequest = req => {
     // Send email options
     var mailOptions = {
       from: `${sender_name} <${sender_email}>`,
-      to: [req.email, 'maximechevallier@kidcab.fr'],
+      to: [req.email, 'hello@kidcab.fr'],
       subject: 'Résumé de votre course Kidcab',
       text: `Bonjour, \n \n Votre demande de course Kidcab a été créée avec succès. Vous en trouverez ci-dessous les détails : \n \n Client : ${first_name} ${last_name} \n Nombre de passagers : ${passengers} \n Lieu de départ : ${
         pickUp_address.label2
