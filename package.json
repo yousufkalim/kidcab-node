@@ -25,7 +25,7 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
-    "express": "^4.17.1",
+    "express": "^4.22.2",
     "express-validator": "^6.12.1",
     "fcm-node": "^1.6.1",
     "geo-lib": "^0.3.2",
