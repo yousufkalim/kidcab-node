@@ -40,7 +40,7 @@
     "nodemailer": "^6.7.2",
     "nodemon": "^2.0.20",
     "pdf-creator-node": "^2.3.4",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "husky": "^8.0.0",
